@@ -1,4 +1,7 @@
 package stmodelservice.domain.enums;
 
-public class QualityStatus {
+public enum QualityStatus {
+    GOOD,
+    MODERATE,
+    BAD
 }
