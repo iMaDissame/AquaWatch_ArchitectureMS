@@ -1,0 +1,146 @@
+<!-- src/app/pages/station-detail/station-detail.component.html -->
+<div class="container my-4">
+
+  <a routerLink="/stations" class="btn btn-link">&larr; Retour aux stations</a>
+
+  <div *ngIf="loading" class="alert alert-info mt-2">
+    Chargement des détails...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger mt-2">
+    {{ error }}
+  </div>
+
+  <div *ngIf="detail && !loading && !error">
+
+    <h2 class="mb-3">
+      {{ detail.name }} <small class="text-muted">({{ detail.code }})</small>
+    </h2>
+
+    <div class="row">
+
+      <!-- Informations station -->
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-header">
+            Station
+          </div>
+          <div class="card-body">
+            <p><strong>Commune : </strong>{{ detail.commune || 'N/A' }}</p>
+            <p><strong>Description : </strong>{{ detail.description || '–' }}</p>
+            <p><strong>Coordonnées : </strong>
+              {{ detail.latitude }}, {{ detail.longitude }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Alertes actives -->
+        <div class="card mb-3">
+          <div class="card-header">
+            Alertes actives
+          </div>
+          <div class="card-body" *ngIf="detail.activeAlerts && detail.activeAlerts.length > 0; else noAlert">
+            <div *ngFor="let a of detail.activeAlerts" class="mb-2">
+              <span class="badge bg-danger me-2">{{ a.severity }}</span>
+              <strong>{{ a.title }}</strong>
+              <div class="small text-muted">
+                {{ a.message }}
+              </div>
+            </div>
+          </div>
+          <ng-template #noAlert>
+            <div class="card-body text-muted">
+              Aucune alerte active.
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Mesure & qualité -->
+      <div class="col-md-8">
+
+        <!-- Dernière mesure -->
+        <div class="card mb-3">
+          <div class="card-header">
+            Dernière mesure capteur
+          </div>
+          <div class="card-body" *ngIf="detail.latestMeasurement; else noMeasurement">
+            <p><strong>Date :</strong> {{ detail.latestMeasurement?.timestamp }}</p>
+            <div class="row">
+              <div class="col-md-4">
+                <p><strong>pH :</strong> {{ detail.latestMeasurement?.ph }}</p>
+                <p><strong>Temp :</strong> {{ detail.latestMeasurement?.temperature }} °C</p>
+              </div>
+              <div class="col-md-4">
+                <p><strong>Turbidité :</strong> {{ detail.latestMeasurement?.turbidity }} NTU</p>
+                <p><strong>DO :</strong> {{ detail.latestMeasurement?.dissolvedOxygen }} mg/L</p>
+              </div>
+              <div class="col-md-4">
+                <p><strong>Conductivité :</strong> {{ detail.latestMeasurement?.conductivity }} µS/cm</p>
+              </div>
+            </div>
+          </div>
+          <ng-template #noMeasurement>
+            <div class="card-body text-muted">
+              Aucune mesure disponible.
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Qualité actuelle -->
+        <div class="card mb-3">
+          <div class="card-header">
+            Qualité actuelle de l'eau
+          </div>
+          <div class="card-body" *ngIf="detail.latestObservation; else noObs">
+            <p>
+              <strong>Statut :</strong>
+              <span [ngClass]="getStatusBadgeClass(detail.latestObservation?.status)">
+                {{ detail.latestObservation?.status }}
+              </span>
+            </p>
+            <p><strong>Score :</strong>
+              {{ detail.latestObservation?.score | number:'1.0-1' }} / 100
+            </p>
+            <p><strong>Détails :</strong> {{ detail.latestObservation?.details }}</p>
+            <p><strong>Horodatage :</strong> {{ detail.latestObservation?.timestamp }}</p>
+          </div>
+          <ng-template #noObs>
+            <div class="card-body text-muted">
+              Aucune observation de qualité disponible.
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Prévision -->
+        <div class="card mb-3">
+          <div class="card-header">
+            Prévision (STModel)
+          </div>
+          <div class="card-body" *ngIf="detail.latestForecast; else noForecast">
+            <p>
+              <strong>Statut prévu :</strong>
+              <span [ngClass]="getStatusBadgeClass(detail.latestForecast?.predictedStatus)">
+                {{ detail.latestForecast?.predictedStatus }}
+              </span>
+            </p>
+            <p><strong>Score prévu :</strong>
+              {{ detail.latestForecast?.predictedScore | number:'1.0-1' }} / 100
+            </p>
+            <p><strong>Horizon :</strong> {{ detail.latestForecast?.forecastTime }}</p>
+            <p><strong>Modèle :</strong>
+              {{ detail.latestForecast?.modelName }} ({{ detail.latestForecast?.modelVersion }})
+            </p>
+          </div>
+          <ng-template #noForecast>
+            <div class="card-body text-muted">
+              Aucune prévision disponible.
+            </div>
+          </ng-template>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
