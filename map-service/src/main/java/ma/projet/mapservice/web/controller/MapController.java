@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/map")
 @RequiredArgsConstructor
-@CrossOrigin
 public class MapController {
 
     private final SensorClient sensorClient;
@@ -62,18 +61,40 @@ public class MapController {
     @GetMapping("/stations/{stationId}")
     public StationDetailDTO getStationDetail(@PathVariable Long stationId) {
 
-        // Dans ce design simple, on ne récupère pas une station isolée,
-        // on reutilise la liste puis filtre. Tu peux ajouter /api/stations/{id}
-        // dans sensor-service si tu veux.
-        StationDTO st = sensorClient.getAllStations().stream()
-                .filter(s -> s.getId().equals(stationId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Station not found: " + stationId));
+        // Récupérer la station directement par ID
+        StationDTO st = sensorClient.getStationById(stationId);
+        if (st == null) {
+            throw new IllegalArgumentException("Station not found: " + stationId);
+        }
 
-        MeasurementDTO latestMeas = sensorClient.getLatestMeasurement(stationId);
-        QualityObservationDTO latestObs = stModelClient.getLatestObservation(stationId);
-        QualityForecastDTO latestForecast = stModelClient.getSimpleForecast(stationId);
-        List<AlertDTO> activeAlerts = alertClient.getActiveAlertsForStation(stationId);
+        MeasurementDTO latestMeas = null;
+        QualityObservationDTO latestObs = null;
+        QualityForecastDTO latestForecast = null;
+        List<AlertDTO> activeAlerts = null;
+
+        try {
+            latestMeas = sensorClient.getLatestMeasurement(stationId);
+        } catch (Exception e) {
+            // Pas de mesure pour cette station
+        }
+
+        try {
+            latestObs = stModelClient.getLatestObservation(stationId);
+        } catch (Exception e) {
+            // Pas d'observation de qualité pour cette station
+        }
+
+        try {
+            latestForecast = stModelClient.getSimpleForecast(stationId);
+        } catch (Exception e) {
+            // Pas de prévision pour cette station
+        }
+
+        try {
+            activeAlerts = alertClient.getActiveAlertsForStation(stationId);
+        } catch (Exception e) {
+            // Pas d'alertes pour cette station
+        }
 
         return StationDetailDTO.builder()
                 .stationId(st.getId())
@@ -86,7 +107,7 @@ public class MapController {
                 .latestMeasurement(latestMeas)
                 .latestObservation(latestObs)
                 .latestForecast(latestForecast)
-                .activeAlerts(activeAlerts)
+                .activeAlerts(activeAlerts != null ? activeAlerts : List.of())
                 .build();
     }
 

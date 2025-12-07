@@ -108,6 +108,12 @@ public class AlertService {
                 .toList();
     }
 
+    public List<AlertResponse> getActiveAlertsForStation(Long stationId) {
+        return alertRepository.findByStationIdAndStatus(stationId, AlertStatus.OPEN).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public List<AlertResponse> getAlertsForStation(Long stationId, AlertStatus status) {
         List<Alert> alerts;
         if (status == null) {

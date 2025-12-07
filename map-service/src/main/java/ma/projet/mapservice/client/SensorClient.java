@@ -2,38 +2,28 @@ package ma.projet.mapservice.client;
 
 import ma.projet.mapservice.web.dto.MeasurementDTO;
 import ma.projet.mapservice.web.dto.StationDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
-public class SensorClient {
+/**
+ * Feign Client pour communiquer avec sensor-service via Eureka
+ */
+@FeignClient(name = "sensor-service")
+public interface SensorClient {
 
-    private final RestTemplate restTemplate;
+    @GetMapping("/api/stations")
+    List<StationDTO> getAllStations();
 
-    @Value("${services.sensor.base-url}")
-    private String sensorBaseUrl; // ex: http://sensor-service:8081
+    @GetMapping("/api/stations/{id}")
+    StationDTO getStationById(@PathVariable("id") Long id);
 
-    public List<StationDTO> getAllStations() {
-        String url = sensorBaseUrl + "/api/stations";
+    @GetMapping("/api/measurements/latest")
+    MeasurementDTO getLatestMeasurement(@RequestParam("stationId") Long stationId);
 
-        ResponseEntity<List<StationDTO>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<StationDTO>>() {}
-        );
-        return response.getBody();
-    }
-
-    public MeasurementDTO getLatestMeasurement(Long stationId) {
-        String url = sensorBaseUrl + "/api/measurements/latest?stationId=" + stationId;
-        return restTemplate.getForObject(url, MeasurementDTO.class);
-    }
+    @GetMapping("/api/measurements")
+    List<MeasurementDTO> getMeasurementsByStation(@RequestParam("stationId") Long stationId);
 }

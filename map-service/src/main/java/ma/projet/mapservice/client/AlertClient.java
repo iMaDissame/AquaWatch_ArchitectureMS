@@ -1,43 +1,27 @@
 package ma.projet.mapservice.client;
 
 import ma.projet.mapservice.web.dto.AlertDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
-public class AlertClient {
+/**
+ * Feign Client pour communiquer avec alert-service via Eureka
+ */
+@FeignClient(name = "alert-service")
+public interface AlertClient {
 
-    private final RestTemplate restTemplate;
+    @GetMapping("/api/alerts")
+    List<AlertDTO> getAlerts(
+            @RequestParam(value = "stationId", required = false) Long stationId,
+            @RequestParam(value = "status", required = false) String status
+    );
 
-    @Value("${services.alert.base-url}")
-    private String alertBaseUrl; // ex: http://alert-service:8084
+    @GetMapping("/api/alerts/active")
+    List<AlertDTO> getActiveAlerts();
 
-    public List<AlertDTO> getActiveAlerts() {
-        String url = alertBaseUrl + "/api/alerts/active";
-        ResponseEntity<List<AlertDTO>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<AlertDTO>>() {}
-        );
-        return response.getBody();
-    }
-
-    public List<AlertDTO> getActiveAlertsForStation(Long stationId) {
-        String url = alertBaseUrl + "/api/alerts?stationId=" + stationId + "&status=OPEN";
-        ResponseEntity<List<AlertDTO>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<AlertDTO>>() {}
-        );
-        return response.getBody();
-    }
+    @GetMapping("/api/alerts/station/{stationId}/active")
+    List<AlertDTO> getActiveAlertsForStation(@org.springframework.web.bind.annotation.PathVariable("stationId") Long stationId);
 }

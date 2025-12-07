@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/satellite/scenes")
 @RequiredArgsConstructor
-@CrossOrigin
 public class SatelliteSceneController {
 
     private final SatelliteSceneService sceneService;

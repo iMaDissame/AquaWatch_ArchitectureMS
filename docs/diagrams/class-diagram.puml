@@ -1,0 +1,417 @@
+@startuml AquaWatch-MS Class Diagram
+title Diagramme de Classes - AquaWatch Microservices
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+' ============================================
+' SERVICE CAPTEURS (sensor-service)
+' ============================================
+package "sensor-service" #LightBlue {
+    
+    enum MeasurementSource {
+        MANUAL_FORM
+        IOT_SIMULATED
+    }
+    
+    class Station {
+        - id: Long
+        - code: String
+        - name: String
+        - type: String
+        - latitude: Double
+        - longitude: Double
+        - commune: String
+        - description: String
+    }
+    
+    class SensorMeasurement {
+        - id: Long
+        - station: Station
+        - timestamp: LocalDateTime
+        - ph: Double
+        - temperature: Double
+        - turbidity: Double
+        - dissolvedOxygen: Double
+        - conductivity: Double
+        - source: MeasurementSource
+    }
+    
+    interface StationRepository {
+        + findAll(): List<Station>
+        + findByCode(code: String): Optional<Station>
+        + findById(id: Long): Optional<Station>
+    }
+    
+    interface SensorMeasurementRepository {
+        + findByStationId(stationId: Long): List<SensorMeasurement>
+        + findLatestByStationId(stationId: Long): Optional<SensorMeasurement>
+        + findByTimestampBetween(start: LocalDateTime, end: LocalDateTime): List<SensorMeasurement>
+    }
+    
+    class StationService {
+        - stationRepository: StationRepository
+        + getAllStations(): List<Station>
+        + getStationById(id: Long): Station
+        + createStation(station: Station): Station
+    }
+    
+    class SensorMeasurementService {
+        - measurementRepository: SensorMeasurementRepository
+        - stationRepository: StationRepository
+        + addMeasurement(request: MeasurementCreateRequest): SensorMeasurement
+        + getLatestByStation(stationId: Long): SensorMeasurement
+        + getMeasurementsByStation(stationId: Long): List<SensorMeasurement>
+    }
+    
+    class StationController {
+        - stationService: StationService
+        + getAllStations(): List<StationDto>
+        + getStationById(id: Long): StationDto
+    }
+    
+    class SensorMeasurementController {
+        - measurementService: SensorMeasurementService
+        + getLatestMeasurement(stationId: Long): MeasurementResponse
+        + addMeasurement(request: MeasurementCreateRequest): MeasurementResponse
+    }
+    
+    Station "1" -- "*" SensorMeasurement : contient >
+    SensorMeasurement --> MeasurementSource
+    StationService --> StationRepository
+    SensorMeasurementService --> SensorMeasurementRepository
+    StationController --> StationService
+    SensorMeasurementController --> SensorMeasurementService
+}
+
+' ============================================
+' SERVICE SATELLITE (satellite-service)
+' ============================================
+package "satellite-service" #LightGreen {
+    
+    enum SatelliteType {
+        SENTINEL_1
+        SENTINEL_2
+    }
+    
+    enum MetricType {
+        NDWI_MEAN
+        MNDWI_MEAN
+        WATER_COVERAGE_PERCENT
+        TURBIDITY_INDEX
+        OTHER
+    }
+    
+    class SatelliteScene {
+        - id: Long
+        - satellite: SatelliteType
+        - acquiredAt: LocalDateTime
+        - productId: String
+        - tileId: String
+        - aoiName: String
+        - boundingBoxWkt: String
+        - cloudCoverage: Double
+        - rawProductPath: String
+        - waterMaskPath: String
+        - probabilityMapPath: String
+    }
+    
+    class SatelliteMetric {
+        - id: Long
+        - stationId: Long
+        - scene: SatelliteScene
+        - metricType: MetricType
+        - unit: String
+        - value: Double
+        - createdAt: LocalDateTime
+    }
+    
+    interface SatelliteSceneRepository {
+        + findByProductId(productId: String): Optional<SatelliteScene>
+        + findBySatellite(satellite: SatelliteType): List<SatelliteScene>
+        + findByAcquiredAtBetween(start: LocalDateTime, end: LocalDateTime): List<SatelliteScene>
+    }
+    
+    interface SatelliteMetricRepository {
+        + findByStationId(stationId: Long): List<SatelliteMetric>
+        + findLatestByStationId(stationId: Long): Optional<SatelliteMetric>
+        + findByMetricType(type: MetricType): List<SatelliteMetric>
+    }
+    
+    class SatelliteSceneService {
+        - sceneRepository: SatelliteSceneRepository
+        + createScene(request: SceneCreateRequest): SatelliteScene
+        + getScenesByDateRange(start: LocalDateTime, end: LocalDateTime): List<SatelliteScene>
+    }
+    
+    class SatelliteMetricService {
+        - metricRepository: SatelliteMetricRepository
+        + addMetric(request: MetricCreateRequest): SatelliteMetric
+        + getMetricsByStation(stationId: Long): List<SatelliteMetric>
+        + getLatestMetricByStation(stationId: Long): SatelliteMetric
+    }
+    
+    class SatelliteSceneController {
+        - sceneService: SatelliteSceneService
+        + createScene(request: SceneCreateRequest): SatelliteScene
+        + getScenes(): List<SatelliteScene>
+    }
+    
+    class SatelliteMetricController {
+        - metricService: SatelliteMetricService
+        + addMetrics(requests: List<MetricCreateRequest>): List<SatelliteMetric>
+        + getMetricsByStation(stationId: Long): List<SatelliteMetric>
+    }
+    
+    SatelliteScene "1" -- "*" SatelliteMetric : génère >
+    SatelliteScene --> SatelliteType
+    SatelliteMetric --> MetricType
+    SatelliteSceneService --> SatelliteSceneRepository
+    SatelliteMetricService --> SatelliteMetricRepository
+    SatelliteSceneController --> SatelliteSceneService
+    SatelliteMetricController --> SatelliteMetricService
+}
+
+' ============================================
+' SERVICE STMODEL (stmodel-service)
+' ============================================
+package "stmodel-service" #LightYellow {
+    
+    enum QualityStatus {
+        GOOD
+        MODERATE
+        BAD
+    }
+    
+    class QualityObservation {
+        - id: Long
+        - stationId: Long
+        - timestamp: LocalDateTime
+        - score: Double
+        - status: QualityStatus
+        - details: String
+    }
+    
+    class QualityForecast {
+        - id: Long
+        - stationId: Long
+        - createdAt: LocalDateTime
+        - forecastTime: LocalDateTime
+        - predictedScore: Double
+        - predictedStatus: QualityStatus
+        - modelName: String
+        - modelVersion: String
+    }
+    
+    interface QualityObservationRepository {
+        + findByStationId(stationId: Long): List<QualityObservation>
+        + findLatestByStationId(stationId: Long): Optional<QualityObservation>
+    }
+    
+    interface QualityForecastRepository {
+        + findByStationId(stationId: Long): List<QualityForecast>
+        + findLatestByStationId(stationId: Long): Optional<QualityForecast>
+        + findByForecastTimeBetween(start: LocalDateTime, end: LocalDateTime): List<QualityForecast>
+    }
+    
+    class QualityCalculationService {
+        - sensorClient: SensorClient
+        - satelliteClient: SatelliteClient
+        - observationRepository: QualityObservationRepository
+        + calculateQuality(stationId: Long): QualityObservation
+        + computeScore(sensorData: SensorMeasurementDTO, satelliteData: SatelliteMetricDTO): Double
+    }
+    
+    class ForecastService {
+        - forecastRepository: QualityForecastRepository
+        - observationRepository: QualityObservationRepository
+        + generateForecast(stationId: Long, horizonHours: int): QualityForecast
+        + getLatestForecast(stationId: Long): QualityForecast
+    }
+    
+    class SensorClient <<FeignClient>> {
+        + getLatestMeasurement(stationId: Long): SensorMeasurementDTO
+        + getMeasurementsByStation(stationId: Long): List<SensorMeasurementDTO>
+    }
+    
+    class SatelliteClient <<FeignClient>> {
+        + getLatestMetric(stationId: Long): SatelliteMetricDTO
+        + getMetricsByStation(stationId: Long): List<SatelliteMetricDTO>
+    }
+    
+    class QualityController {
+        - qualityService: QualityCalculationService
+        + calculateQuality(stationId: Long): QualityObservationResponse
+        + getLatestObservation(stationId: Long): QualityObservationResponse
+    }
+    
+    class ForecastController {
+        - forecastService: ForecastService
+        + generateForecast(stationId: Long): QualityForecastResponse
+        + getLatestForecast(stationId: Long): QualityForecastResponse
+    }
+    
+    QualityObservation --> QualityStatus
+    QualityForecast --> QualityStatus
+    QualityCalculationService --> SensorClient
+    QualityCalculationService --> SatelliteClient
+    QualityCalculationService --> QualityObservationRepository
+    ForecastService --> QualityForecastRepository
+    QualityController --> QualityCalculationService
+    ForecastController --> ForecastService
+}
+
+' ============================================
+' SERVICE ALERTES (alert-service)
+' ============================================
+package "alert-service" #LightPink {
+    
+    enum AlertSeverity {
+        INFO
+        WARNING
+        CRITICAL
+    }
+    
+    enum AlertStatus {
+        OPEN
+        ACKNOWLEDGED
+        RESOLVED
+    }
+    
+    enum AlertSourceType {
+        OBSERVATION
+        FORECAST
+    }
+    
+    class Alert {
+        - id: Long
+        - stationId: Long
+        - sourceId: Long
+        - createdAt: LocalDateTime
+        - sourceType: AlertSourceType
+        - eventTime: LocalDateTime
+        - severity: AlertSeverity
+        - status: AlertStatus
+        - type: String
+        - title: String
+        - message: String
+        - score: Double
+        - resolvedAt: LocalDateTime
+    }
+    
+    interface AlertRepository {
+        + findByStationId(stationId: Long): List<Alert>
+        + findByStatus(status: AlertStatus): List<Alert>
+        + findByStationIdAndStatus(stationId: Long, status: AlertStatus): List<Alert>
+    }
+    
+    class AlertService {
+        - alertRepository: AlertRepository
+        + createAlert(observation: QualityObservationDTO): Alert
+        + createAlertFromForecast(forecast: QualityForecastDTO): Alert
+        + getActiveAlerts(): List<Alert>
+        + acknowledgeAlert(id: Long): Alert
+        + resolveAlert(id: Long): Alert
+    }
+    
+    class AlertController {
+        - alertService: AlertService
+        + getAlerts(stationId: Long, status: AlertStatus): List<AlertResponse>
+        + createAlertFromObservation(observation: QualityObservationDTO): AlertResponse
+        + acknowledgeAlert(id: Long): AlertResponse
+        + resolveAlert(id: Long): AlertResponse
+    }
+    
+    Alert --> AlertSeverity
+    Alert --> AlertStatus
+    Alert --> AlertSourceType
+    AlertService --> AlertRepository
+    AlertController --> AlertService
+}
+
+' ============================================
+' SERVICE API-SIG / MAP-SERVICE
+' ============================================
+package "map-service (API-SIG)" #LightCyan {
+    
+    class StationOverviewDTO <<DTO>> {
+        - stationId: Long
+        - stationCode: String
+        - stationName: String
+        - latitude: Double
+        - longitude: Double
+        - latestMeasurement: MeasurementDTO
+        - qualityStatus: QualityStatus
+        - qualityScore: Double
+        - activeAlerts: List<AlertDTO>
+    }
+    
+    class StationDetailDTO <<DTO>> {
+        - station: StationDTO
+        - measurements: List<MeasurementDTO>
+        - qualityObservations: List<QualityObservationDTO>
+        - forecasts: List<QualityForecastDTO>
+        - alerts: List<AlertDTO>
+    }
+    
+    class SensorClient <<FeignClient>> {
+        + getStations(): List<StationDTO>
+        + getStationById(id: Long): StationDTO
+        + getLatestMeasurement(stationId: Long): MeasurementDTO
+    }
+    
+    class StModelClient <<FeignClient>> {
+        + getLatestObservation(stationId: Long): QualityObservationDTO
+        + getLatestForecast(stationId: Long): QualityForecastDTO
+    }
+    
+    class AlertClient <<FeignClient>> {
+        + getAlertsByStation(stationId: Long, status: AlertStatus): List<AlertDTO>
+    }
+    
+    class MapController {
+        - sensorClient: SensorClient
+        - stModelClient: StModelClient
+        - alertClient: AlertClient
+        + getStationsOverview(): List<StationOverviewDTO>
+        + getStationDetail(stationId: Long): StationDetailDTO
+    }
+    
+    MapController --> SensorClient
+    MapController --> StModelClient
+    MapController --> AlertClient
+}
+
+' ============================================
+' GATEWAY SERVICE
+' ============================================
+package "gateway-service" #LightGray {
+    
+    class GatewayServiceApplication {
+        + main(args: String[]): void
+    }
+    
+    note right of GatewayServiceApplication
+        Routes:
+        /sensor/** → sensor-service
+        /satellite/** → satellite-service
+        /stmodel/** → stmodel-service
+        /alerts/** → alert-service
+        /map/** → map-service
+    end note
+}
+
+' ============================================
+' RELATIONS INTER-SERVICES
+' ============================================
+note "Communication via REST/Feign" as N1
+
+"stmodel-service" ..> "sensor-service" : <<HTTP/Feign>>
+"stmodel-service" ..> "satellite-service" : <<HTTP/Feign>>
+"alert-service" ..> "stmodel-service" : <<HTTP/Feign>>
+"map-service (API-SIG)" ..> "sensor-service" : <<HTTP/Feign>>
+"map-service (API-SIG)" ..> "stmodel-service" : <<HTTP/Feign>>
+"map-service (API-SIG)" ..> "alert-service" : <<HTTP/Feign>>
+
+@enduml

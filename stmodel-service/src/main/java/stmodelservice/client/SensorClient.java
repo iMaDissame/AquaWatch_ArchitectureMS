@@ -1,22 +1,21 @@
 package stmodelservice.client;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import stmodelservice.web.dto.SensorMeasurementDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
-@Component
-@RequiredArgsConstructor
-public class SensorClient {
+import java.util.List;
 
-    private final RestTemplate restTemplate;
+/**
+ * Feign Client pour communiquer avec sensor-service via Eureka
+ */
+@FeignClient(name = "sensor-service")
+public interface SensorClient {
 
-    @Value("${services.sensor.base-url}")
-    private String sensorBaseUrl; // ex: http://sensor-service:8081
+    @GetMapping("/api/measurements/latest")
+    SensorMeasurementDTO getLatestMeasurement(@RequestParam("stationId") Long stationId);
 
-    public SensorMeasurementDTO getLatestMeasurement(Long stationId) {
-        String url = sensorBaseUrl + "/api/measurements/latest?stationId=" + stationId;
-        return restTemplate.getForObject(url, SensorMeasurementDTO.class);
-    }
+    @GetMapping("/api/measurements")
+    List<SensorMeasurementDTO> getMeasurementsByStation(@RequestParam("stationId") Long stationId);
 }

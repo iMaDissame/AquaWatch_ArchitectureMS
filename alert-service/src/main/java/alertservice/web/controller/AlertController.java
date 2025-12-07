@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/alerts")
 @RequiredArgsConstructor
-@CrossOrigin
 public class AlertController {
 
     private final AlertService alertService;
@@ -41,6 +40,11 @@ public class AlertController {
     @GetMapping("/active")
     public List<AlertResponse> getActive() {
         return alertService.getActiveAlerts();
+    }
+
+    @GetMapping("/station/{stationId}/active")
+    public List<AlertResponse> getActiveForStation(@PathVariable Long stationId) {
+        return alertService.getActiveAlertsForStation(stationId);
     }
 
     @GetMapping

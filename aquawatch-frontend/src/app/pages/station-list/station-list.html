@@ -1,0 +1,239 @@
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-list-ul me-2"></i>Gestion des Stations</h2>
+    <div>
+      <a routerLink="/stations/add" class="btn btn-success me-2">
+        <i class="bi bi-plus-lg me-1"></i>Ajouter une station
+      </a>
+      <a routerLink="/stations" class="btn btn-outline-primary">
+        <i class="bi bi-map me-1"></i>Voir sur la carte
+      </a>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="text-center py-5">
+      <span class="spinner-border spinner-border-lg text-primary"></span>
+      <p class="mt-3 text-muted">Chargement des stations...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error) {
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+      <button class="btn btn-sm btn-outline-danger ms-3" (click)="loadStations()">Réessayer</button>
+    </div>
+  }
+
+  <!-- Table des stations -->
+  @if (!loading && !error) {
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Code</th>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Commune</th>
+                <th>Coordonnées</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (station of stations; track station.id) {
+                <tr>
+                  <td><code>{{ station.code }}</code></td>
+                  <td>
+                    <a [routerLink]="['/stations', station.id]" class="text-decoration-none fw-bold">
+                      {{ station.name }}
+                    </a>
+                  </td>
+                  <td><span class="badge bg-info">{{ station.type || 'N/A' }}</span></td>
+                  <td>{{ station.commune || '—' }}</td>
+                  <td class="small text-muted">
+                    {{ station.latitude | number:'1.4-4' }}, {{ station.longitude | number:'1.4-4' }}
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <button class="btn btn-outline-info" title="Historique" (click)="openHistoryModal(station)">
+                        <i class="bi bi-clock-history"></i>
+                      </button>
+                      <a [routerLink]="['/stations', station.id]" class="btn btn-outline-primary" title="Détails">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <button class="btn btn-outline-warning" title="Modifier" (click)="openEditModal(station)">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn btn-outline-danger" title="Supprimer" (click)="deleteStation(station)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="text-center text-muted py-4">
+                    Aucune station trouvée. <a routerLink="/stations/add">Ajouter une station</a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer text-muted small">
+        Total: {{ stations.length }} station(s)
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Modal d'édition -->
+@if (editingStation) {
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title">
+            <i class="bi bi-pencil me-2"></i>Modifier la station
+          </h5>
+          <button type="button" class="btn-close" (click)="closeEditModal()"></button>
+        </div>
+        <form [formGroup]="editForm" (ngSubmit)="saveStation()">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Code *</label>
+                <input type="text" class="form-control" formControlName="code">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Nom *</label>
+                <input type="text" class="form-control" formControlName="name">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Type</label>
+                <select class="form-select" formControlName="type">
+                  <option value="SURFACE">Eau de surface</option>
+                  <option value="GROUNDWATER">Eau souterraine</option>
+                  <option value="COASTAL">Côtière</option>
+                  <option value="RESERVOIR">Réservoir</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Commune</label>
+                <input type="text" class="form-control" formControlName="commune">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Latitude *</label>
+                <input type="number" step="0.0001" class="form-control" formControlName="latitude">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Longitude *</label>
+                <input type="number" step="0.0001" class="form-control" formControlName="longitude">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" rows="3" formControlName="description"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Annuler</button>
+            <button type="submit" class="btn btn-warning" [disabled]="editForm.invalid || saving">
+              @if (saving) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+              }
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal d'historique -->
+@if (selectedStationForHistory) {
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-clock-history me-2"></i>Historique des prédictions - {{ selectedStationForHistory.name }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeHistoryModal()"></button>
+        </div>
+        <div class="modal-body">
+          @if (loadingHistory) {
+            <div class="text-center py-4">
+              <span class="spinner-border text-primary"></span>
+              <p class="mt-2 text-muted">Chargement de l'historique...</p>
+            </div>
+          } @else if (predictionHistory.length === 0) {
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-inbox display-4"></i>
+              <p class="mt-2">Aucune prédiction enregistrée pour cette station.</p>
+              <a routerLink="/prediction" class="btn btn-primary" (click)="closeHistoryModal()">
+                <i class="bi bi-calculator me-1"></i>Faire une prédiction
+              </a>
+            </div>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-sm table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th>Status</th>
+                    <th>pH</th>
+                    <th>Temp (°C)</th>
+                    <th>Turbidité (NTU)</th>
+                    <th>O₂ (mg/L)</th>
+                    <th>Conductivité (µS/cm)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (h of predictionHistory; track h.id) {
+                    <tr>
+                      <td>{{ h.predictionTimestamp | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td>
+                        <strong [style.color]="getScoreColor(h.score)">{{ h.score | number:'1.1-1' }}</strong>
+                      </td>
+                      <td>
+                        <span class="badge" [class]="getStatusBadgeClass(h.status)">{{ getStatusLabel(h.status) }}</span>
+                      </td>
+                      <td>{{ h.ph | number:'1.2-2' }}</td>
+                      <td>{{ h.temperature | number:'1.1-1' }}</td>
+                      <td>{{ h.turbidity | number:'1.1-1' }}</td>
+                      <td>{{ h.dissolvedOxygen | number:'1.1-1' }}</td>
+                      <td>{{ h.conductivity | number:'1.0-0' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <div class="text-muted small">
+              Total: {{ predictionHistory.length }} prédiction(s)
+            </div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeHistoryModal()">Fermer</button>
+          <a routerLink="/prediction" class="btn btn-primary" (click)="closeHistoryModal()">
+            <i class="bi bi-calculator me-1"></i>Nouvelle prédiction
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+}

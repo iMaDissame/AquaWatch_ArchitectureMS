@@ -2,13 +2,16 @@ server:
   port: 8083
 
 spring:
+  application:
+    name: stmodel-service
   datasource:
     url: jdbc:postgresql://localhost:5432/stmodel_db
     username: postgres
-    password: postgres123
+    password: 123456
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -16,10 +19,20 @@ spring:
       hibernate.format_sql: true
       hibernate.jdbc.lob.non_contextual_creation: true
 
+# Eureka
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
 
-
-services:
-  sensor:
-    base-url: http://localhost:8081
-  satellite:
-    base-url: http://localhost:8082
+# Feign clients via Eureka
+sensor-service:
+  url: sensor-service
+satellite-service:
+  url: satellite-service
+alert-service:
+  url: alert-service

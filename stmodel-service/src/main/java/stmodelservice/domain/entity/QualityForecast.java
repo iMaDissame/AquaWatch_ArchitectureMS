@@ -32,4 +32,9 @@ public class QualityForecast {
 
     private String modelName;
     private String modelVersion;
+    
+    // Intervalles de confiance
+    private Double confidence;
+    private Double lowerBound;
+    private Double upperBound;
 }

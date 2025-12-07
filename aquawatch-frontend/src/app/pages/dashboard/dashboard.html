@@ -1,0 +1,256 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1><i class="bi bi-droplet-fill text-primary"></i> AquaWatch Dashboard</h1>
+      <p class="text-muted">Surveillance de la qualité de l'eau en temps réel</p>
+    </div>
+    <div class="header-actions">
+      <span class="last-update">
+        <i class="bi bi-clock"></i> 
+        Dernière mise à jour: {{ lastUpdate | date:'HH:mm:ss' }}
+      </span>
+      <button class="btn btn-primary btn-sm" (click)="refreshData()" [disabled]="loading">
+        <i class="bi bi-arrow-clockwise" [class.spin]="loading"></i> Rafraîchir
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon bg-primary">
+        <i class="bi bi-geo-alt-fill"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ totalStations }}</h3>
+        <p>Stations totales</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-success">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ goodStations }}</h3>
+        <p>Qualité bonne</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-warning">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ moderateStations }}</h3>
+        <p>Qualité modérée</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-danger">
+        <i class="bi bi-x-circle-fill"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ badStations }}</h3>
+        <p>Qualité mauvaise</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-danger">
+        <i class="bi bi-bell-fill"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ activeAlerts }}</h3>
+        <p>Alertes actives</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (loading) {
+    <div class="loading-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des données...</p>
+    </div>
+  }
+
+  <!-- Error Message -->
+  @if (error) {
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle"></i> {{ error }}
+    </div>
+  }
+
+  <!-- Main Content - Always show, use opacity when loading -->
+  <div class="main-content" [class.loading-content]="loading">
+    <div class="row">
+      <!-- Charts Section -->
+      <div class="col-lg-4">
+        <div class="card chart-card">
+          <div class="card-header">
+            <h5><i class="bi bi-pie-chart-fill"></i> Répartition de la qualité</h5>
+          </div>
+          <div class="card-body">
+            <canvas baseChart
+              [data]="qualityPieChartData"
+              [options]="qualityPieChartOptions"
+              type="pie">
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card chart-card">
+          <div class="card-header">
+            <h5><i class="bi bi-bar-chart-fill"></i> Scores WQI par station</h5>
+          </div>
+          <div class="card-body">
+            <canvas baseChart
+              [data]="scoreBarChartData"
+              [options]="scoreBarChartOptions"
+              type="bar">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <!-- Stations Table -->
+      <div class="col-lg-7">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="bi bi-list-ul"></i> Stations de surveillance</h5>
+            <a routerLink="/stations" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-map"></i> Voir la carte
+            </a>
+          </div>
+          <div class="card-body table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Score</th>
+                  <th>Status</th>
+                  <th>Alerte</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let station of stations" 
+                    [class.table-danger]="station.currentStatus === 'BAD'"
+                    [class.table-warning]="station.currentStatus === 'MODERATE'">
+                  <td><strong>{{ station.code }}</strong></td>
+                  <td>{{ station.name }}</td>
+                  <td>
+                    <div class="score-badge" [style.background-color]="getStatusColor(station.currentStatus)">
+                      {{ station.currentScore | number:'1.0-0' }}
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge" [style.background-color]="getStatusColor(station.currentStatus)">
+                      {{ getStatusLabel(station.currentStatus) }}
+                    </span>
+                  </td>
+                  <td>
+                    <span *ngIf="station.hasActiveAlert" class="badge bg-danger">
+                      <i class="bi bi-bell-fill"></i> {{ station.latestAlertSeverity }}
+                    </span>
+                    <span *ngIf="!station.hasActiveAlert" class="text-muted">-</span>
+                  </td>
+                  <td>
+                    <a [routerLink]="['/stations', station.stationId]" class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <button class="btn btn-sm btn-outline-success ms-1" 
+                            (click)="computeQuality(station.stationId)"
+                            title="Recalculer la qualité">
+                      <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Alerts Panel -->
+      <div class="col-lg-5">
+        <div class="card alerts-card">
+          <div class="card-header bg-danger text-white">
+            <h5><i class="bi bi-bell-fill"></i> Alertes actives ({{ activeAlerts }})</h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="alerts.length === 0" class="text-center text-muted py-4">
+              <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+              <p class="mt-2">Aucune alerte active</p>
+            </div>
+            
+            <div *ngFor="let alert of alerts" class="alert-item" [class]="'alert-' + alert.severity.toLowerCase()">
+              <div class="alert-header">
+                <span [class]="getSeverityClass(alert.severity)">{{ alert.severity }}</span>
+                <small class="text-muted">{{ alert.createdAt | date:'dd/MM HH:mm' }}</small>
+              </div>
+              <h6>{{ alert.title }}</h6>
+              <p class="alert-message">{{ alert.message }}</p>
+              <div class="alert-footer">
+                <small>Station #{{ alert.stationId }} | Score: {{ alert.score | number:'1.0-0' }}</small>
+                <button class="btn btn-sm btn-outline-secondary" (click)="acknowledgeAlert(alert.id)">
+                  <i class="bi bi-check"></i> Acquitter
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Model Info Section -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card model-info-card">
+        <div class="card-header bg-info text-white">
+          <h5><i class="bi bi-cpu"></i> À propos du modèle de prédiction</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6><i class="bi bi-graph-up"></i> Calcul du Score WQI (Water Quality Index)</h6>
+              <p>Le score de qualité est calculé selon les normes OMS en combinant:</p>
+              <ul>
+                <li><strong>pH</strong> (optimal: 6.5-8.5) - Poids: 15%</li>
+                <li><strong>Température</strong> (optimal: 15-25°C) - Poids: 10%</li>
+                <li><strong>Turbidité</strong> (optimal: &lt;5 NTU) - Poids: 20%</li>
+                <li><strong>Oxygène dissous</strong> (optimal: &gt;6 mg/L) - Poids: 25%</li>
+                <li><strong>Conductivité</strong> (optimal: &lt;1000 µS/cm) - Poids: 15%</li>
+                <li><strong>Données satellite</strong> (NDWI, turbidité) - Poids: 15%</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6><i class="bi bi-lightning"></i> Prédiction & Alertes</h6>
+              <p>Le système de prédiction utilise:</p>
+              <ul>
+                <li><strong>Régression linéaire</strong> sur l'historique des observations</li>
+                <li><strong>Facteurs saisonniers</strong> (printemps, été, automne, hiver)</li>
+                <li><strong>Intervalles de confiance</strong> basés sur la variance historique</li>
+              </ul>
+              <p class="text-muted">
+                <i class="bi bi-info-circle"></i> 
+                Les alertes sont générées automatiquement quand le score passe sous 70 (modéré) ou 40 (mauvais).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

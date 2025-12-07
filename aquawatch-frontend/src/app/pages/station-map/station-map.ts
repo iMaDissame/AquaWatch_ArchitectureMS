@@ -1,10 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, AfterViewChecked, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { StationOverview } from '../../core/models/station-overview.model';
-import { Map } from '../../core/services/map';
+import { MapService } from '../../core/services/map';
 import { Router } from '@angular/router';
 
 import * as L from 'leaflet';
+
+// Fix for Leaflet marker icons in Angular
+const iconRetinaUrl = 'assets/marker-icon-2x.png';
+const iconUrl = 'assets/marker-icon.png';
+const shadowUrl = 'assets/marker-shadow.png';
+L.Marker.prototype.options.icon = L.icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
 
 @Component({
   selector: 'app-station-map',
@@ -13,49 +28,72 @@ import * as L from 'leaflet';
   templateUrl: './station-map.html',
   styleUrl: './station-map.scss',
 })
-export class StationMap{
+export class StationMap implements OnInit, AfterViewChecked, OnDestroy {
   stations: StationOverview[] = [];
-  loading = false;
+  loading = true;
   error: string | null = null;
   private map: L.Map | null = null;
   private markersLayer: L.LayerGroup | null = null;
-
+  private mapInitialized = false;
 
   constructor(
-    private mapService: Map,
-    private router: Router
+    private mapService: MapService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.loadStations();
   }
+
+  ngAfterViewChecked(): void {
+    // La carte est maintenant initialisée dans loadStations après le chargement des données
+  }
+
+  ngOnDestroy(): void {
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
+  }
+
   loadStations(): void {
     this.loading = true;
     this.error = null;
 
     this.mapService.getStationsOverview().subscribe({
       next: (data) => {
+        console.log('Stations loaded:', data);
         this.stations = data;
         this.loading = false;
-
-        // initialiser la carte si ce n'est pas déjà fait
-        if (!this.map) {
-          this.initMap();
-        }
-
-        // mettre à jour les marqueurs avec les stations
-        this.updateMarkers();
+        this.cdr.markForCheck();
+        // Initialiser la carte après le chargement des données
+        setTimeout(() => {
+          if (!this.mapInitialized) {
+            this.initMap();
+            this.updateMarkers();
+            this.mapInitialized = true;
+          }
+        }, 200);
       },
       error: (err) => {
-        console.error(err);
+        console.error('Error loading stations:', err);
         this.error = 'Erreur lors du chargement des stations.';
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }
 
   // --------- Initialisation de la carte Leaflet ---------
   private initMap(): void {
+    // Vérifier que le conteneur existe
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+      console.error('Map container not found');
+      return;
+    }
+
     // centre initial (Maroc / zone projet)
     const initialCenter: L.LatLngExpression = [31.6, -7.9]; // Marrakech approx
     const initialZoom = 6;
@@ -73,6 +111,13 @@ export class StationMap{
 
     // couche pour les marqueurs
     this.markersLayer = L.layerGroup().addTo(this.map);
+
+    // Forcer le rafraîchissement de la carte après un court délai
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      }
+    }, 100);
   }
 
    // --------- Ajout / mise à jour des marqueurs ---------

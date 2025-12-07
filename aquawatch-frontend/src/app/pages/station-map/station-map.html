@@ -2,22 +2,24 @@
 
   <h2 class="mb-3">AquaWatch – Carte / Dashboard des stations</h2>
 
-  <div *ngIf="loading" class="alert alert-info">
-    Chargement des stations...
-  </div>
+  @if (loading) {
+    <div class="alert alert-info">
+      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+      Chargement des stations...
+    </div>
+  }
 
-  <div *ngIf="error" class="alert alert-danger">
-    {{ error }}
-  </div>
+  @if (error) {
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  }
 
-  <div *ngIf="!loading && !error">
-
-    <!-- TODO: plus tard, tu peux ajouter ici une vraie carte (Leaflet / Google Maps) -->
-
+  @if (!loading && !error) {
     <!-- 🗺️ Carte Leaflet -->
     <div id="map" class="mb-3"></div>
 
-    <!-- Tableau comme avant -->
+    <!-- Tableau des stations -->
     <div class="card">
       <div class="card-header">
         Stations de mesure
@@ -67,6 +69,5 @@
         </table>
       </div>
     </div>
-
-  </div>
+  }
 </div>

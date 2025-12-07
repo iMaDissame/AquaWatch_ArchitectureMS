@@ -139,6 +139,53 @@
           </ng-template>
         </div>
 
+        <!-- Historique des prédictions -->
+        <div class="card mb-3">
+          <div class="card-header bg-info text-white">
+            <i class="bi bi-clock-history me-2"></i>Historique des prédictions
+          </div>
+          <div class="card-body">
+            <div *ngIf="loadingHistory" class="text-center py-3">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Chargement de l'historique...
+            </div>
+            <div *ngIf="!loadingHistory && predictionHistory.length === 0" class="text-muted text-center py-3">
+              Aucune prédiction enregistrée pour cette station.
+              <br><a routerLink="/prediction" class="btn btn-sm btn-primary mt-2">Faire une prédiction</a>
+            </div>
+            <div *ngIf="!loadingHistory && predictionHistory.length > 0">
+              <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Date</th>
+                      <th>Score</th>
+                      <th>Status</th>
+                      <th>pH</th>
+                      <th>Temp</th>
+                      <th>Turb</th>
+                      <th>DO</th>
+                      <th>Cond</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let h of predictionHistory">
+                      <td class="small">{{ h.predictionTimestamp | date:'dd/MM/yy HH:mm' }}</td>
+                      <td><strong [style.color]="getScoreColor(h.score)">{{ h.score | number:'1.1-1' }}</strong></td>
+                      <td><span [ngClass]="getStatusBadgeClass(h.status)">{{ getStatusLabel(h.status) }}</span></td>
+                      <td class="small">{{ h.ph | number:'1.1-1' }}</td>
+                      <td class="small">{{ h.temperature | number:'1.1-1' }}°C</td>
+                      <td class="small">{{ h.turbidity | number:'1.1-1' }}</td>
+                      <td class="small">{{ h.dissolvedOxygen | number:'1.1-1' }}</td>
+                      <td class="small">{{ h.conductivity | number:'1.0-0' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>

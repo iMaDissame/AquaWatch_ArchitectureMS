@@ -1,6 +1,5 @@
 package stmodelservice.web.dto;
 
-import stmodelservice.domain.enums.QualityStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,10 +9,15 @@ import java.time.LocalDateTime;
 @Builder
 public class QualityForecastResponse {
 
+    private Long id;
     private Long stationId;
     private LocalDateTime forecastTime;
+    private LocalDateTime createdAt;
     private Double predictedScore;
-    private QualityStatus predictedStatus;
+    private String predictedStatus;
     private String modelName;
     private String modelVersion;
+    private Double confidence;
+    private Double lowerBound;
+    private Double upperBound;
 }

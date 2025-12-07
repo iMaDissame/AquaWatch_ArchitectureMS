@@ -2,29 +2,30 @@ package ma.projet.mapservice.client;
 
 import ma.projet.mapservice.web.dto.QualityForecastDTO;
 import ma.projet.mapservice.web.dto.QualityObservationDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@Component
-@RequiredArgsConstructor
-public class StModelClient {
+import java.util.List;
 
-    private final RestTemplate restTemplate;
+/**
+ * Feign Client pour communiquer avec stmodel-service via Eureka
+ */
+@FeignClient(name = "stmodel-service")
+public interface StModelClient {
 
-    @Value("${services.stmodel.base-url}")
-    private String stmodelBaseUrl; // ex: http://stmodel-service:8083
+    @GetMapping("/api/quality/latest")
+    QualityObservationDTO getLatestObservation(@RequestParam("stationId") Long stationId);
 
-    public QualityObservationDTO getLatestObservation(Long stationId) {
-        String url = stmodelBaseUrl + "/api/quality/latest?stationId=" + stationId;
-        return restTemplate.getForObject(url, QualityObservationDTO.class);
-    }
+    @GetMapping("/api/quality")
+    List<QualityObservationDTO> getObservationsByStation(@RequestParam("stationId") Long stationId);
 
-    public QualityForecastDTO getSimpleForecast(Long stationId) {
-        // si ton endpoint forecast est POST, tu peux l'ajuster;
-        // ici on simplifie en supposant un GET (à adapter selon ton implémentation réelle).
-        String url = stmodelBaseUrl + "/api/forecast?stationId=" + stationId + "&horizonHours=24";
-        return restTemplate.getForObject(url, QualityForecastDTO.class);
-    }
+    @GetMapping("/api/forecast/latest")
+    QualityForecastDTO getLatestForecast(@RequestParam("stationId") Long stationId);
+
+    @GetMapping("/api/forecast")
+    List<QualityForecastDTO> getForecastsByStation(@RequestParam("stationId") Long stationId);
+
+    @GetMapping("/api/forecast/simple")
+    QualityForecastDTO getSimpleForecast(@RequestParam("stationId") Long stationId);
 }

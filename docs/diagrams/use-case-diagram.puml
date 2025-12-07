@@ -1,0 +1,127 @@
+@startuml AquaWatch-MS Use Case Diagram
+title Diagramme de Cas d'Utilisation - AquaWatch Microservices
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+' ============================================
+' ACTEURS
+' ============================================
+actor "Opérateur Terrain" as operator
+actor "Analyste Qualité" as analyst
+actor "Administrateur" as admin
+actor "Citoyen" as citizen
+actor "Pipeline Sentinel\n(Automatisé)" as sentinel_pipeline
+actor "Service ML\n(Automatisé)" as ml_service
+
+' ============================================
+' SYSTÈME PRINCIPAL
+' ============================================
+rectangle "AquaWatch-MS Platform" {
+    
+    ' --- Service Capteurs ---
+    package "Gestion des Capteurs\n(sensor-service)" #LightBlue {
+        usecase "Saisir mesure via formulaire" as UC_MANUAL_MEASURE
+        usecase "Visualiser stations" as UC_VIEW_STATIONS
+        usecase "Créer/Modifier station" as UC_MANAGE_STATION
+        usecase "Consulter historique mesures" as UC_VIEW_MEASURES
+        usecase "Simuler données IoT" as UC_SIMULATE_IOT
+    }
+    
+    ' --- Service Satellite ---
+    package "Données Satellite\n(satellite-service)" #LightGreen {
+        usecase "Ingérer scène Sentinel" as UC_INGEST_SCENE
+        usecase "Calculer métriques NDWI/Turbidité" as UC_CALC_METRICS
+        usecase "Associer métriques aux stations" as UC_LINK_METRICS
+        usecase "Consulter données satellite" as UC_VIEW_SATELLITE
+    }
+    
+    ' --- Service STModel ---
+    package "Modèle Spatio-Temporel\n(stmodel-service)" #LightYellow {
+        usecase "Fusionner données capteurs/satellite" as UC_FUSE_DATA
+        usecase "Calculer score qualité" as UC_CALC_QUALITY
+        usecase "Générer prévision 24h/72h" as UC_FORECAST
+        usecase "Consulter observations qualité" as UC_VIEW_QUALITY
+        usecase "Consulter prévisions" as UC_VIEW_FORECAST
+    }
+    
+    ' --- Service Alertes ---
+    package "Gestion des Alertes\n(alert-service)" #LightPink {
+        usecase "Générer alerte automatique" as UC_AUTO_ALERT
+        usecase "Consulter alertes actives" as UC_VIEW_ALERTS
+        usecase "Acquitter alerte" as UC_ACK_ALERT
+        usecase "Résoudre alerte" as UC_RESOLVE_ALERT
+        usecase "Configurer seuils d'alerte" as UC_CONFIG_THRESHOLDS
+    }
+    
+    ' --- Service API-SIG ---
+    package "Interface Cartographique\n(map-service)" #LightCyan {
+        usecase "Afficher carte des stations" as UC_MAP_VIEW
+        usecase "Voir état qualité par station" as UC_STATION_STATUS
+        usecase "Afficher zones rouges/vertes" as UC_QUALITY_ZONES
+        usecase "Consulter détails station" as UC_STATION_DETAIL
+        usecase "Exporter données GeoJSON" as UC_EXPORT_GEOJSON
+    }
+}
+
+' ============================================
+' RELATIONS ACTEURS -> CAS D'UTILISATION
+' ============================================
+
+' --- Opérateur Terrain ---
+operator --> UC_MANUAL_MEASURE
+operator --> UC_VIEW_STATIONS
+operator --> UC_VIEW_MEASURES
+operator --> UC_SIMULATE_IOT
+
+' --- Analyste Qualité ---
+analyst --> UC_VIEW_STATIONS
+analyst --> UC_VIEW_MEASURES
+analyst --> UC_VIEW_SATELLITE
+analyst --> UC_VIEW_QUALITY
+analyst --> UC_VIEW_FORECAST
+analyst --> UC_VIEW_ALERTS
+analyst --> UC_ACK_ALERT
+analyst --> UC_MAP_VIEW
+analyst --> UC_STATION_STATUS
+analyst --> UC_STATION_DETAIL
+analyst --> UC_EXPORT_GEOJSON
+
+' --- Administrateur ---
+admin --> UC_MANAGE_STATION
+admin --> UC_CONFIG_THRESHOLDS
+admin --> UC_RESOLVE_ALERT
+admin --> UC_VIEW_ALERTS
+
+' --- Citoyen ---
+citizen --> UC_MAP_VIEW
+citizen --> UC_QUALITY_ZONES
+citizen --> UC_STATION_STATUS
+
+' --- Pipeline Sentinel (Automatisé) ---
+sentinel_pipeline --> UC_INGEST_SCENE
+sentinel_pipeline --> UC_CALC_METRICS
+sentinel_pipeline --> UC_LINK_METRICS
+
+' --- Service ML (Automatisé) ---
+ml_service --> UC_FUSE_DATA
+ml_service --> UC_CALC_QUALITY
+ml_service --> UC_FORECAST
+ml_service --> UC_AUTO_ALERT
+
+' ============================================
+' RELATIONS INCLUDE / EXTEND
+' ============================================
+
+UC_CALC_QUALITY ..> UC_FUSE_DATA : <<include>>
+UC_FORECAST ..> UC_FUSE_DATA : <<include>>
+UC_AUTO_ALERT ..> UC_CALC_QUALITY : <<extend>>
+UC_AUTO_ALERT ..> UC_FORECAST : <<extend>>
+UC_STATION_STATUS ..> UC_VIEW_QUALITY : <<include>>
+UC_STATION_DETAIL ..> UC_VIEW_MEASURES : <<include>>
+UC_STATION_DETAIL ..> UC_VIEW_ALERTS : <<include>>
+UC_QUALITY_ZONES ..> UC_VIEW_QUALITY : <<include>>
+UC_MAP_VIEW ..> UC_VIEW_STATIONS : <<include>>
+
+@enduml

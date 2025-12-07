@@ -1,0 +1,31 @@
+.card {
+  border: none;
+  border-radius: 12px;
+  
+  .card-header {
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+.form-label {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.form-control, .form-select {
+  border-radius: 8px;
+  padding: 10px 15px;
+  
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+  }
+}
+
+.btn {
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+
+.alert {
+  border-radius: 10px;
+}

@@ -1,0 +1,322 @@
+<div class="container my-4">
+  <div class="row">
+    <!-- Form Column -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0"><i class="bi bi-calculator me-2"></i>Prédiction de Qualité d'Eau</h4>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-4">
+            Entrez les paramètres de mesure pour calculer le score de qualité de l'eau (WQI).
+          </p>
+
+          @if (error) {
+            <div class="alert alert-danger">
+              <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+            </div>
+          }
+
+          <form [formGroup]="predictionForm" (ngSubmit)="onPredict()">
+            <!-- Station Selection -->
+            <div class="mb-4">
+              <label for="stationId" class="form-label fw-bold">
+                <i class="bi bi-geo-alt me-1"></i> Station
+              </label>
+              @if (loadingStations) {
+                <div class="text-muted">Chargement des stations...</div>
+              } @else {
+                <select class="form-select" id="stationId" formControlName="stationId" (change)="onStationChange()">
+                  @for (station of stations; track station.id) {
+                    <option [value]="station.id">{{ station.code }} - {{ station.name }}</option>
+                  }
+                </select>
+              }
+            </div>
+
+            <hr>
+            <h6 class="text-muted mb-3"><i class="bi bi-droplet me-1"></i> Paramètres de mesure</h6>
+
+            <div class="row">
+              <!-- pH -->
+              <div class="col-md-6 mb-3">
+                <label for="ph" class="form-label">pH</label>
+                <input type="number" step="0.1" class="form-control" id="ph" formControlName="ph">
+                <small class="text-muted">Idéal: 6.5 - 8.5</small>
+              </div>
+
+              <!-- Temperature -->
+              <div class="col-md-6 mb-3">
+                <label for="temperature" class="form-label">Température (°C)</label>
+                <input type="number" step="0.1" class="form-control" id="temperature" formControlName="temperature">
+                <small class="text-muted">Idéal: 15 - 25°C</small>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Turbidity -->
+              <div class="col-md-6 mb-3">
+                <label for="turbidity" class="form-label">Turbidité (NTU)</label>
+                <input type="number" step="0.1" class="form-control" id="turbidity" formControlName="turbidity">
+                <small class="text-muted">Idéal: &lt; 5 NTU</small>
+              </div>
+
+              <!-- Dissolved Oxygen -->
+              <div class="col-md-6 mb-3">
+                <label for="dissolvedOxygen" class="form-label">Oxygène dissous (mg/L)</label>
+                <input type="number" step="0.1" class="form-control" id="dissolvedOxygen" formControlName="dissolvedOxygen">
+                <small class="text-muted">Idéal: &gt; 6 mg/L</small>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Conductivity -->
+              <div class="col-md-6 mb-3">
+                <label for="conductivity" class="form-label">Conductivité (µS/cm)</label>
+                <input type="number" step="1" class="form-control" id="conductivity" formControlName="conductivity">
+                <small class="text-muted">Idéal: 200 - 800 µS/cm</small>
+              </div>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="loading || loadingStations">
+                @if (loading) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Calcul en cours...
+                } @else {
+                  <i class="bi bi-lightning-charge me-2"></i>Calculer la qualité
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Column -->
+    <div class="col-lg-6">
+      @if (result) {
+        <div class="card shadow-sm result-card">
+          <div class="card-header" [class]="getStatusClass(result.status)">
+            <h4 class="mb-0 text-white">
+              <i class="bi bi-clipboard-data me-2"></i>Résultat de l'analyse
+            </h4>
+          </div>
+          <div class="card-body">
+            <!-- Score Display -->
+            <div class="text-center mb-4">
+              <div class="score-circle" [style.border-color]="getScoreColor(result.score)">
+                <span class="score-value" [style.color]="getScoreColor(result.score)">
+                  {{ result.score | number:'1.1-1' }}
+                </span>
+                <span class="score-label">/ 100</span>
+              </div>
+              <h3 class="mt-3" [style.color]="getScoreColor(result.score)">
+                {{ getStatusLabel(result.status) }}
+              </h3>
+            </div>
+
+            <!-- Station Info -->
+            <div class="info-section">
+              <h6><i class="bi bi-geo-alt me-2"></i>Station</h6>
+              <p class="mb-1"><strong>{{ result.stationName }}</strong></p>
+              <small class="text-muted">Calculé le {{ result.timestamp | date:'dd/MM/yyyy à HH:mm' }}</small>
+            </div>
+
+            <hr>
+
+            <!-- Parameters Used -->
+            <div class="info-section">
+              <h6><i class="bi bi-list-check me-2"></i>Paramètres analysés</h6>
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="param-item">
+                    <span class="param-label">pH</span>
+                    <span class="param-value">{{ result.parameters.ph }}</span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="param-item">
+                    <span class="param-label">Température</span>
+                    <span class="param-value">{{ result.parameters.temperature }}°C</span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="param-item">
+                    <span class="param-label">Turbidité</span>
+                    <span class="param-value">{{ result.parameters.turbidity }} NTU</span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="param-item">
+                    <span class="param-label">O₂ dissous</span>
+                    <span class="param-value">{{ result.parameters.dissolvedOxygen }} mg/L</span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="param-item">
+                    <span class="param-label">Conductivité</span>
+                    <span class="param-value">{{ result.parameters.conductivity }} µS/cm</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recommendations Section -->
+            @if (result.recommendations && result.recommendations.length > 0) {
+              <hr>
+              <div class="info-section">
+                <h6><i class="bi bi-lightbulb me-2 text-warning"></i>Recommandations</h6>
+                <div class="recommendations-list">
+                  @for (recommendation of result.recommendations; track recommendation) {
+                    <div class="recommendation-item">
+                      <i class="bi bi-arrow-right-circle text-primary me-2"></i>
+                      {{ recommendation }}
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Parameter Scores Section -->
+            @if (result.parameterScores) {
+              <hr>
+              <div class="info-section">
+                <h6><i class="bi bi-bar-chart me-2"></i>Scores par paramètre</h6>
+                <div class="parameter-scores">
+                  @for (param of ['ph', 'temperature', 'turbidity', 'dissolvedOxygen', 'conductivity']; track param) {
+                    @if (result.parameterScores[param] !== undefined) {
+                      <div class="score-bar-container mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <span class="param-name">{{ getParamLabel(param) }}</span>
+                          <span class="param-score" [style.color]="getScoreColor(result.parameterScores[param])">
+                            {{ result.parameterScores[param] | number:'1.0-0' }}/100
+                          </span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                          <div class="progress-bar" 
+                               [style.width.%]="result.parameterScores[param]"
+                               [style.background-color]="getScoreColor(result.parameterScores[param])">
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+            }
+
+            <hr>
+
+            <!-- Actions -->
+            <div class="d-flex gap-2">
+              <a routerLink="/stations" class="btn btn-outline-primary flex-fill">
+                <i class="bi bi-map me-1"></i> Voir sur la carte
+              </a>
+              <a routerLink="/dashboard" class="btn btn-outline-secondary flex-fill">
+                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+              </a>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="card shadow-sm">
+          <div class="card-body text-center py-5">
+            <i class="bi bi-droplet-half display-1 text-muted"></i>
+            <h5 class="mt-3 text-muted">Aucune prédiction</h5>
+            <p class="text-muted">Entrez les paramètres et cliquez sur "Calculer" pour obtenir une prédiction.</p>
+          </div>
+        </div>
+      }
+
+      <!-- Info Card -->
+      <div class="card shadow-sm mt-4">
+        <div class="card-header bg-info text-white">
+          <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Comment fonctionne le WQI ?</h6>
+        </div>
+        <div class="card-body">
+          <p class="small mb-2">
+            L'indice de qualité de l'eau (WQI) est calculé à partir de plusieurs paramètres physico-chimiques :
+          </p>
+          <ul class="small mb-0">
+            <li><strong>pH</strong> : Mesure de l'acidité/alcalinité</li>
+            <li><strong>Température</strong> : Affecte la vie aquatique</li>
+            <li><strong>Turbidité</strong> : Clarté de l'eau</li>
+            <li><strong>Oxygène dissous</strong> : Vital pour les organismes</li>
+            <li><strong>Conductivité</strong> : Concentration en minéraux</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historique des prédictions -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Historique des prédictions</h5>
+          @if (predictionHistory.length > 0) {
+            <span class="badge bg-light text-dark">{{ predictionHistory.length }} prédiction(s)</span>
+          }
+        </div>
+        <div class="card-body">
+          @if (loadingHistory) {
+            <div class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="text-muted mt-2">Chargement de l'historique...</p>
+            </div>
+          } @else if (predictionHistory.length === 0) {
+            <div class="text-center py-4">
+              <i class="bi bi-inbox display-4 text-muted"></i>
+              <p class="text-muted mt-2">Aucune prédiction dans l'historique pour cette station.</p>
+            </div>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th>Status</th>
+                    <th>pH</th>
+                    <th>Temp (°C)</th>
+                    <th>Turbidité</th>
+                    <th>O₂ (mg/L)</th>
+                    <th>Cond. (µS/cm)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of predictionHistory; track item.id) {
+                    <tr>
+                      <td>
+                        <small>{{ item.predictionTimestamp | date:'dd/MM/yyyy HH:mm' }}</small>
+                      </td>
+                      <td>
+                        <strong [style.color]="getScoreColor(item.score)">
+                          {{ item.score | number:'1.1-1' }}
+                        </strong>
+                      </td>
+                      <td>
+                        <span class="badge" [class]="'bg-' + getStatusBadgeClass(item.status)">
+                          {{ getStatusLabel(item.status) }}
+                        </span>
+                      </td>
+                      <td>{{ item.ph | number:'1.1-1' }}</td>
+                      <td>{{ item.temperature | number:'1.1-1' }}</td>
+                      <td>{{ item.turbidity | number:'1.1-1' }}</td>
+                      <td>{{ item.dissolvedOxygen | number:'1.1-1' }}</td>
+                      <td>{{ item.conductivity | number:'1.0-0' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/satellite/metrics")
 @RequiredArgsConstructor
-@CrossOrigin
 public class SatelliteMetricController {
 
     private final SatelliteMetricService metricService;

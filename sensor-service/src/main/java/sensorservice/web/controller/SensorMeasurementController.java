@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/measurements")
 @RequiredArgsConstructor
-@CrossOrigin
 public class SensorMeasurementController {
 
     private final SensorMeasurementService measurementService;
