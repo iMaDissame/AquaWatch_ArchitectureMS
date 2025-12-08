@@ -1,0 +1,146 @@
+[
+  {
+    "name": "[US-1.1] Configuration de l'environnement de développement",
+    "desc": "En tant que développeur, je veux avoir un environnement de développement configuré afin de pouvoir développer et tester les microservices.\n\n## Tâches\n- [ ] Installer Java 17+ et configurer JAVA_HOME\n- [ ] Installer Maven 3.8+\n- [ ] Installer Node.js 18+ et npm\n- [ ] Installer Docker Desktop\n- [ ] Configurer IDE\n- [ ] Cloner le repository",
+    "labels": ["EPIC-1", "Sprint-1", "Critical"],
+    "members": ["Issame", "Amine", "Yahya"]
+  },
+  {
+    "name": "[US-1.2] Structure du projet multi-modules Maven",
+    "desc": "En tant qu'architecte, je veux une structure de projet Maven parent-enfant afin de gérer les dépendances de manière centralisée.\n\n## Tâches\n- [ ] Créer le POM parent\n- [ ] Configurer Spring Boot 3.x\n- [ ] Définir les modules enfants\n- [ ] Configurer les plugins Maven\n- [ ] Documenter la structure",
+    "labels": ["EPIC-1", "Sprint-1", "Critical"],
+    "members": ["Issame"]
+  },
+  {
+    "name": "[US-1.3] Configuration Docker pour tous les services",
+    "desc": "En tant que DevOps, je veux des Dockerfiles et docker-compose afin de déployer facilement l'ensemble des services.\n\n## Tâches\n- [ ] Créer Dockerfile pour chaque service\n- [ ] Créer docker-compose.yml\n- [ ] Configurer volumes et networks\n- [ ] Tester le démarrage",
+    "labels": ["EPIC-1", "Sprint-1", "Critical"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-2.1] CRUD des Stations de surveillance",
+    "desc": "En tant qu'administrateur, je veux pouvoir créer, modifier et supprimer des stations afin de gérer le réseau de surveillance.\n\n## Tâches\n- [ ] Créer l'entité JPA Station\n- [ ] Créer StationRepository\n- [ ] Implémenter StationService CRUD\n- [ ] Créer StationController REST\n- [ ] Créer les DTOs\n- [ ] Validation des données\n- [ ] Tests unitaires\n- [ ] Tests d'intégration\n- [ ] Documentation Swagger",
+    "labels": ["EPIC-2", "Sprint-2", "Critical"],
+    "members": ["Issame"]
+  },
+  {
+    "name": "[US-2.2] Enregistrement des mesures des capteurs",
+    "desc": "En tant que système IoT, je veux envoyer les mesures des capteurs afin de stocker les données de qualité d'eau.\n\n## Tâches\n- [ ] Créer l'entité Measurement\n- [ ] Créer MeasurementRepository\n- [ ] Implémenter MeasurementService\n- [ ] Créer endpoint POST /measurements\n- [ ] Validation des plages\n- [ ] Endpoint GET avec pagination\n- [ ] Tests",
+    "labels": ["EPIC-2", "Sprint-2", "Critical"],
+    "members": ["Issame"]
+  },
+  {
+    "name": "[US-2.3] Statistiques et agrégations des mesures",
+    "desc": "En tant qu'analyste, je veux voir les statistiques des mesures afin d'analyser les tendances.\n\n## Tâches\n- [ ] Requêtes SQL moyennes/min/max\n- [ ] Endpoint /stations/{id}/stats\n- [ ] Agrégation par période\n- [ ] DTO StatisticsResponse\n- [ ] Optimisation avec index",
+    "labels": ["EPIC-2", "Sprint-3", "High"],
+    "members": ["Issame"]
+  },
+  {
+    "name": "[US-3.1] Configuration API Copernicus/Sentinel Hub",
+    "desc": "En tant que système, je veux me connecter aux APIs satellite afin de récupérer les images Sentinel.\n\n## Tâches\n- [ ] Créer compte Copernicus\n- [ ] Obtenir les credentials API\n- [ ] Configurer application.yml\n- [ ] Créer SentinelApiClient\n- [ ] Authentification OAuth2\n- [ ] Tester la connexion",
+    "labels": ["EPIC-3", "Sprint-2", "High"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-3.2] Téléchargement et stockage des images satellite",
+    "desc": "En tant que système, je veux télécharger les images Sentinel afin de les analyser.\n\n## Tâches\n- [ ] Créer entité SatelliteImage\n- [ ] Configurer stockage fichiers\n- [ ] Service de téléchargement async\n- [ ] Job planifié @Scheduled\n- [ ] Gestion erreurs et retry\n- [ ] Endpoint téléchargement manuel",
+    "labels": ["EPIC-3", "Sprint-3", "High"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-3.3] Traitement des images pour extraction de données",
+    "desc": "En tant que système, je veux extraire les indicateurs de qualité des images.\n\n## Tâches\n- [ ] Intégrer bibliothèque traitement\n- [ ] Implémenter calcul NDWI\n- [ ] Détection turbidité par imagerie\n- [ ] Service traitement asynchrone\n- [ ] Stocker résultats\n- [ ] API récupération analyses",
+    "labels": ["EPIC-3", "Sprint-4", "High"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-4.1] Calcul du Water Quality Index (WQI)",
+    "desc": "En tant que système, je veux calculer le score WQI afin d'évaluer la qualité globale de l'eau.\n\n## Tâches\n- [ ] Documenter formule WQI\n- [ ] Créer WQICalculator\n- [ ] Sous-indices par paramètre\n- [ ] Endpoint POST /predict\n- [ ] DTOs Request/Response\n- [ ] Classification Bon/Modéré/Mauvais\n- [ ] Tests unitaires",
+    "labels": ["EPIC-4", "Sprint-3", "High"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-4.2] Génération de recommandations",
+    "desc": "En tant qu'utilisateur, je veux recevoir des recommandations basées sur le WQI.\n\n## Tâches\n- [ ] Base de règles recommandations\n- [ ] RecommendationEngine\n- [ ] Recommandations par paramètre critique\n- [ ] Intégrer dans PredictionResponse\n- [ ] Internationalisation FR/EN",
+    "labels": ["EPIC-4", "Sprint-4", "Medium"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-4.3] Historique des prédictions",
+    "desc": "En tant qu'utilisateur, je veux voir l'historique des prédictions.\n\n## Tâches\n- [ ] Entité PredictionHistory\n- [ ] Sauvegarder prédictions\n- [ ] Endpoint GET /predictions/history\n- [ ] Filtres par station/période\n- [ ] Pagination",
+    "labels": ["EPIC-4", "Sprint-4", "Medium"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-5.1] Création et gestion des alertes",
+    "desc": "En tant que système, je veux créer des alertes automatiquement.\n\n## Tâches\n- [ ] Entité Alert\n- [ ] AlertRepository\n- [ ] AlertService\n- [ ] Règles de seuils\n- [ ] Endpoint POST /alerts\n- [ ] Endpoint GET /alerts\n- [ ] Acknowledge et resolve",
+    "labels": ["EPIC-5", "Sprint-3", "High"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-5.2] Règles de déclenchement d'alertes",
+    "desc": "En tant qu'administrateur, je veux configurer les seuils d'alerte.\n\n## Tâches\n- [ ] Entité AlertRule\n- [ ] AlertRuleEngine\n- [ ] CRUD AlertRule\n- [ ] Intégrer avec Sensor Service\n- [ ] Règles par défaut",
+    "labels": ["EPIC-5", "Sprint-4", "Medium"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-5.3] Communication inter-services pour alertes",
+    "desc": "En tant que système, je veux recevoir les événements des autres services.\n\n## Tâches\n- [ ] Communication REST inter-services\n- [ ] Feign Client Sensor Service\n- [ ] Feign Client STModel Service\n- [ ] Écoute nouvelles mesures\n- [ ] Écoute prédictions critiques",
+    "labels": ["EPIC-5", "Sprint-4", "Medium"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-6.1] API de données géospatiales",
+    "desc": "En tant que frontend, je veux accéder aux données géolocalisées.\n\n## Tâches\n- [ ] Endpoint GET /map/stations\n- [ ] Données GeoJSON\n- [ ] Agréger dernières mesures\n- [ ] Endpoint détail station\n- [ ] Intégrer Sensor/Alert services",
+    "labels": ["EPIC-6", "Sprint-3", "Medium"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-6.2] Agrégation des données multi-services",
+    "desc": "En tant que map-service, je veux combiner les données de plusieurs services.\n\n## Tâches\n- [ ] Feign Clients tous services\n- [ ] MapAggregationService\n- [ ] DTO StationDetailDTO\n- [ ] Gestion erreurs services\n- [ ] Cache optimisation",
+    "labels": ["EPIC-6", "Sprint-4", "Medium"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-7.1] Structure du projet Angular et routing",
+    "desc": "En tant que développeur frontend, je veux une structure Angular bien organisée.\n\n## Tâches\n- [ ] Initialiser projet Angular\n- [ ] Structure core/pages/shared\n- [ ] Installer dépendances\n- [ ] Routing lazy loading\n- [ ] Layout navbar/footer\n- [ ] Environnements dev/prod\n- [ ] ApiService HttpClient",
+    "labels": ["EPIC-7", "Sprint-2", "Critical"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-7.2] Dashboard principal",
+    "desc": "En tant qu'utilisateur, je veux voir un tableau de bord synthétique.\n\n## Tâches\n- [ ] DashboardComponent\n- [ ] Cartes KPIs\n- [ ] Graphique ng2-charts\n- [ ] Liste alertes\n- [ ] Tableau stations\n- [ ] Design HD animations\n- [ ] Responsive",
+    "labels": ["EPIC-7", "Sprint-3", "High"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-7.3] Page de gestion des stations",
+    "desc": "En tant qu'utilisateur, je veux gérer les stations.\n\n## Tâches\n- [ ] StationListComponent\n- [ ] Tableau tri/pagination\n- [ ] StationAddComponent\n- [ ] StationDetailComponent\n- [ ] Modales confirmation\n- [ ] Validations formulaire\n- [ ] Design HD",
+    "labels": ["EPIC-7", "Sprint-4", "High"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-7.4] Page de carte interactive",
+    "desc": "En tant qu'utilisateur, je veux voir les stations sur une carte.\n\n## Tâches\n- [ ] StationMapComponent\n- [ ] Intégrer Leaflet\n- [ ] Marqueurs stations\n- [ ] Popups infos\n- [ ] Couleurs selon qualité\n- [ ] Clustering",
+    "labels": ["EPIC-7", "Sprint-4", "Medium"],
+    "members": ["Yahya"]
+  },
+  {
+    "name": "[US-7.5] Page des alertes",
+    "desc": "En tant qu'utilisateur, je veux voir et gérer les alertes.\n\n## Tâches\n- [ ] AlertsComponent\n- [ ] Tableau avec filtres\n- [ ] Badges sévérité/status\n- [ ] Modale détail\n- [ ] Actions acknowledge/resolve\n- [ ] Compteurs sévérité",
+    "labels": ["EPIC-7", "Sprint-5", "Medium"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-7.6] Page de prédiction",
+    "desc": "En tant qu'utilisateur, je veux faire des prédictions de qualité.\n\n## Tâches\n- [ ] PredictionComponent\n- [ ] Formulaire paramètres\n- [ ] Score visuel cercle\n- [ ] Afficher recommandations\n- [ ] Historique prédictions\n- [ ] Graphiques scores",
+    "labels": ["EPIC-7", "Sprint-5", "Medium"],
+    "members": ["Amine"]
+  },
+  {
+    "name": "[US-8.1] Configuration de Spring Cloud Gateway",
+    "desc": "En tant que système, je veux un point d'entrée unique pour les APIs.\n\n## Tâches\n- [ ] Créer gateway-service\n- [ ] Routes vers microservices\n- [ ] CORS configuration\n- [ ] Load balancing\n- [ ] Logging requêtes\n- [ ] Rate limiting",
+    "labels": ["EPIC-8", "Sprint-2", "High"],
+    "members": ["Issame"]
+  }
+]

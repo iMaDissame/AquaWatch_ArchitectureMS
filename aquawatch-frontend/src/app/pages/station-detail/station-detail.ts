@@ -102,4 +102,13 @@ export class StationDetail {
     }
   }
 
+  getStatusClass(status: string | null | undefined): string {
+    switch (status) {
+      case 'GOOD': return 'status-good';
+      case 'MODERATE': return 'status-moderate';
+      case 'BAD': return 'status-bad';
+      default: return 'status-unknown';
+    }
+  }
+
 }

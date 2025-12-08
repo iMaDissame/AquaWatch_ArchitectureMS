@@ -1,162 +1,295 @@
 <!-- src/app/pages/station-detail/station-detail.component.html -->
-<div class="container my-4">
+<div class="station-detail-container">
+  
+  <!-- Back Button -->
+  <a routerLink="/stations" class="back-link animate-fade-in">
+    <i class="bi bi-arrow-left-circle me-2"></i>
+    Retour aux stations
+  </a>
 
-  <a routerLink="/stations" class="btn btn-link">&larr; Retour aux stations</a>
-
-  <div *ngIf="loading" class="alert alert-info mt-2">
-    Chargement des détails...
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container animate-fade-in">
+    <div class="loading-spinner">
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring"></div>
+      <i class="bi bi-geo-alt-fill spinner-icon"></i>
+    </div>
+    <p class="loading-text">Chargement des détails...</p>
   </div>
 
-  <div *ngIf="error" class="alert alert-danger mt-2">
-    {{ error }}
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container animate-fade-in">
+    <div class="error-icon">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+    <p>{{ error }}</p>
+    <a routerLink="/stations" class="btn btn-primary">
+      <i class="bi bi-arrow-left me-2"></i>Retour
+    </a>
   </div>
 
-  <div *ngIf="detail && !loading && !error">
+  <!-- Main Content -->
+  <div *ngIf="detail && !loading && !error" class="detail-content">
 
-    <h2 class="mb-3">
-      {{ detail.name }} <small class="text-muted">({{ detail.code }})</small>
-    </h2>
-
-    <div class="row">
-
-      <!-- Informations station -->
-      <div class="col-md-4">
-        <div class="card mb-3">
-          <div class="card-header">
-            Station
-          </div>
-          <div class="card-body">
-            <p><strong>Commune : </strong>{{ detail.commune || 'N/A' }}</p>
-            <p><strong>Description : </strong>{{ detail.description || '–' }}</p>
-            <p><strong>Coordonnées : </strong>
-              {{ detail.latitude }}, {{ detail.longitude }}
-            </p>
+    <!-- Page Header -->
+    <div class="page-header animate-fade-in-down">
+      <div class="header-content">
+        <div class="header-icon animate-pulse">
+          <i class="bi bi-geo-alt-fill"></i>
+        </div>
+        <div class="header-text">
+          <h1>{{ detail.name }}</h1>
+          <div class="header-meta">
+            <span class="code-badge">
+              <i class="bi bi-hash me-1"></i>{{ detail.code }}
+            </span>
+            <span class="commune-badge" *ngIf="detail.commune">
+              <i class="bi bi-geo me-1"></i>{{ detail.commune }}
+            </span>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Alertes actives -->
-        <div class="card mb-3">
+    <div class="content-grid">
+
+      <!-- Left Column -->
+      <div class="left-column">
+        
+        <!-- Station Info Card -->
+        <div class="info-card animate-fade-in-up stagger-1">
           <div class="card-header">
-            Alertes actives
+            <i class="bi bi-info-circle me-2"></i>
+            Informations Station
           </div>
-          <div class="card-body" *ngIf="detail.activeAlerts && detail.activeAlerts.length > 0; else noAlert">
-            <div *ngFor="let a of detail.activeAlerts" class="mb-2">
-              <span class="badge bg-danger me-2">{{ a.severity }}</span>
-              <strong>{{ a.title }}</strong>
-              <div class="small text-muted">
-                {{ a.message }}
+          <div class="card-body">
+            <div class="info-item">
+              <i class="bi bi-geo-alt"></i>
+              <div>
+                <label>Commune</label>
+                <span>{{ detail.commune || 'N/A' }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <i class="bi bi-card-text"></i>
+              <div>
+                <label>Description</label>
+                <span>{{ detail.description || 'Aucune description' }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <i class="bi bi-pin-map"></i>
+              <div>
+                <label>Coordonnées</label>
+                <span class="coords">{{ detail.latitude }}, {{ detail.longitude }}</span>
               </div>
             </div>
           </div>
-          <ng-template #noAlert>
-            <div class="card-body text-muted">
-              Aucune alerte active.
+        </div>
+
+        <!-- Active Alerts Card -->
+        <div class="alerts-card animate-fade-in-up stagger-2">
+          <div class="card-header" [class.has-alerts]="detail.activeAlerts && detail.activeAlerts.length > 0">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Alertes Actives
+            <span class="alert-count" *ngIf="detail.activeAlerts?.length">
+              {{ detail.activeAlerts.length }}
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="detail.activeAlerts && detail.activeAlerts.length > 0; else noAlert">
+              <div *ngFor="let a of detail.activeAlerts" class="alert-item">
+                <span class="severity-badge" [class]="'severity-' + a.severity?.toLowerCase()">
+                  <i class="bi bi-exclamation-circle-fill me-1"></i>
+                  {{ a.severity }}
+                </span>
+                <div class="alert-content">
+                  <strong>{{ a.title }}</strong>
+                  <p>{{ a.message }}</p>
+                </div>
+              </div>
             </div>
-          </ng-template>
+            <ng-template #noAlert>
+              <div class="empty-state">
+                <i class="bi bi-shield-check"></i>
+                <p>Aucune alerte active</p>
+              </div>
+            </ng-template>
+          </div>
         </div>
       </div>
 
-      <!-- Mesure & qualité -->
-      <div class="col-md-8">
+      <!-- Right Column -->
+      <div class="right-column">
 
-        <!-- Dernière mesure -->
-        <div class="card mb-3">
+        <!-- Latest Measurement Card -->
+        <div class="measurement-card animate-fade-in-up stagger-1">
           <div class="card-header">
-            Dernière mesure capteur
+            <i class="bi bi-speedometer2 me-2"></i>
+            Dernière Mesure Capteur
           </div>
           <div class="card-body" *ngIf="detail.latestMeasurement; else noMeasurement">
-            <p><strong>Date :</strong> {{ detail.latestMeasurement?.timestamp }}</p>
-            <div class="row">
-              <div class="col-md-4">
-                <p><strong>pH :</strong> {{ detail.latestMeasurement?.ph }}</p>
-                <p><strong>Temp :</strong> {{ detail.latestMeasurement?.temperature }} °C</p>
+            <div class="measurement-date">
+              <i class="bi bi-calendar3 me-1"></i>
+              {{ detail.latestMeasurement?.timestamp }}
+            </div>
+            <div class="measurements-grid">
+              <div class="measurement-item">
+                <div class="measurement-icon ph">
+                  <i class="bi bi-droplet-half"></i>
+                </div>
+                <div class="measurement-data">
+                  <label>pH</label>
+                  <span>{{ detail.latestMeasurement?.ph }}</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <p><strong>Turbidité :</strong> {{ detail.latestMeasurement?.turbidity }} NTU</p>
-                <p><strong>DO :</strong> {{ detail.latestMeasurement?.dissolvedOxygen }} mg/L</p>
+              <div class="measurement-item">
+                <div class="measurement-icon temp">
+                  <i class="bi bi-thermometer-half"></i>
+                </div>
+                <div class="measurement-data">
+                  <label>Température</label>
+                  <span>{{ detail.latestMeasurement?.temperature }} °C</span>
+                </div>
               </div>
-              <div class="col-md-4">
-                <p><strong>Conductivité :</strong> {{ detail.latestMeasurement?.conductivity }} µS/cm</p>
+              <div class="measurement-item">
+                <div class="measurement-icon turbidity">
+                  <i class="bi bi-water"></i>
+                </div>
+                <div class="measurement-data">
+                  <label>Turbidité</label>
+                  <span>{{ detail.latestMeasurement?.turbidity }} NTU</span>
+                </div>
+              </div>
+              <div class="measurement-item">
+                <div class="measurement-icon oxygen">
+                  <i class="bi bi-wind"></i>
+                </div>
+                <div class="measurement-data">
+                  <label>Oxygène Dissous</label>
+                  <span>{{ detail.latestMeasurement?.dissolvedOxygen }} mg/L</span>
+                </div>
+              </div>
+              <div class="measurement-item">
+                <div class="measurement-icon conductivity">
+                  <i class="bi bi-lightning"></i>
+                </div>
+                <div class="measurement-data">
+                  <label>Conductivité</label>
+                  <span>{{ detail.latestMeasurement?.conductivity }} µS/cm</span>
+                </div>
               </div>
             </div>
           </div>
           <ng-template #noMeasurement>
-            <div class="card-body text-muted">
-              Aucune mesure disponible.
+            <div class="card-body">
+              <div class="empty-state">
+                <i class="bi bi-speedometer"></i>
+                <p>Aucune mesure disponible</p>
+              </div>
             </div>
           </ng-template>
         </div>
 
-        <!-- Qualité actuelle -->
-        <div class="card mb-3">
+        <!-- Water Quality Card -->
+        <div class="quality-card animate-fade-in-up stagger-2">
           <div class="card-header">
-            Qualité actuelle de l'eau
+            <i class="bi bi-clipboard2-pulse me-2"></i>
+            Qualité Actuelle de l'Eau
           </div>
           <div class="card-body" *ngIf="detail.latestObservation; else noObs">
-            <p>
-              <strong>Statut :</strong>
-              <span [ngClass]="getStatusBadgeClass(detail.latestObservation?.status)">
-                {{ detail.latestObservation?.status }}
-              </span>
-            </p>
-            <p><strong>Score :</strong>
-              {{ detail.latestObservation?.score | number:'1.0-1' }} / 100
-            </p>
-            <p><strong>Détails :</strong> {{ detail.latestObservation?.details }}</p>
-            <p><strong>Horodatage :</strong> {{ detail.latestObservation?.timestamp }}</p>
+            <div class="quality-score-section">
+              <div class="score-circle" [class]="getStatusClass(detail.latestObservation?.status)">
+                <span class="score-value">{{ detail.latestObservation?.score | number:'1.0-0' }}</span>
+                <span class="score-max">/100</span>
+              </div>
+              <div class="score-info">
+                <span class="status-badge" [ngClass]="getStatusBadgeClass(detail.latestObservation?.status)">
+                  {{ detail.latestObservation?.status }}
+                </span>
+                <p class="score-timestamp">
+                  <i class="bi bi-clock me-1"></i>
+                  {{ detail.latestObservation?.timestamp }}
+                </p>
+              </div>
+            </div>
+            <div class="quality-details" *ngIf="detail.latestObservation?.details">
+              <i class="bi bi-info-circle me-1"></i>
+              {{ detail.latestObservation?.details }}
+            </div>
           </div>
           <ng-template #noObs>
-            <div class="card-body text-muted">
-              Aucune observation de qualité disponible.
+            <div class="card-body">
+              <div class="empty-state">
+                <i class="bi bi-clipboard2-x"></i>
+                <p>Aucune observation disponible</p>
+              </div>
             </div>
           </ng-template>
         </div>
 
-        <!-- Prévision -->
-        <div class="card mb-3">
+        <!-- Forecast Card -->
+        <div class="forecast-card animate-fade-in-up stagger-3">
           <div class="card-header">
+            <i class="bi bi-graph-up-arrow me-2"></i>
             Prévision (STModel)
           </div>
           <div class="card-body" *ngIf="detail.latestForecast; else noForecast">
-            <p>
-              <strong>Statut prévu :</strong>
-              <span [ngClass]="getStatusBadgeClass(detail.latestForecast?.predictedStatus)">
-                {{ detail.latestForecast?.predictedStatus }}
-              </span>
-            </p>
-            <p><strong>Score prévu :</strong>
-              {{ detail.latestForecast?.predictedScore | number:'1.0-1' }} / 100
-            </p>
-            <p><strong>Horizon :</strong> {{ detail.latestForecast?.forecastTime }}</p>
-            <p><strong>Modèle :</strong>
-              {{ detail.latestForecast?.modelName }} ({{ detail.latestForecast?.modelVersion }})
-            </p>
+            <div class="forecast-content">
+              <div class="forecast-score-section">
+                <div class="score-circle" [class]="getStatusClass(detail.latestForecast?.predictedStatus)">
+                  <span class="score-value">{{ detail.latestForecast?.predictedScore | number:'1.0-0' }}</span>
+                  <span class="score-max">/100</span>
+                </div>
+                <div class="score-info">
+                  <span class="status-badge" [ngClass]="getStatusBadgeClass(detail.latestForecast?.predictedStatus)">
+                    {{ detail.latestForecast?.predictedStatus }}
+                  </span>
+                  <p class="forecast-horizon">
+                    <i class="bi bi-clock-history me-1"></i>
+                    Horizon: {{ detail.latestForecast?.forecastTime }}
+                  </p>
+                </div>
+              </div>
+              <div class="model-info">
+                <i class="bi bi-cpu me-1"></i>
+                {{ detail.latestForecast?.modelName }} 
+                <span class="version-tag">v{{ detail.latestForecast?.modelVersion }}</span>
+              </div>
+            </div>
           </div>
           <ng-template #noForecast>
-            <div class="card-body text-muted">
-              Aucune prévision disponible.
+            <div class="card-body">
+              <div class="empty-state">
+                <i class="bi bi-graph-down"></i>
+                <p>Aucune prévision disponible</p>
+              </div>
             </div>
           </ng-template>
         </div>
 
-        <!-- Historique des prédictions -->
-        <div class="card mb-3">
-          <div class="card-header bg-info text-white">
-            <i class="bi bi-clock-history me-2"></i>Historique des prédictions
+        <!-- Prediction History Card -->
+        <div class="history-card animate-fade-in-up stagger-4">
+          <div class="card-header">
+            <i class="bi bi-clock-history me-2"></i>
+            Historique des Prédictions
           </div>
           <div class="card-body">
-            <div *ngIf="loadingHistory" class="text-center py-3">
+            <div *ngIf="loadingHistory" class="loading-mini">
               <span class="spinner-border spinner-border-sm me-2"></span>
               Chargement de l'historique...
             </div>
-            <div *ngIf="!loadingHistory && predictionHistory.length === 0" class="text-muted text-center py-3">
-              Aucune prédiction enregistrée pour cette station.
-              <br><a routerLink="/prediction" class="btn btn-sm btn-primary mt-2">Faire une prédiction</a>
+            <div *ngIf="!loadingHistory && predictionHistory.length === 0" class="empty-state">
+              <i class="bi bi-clock"></i>
+              <p>Aucune prédiction enregistrée</p>
+              <a routerLink="/prediction" class="btn btn-primary btn-sm mt-2">
+                <i class="bi bi-plus-circle me-1"></i>Faire une prédiction
+              </a>
             </div>
-            <div *ngIf="!loadingHistory && predictionHistory.length > 0">
+            <div *ngIf="!loadingHistory && predictionHistory.length > 0" class="history-table-container">
               <div class="table-responsive">
-                <table class="table table-sm table-hover">
-                  <thead class="table-light">
+                <table class="table table-hover">
+                  <thead>
                     <tr>
                       <th>Date</th>
                       <th>Score</th>
@@ -169,15 +302,24 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let h of predictionHistory">
-                      <td class="small">{{ h.predictionTimestamp | date:'dd/MM/yy HH:mm' }}</td>
-                      <td><strong [style.color]="getScoreColor(h.score)">{{ h.score | number:'1.1-1' }}</strong></td>
-                      <td><span [ngClass]="getStatusBadgeClass(h.status)">{{ getStatusLabel(h.status) }}</span></td>
-                      <td class="small">{{ h.ph | number:'1.1-1' }}</td>
-                      <td class="small">{{ h.temperature | number:'1.1-1' }}°C</td>
-                      <td class="small">{{ h.turbidity | number:'1.1-1' }}</td>
-                      <td class="small">{{ h.dissolvedOxygen | number:'1.1-1' }}</td>
-                      <td class="small">{{ h.conductivity | number:'1.0-0' }}</td>
+                    <tr *ngFor="let h of predictionHistory; let i = index" 
+                        class="table-row-animated" [style.animation-delay.ms]="i * 50">
+                      <td class="date-cell">{{ h.predictionTimestamp | date:'dd/MM/yy HH:mm' }}</td>
+                      <td>
+                        <span class="score-badge" [style.color]="getScoreColor(h.score)">
+                          {{ h.score | number:'1.1-1' }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="status-mini" [ngClass]="getStatusBadgeClass(h.status)">
+                          {{ getStatusLabel(h.status) }}
+                        </span>
+                      </td>
+                      <td class="param-cell">{{ h.ph | number:'1.1-1' }}</td>
+                      <td class="param-cell">{{ h.temperature | number:'1.1-1' }}°C</td>
+                      <td class="param-cell">{{ h.turbidity | number:'1.1-1' }}</td>
+                      <td class="param-cell">{{ h.dissolvedOxygen | number:'1.1-1' }}</td>
+                      <td class="param-cell">{{ h.conductivity | number:'1.0-0' }}</td>
                     </tr>
                   </tbody>
                 </table>

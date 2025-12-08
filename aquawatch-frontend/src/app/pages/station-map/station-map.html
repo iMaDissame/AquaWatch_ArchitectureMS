@@ -1,72 +1,143 @@
-<div class="container my-4">
+<div class="map-container">
+  <!-- Page Header -->
+  <div class="page-header animate-fade-in-down">
+    <div class="header-content">
+      <div class="header-icon animate-pulse">
+        <i class="bi bi-map-fill"></i>
+      </div>
+      <div class="header-text">
+        <h1>Carte des Stations</h1>
+        <p>Visualisez toutes les stations de mesure sur la carte</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-chip">
+        <i class="bi bi-geo-alt-fill"></i>
+        <span>{{ stations.length }}</span>
+        <label>Stations</label>
+      </div>
+    </div>
+  </div>
 
-  <h2 class="mb-3">AquaWatch – Carte / Dashboard des stations</h2>
-
+  <!-- Loading State -->
   @if (loading) {
-    <div class="alert alert-info">
-      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-      Chargement des stations...
+    <div class="loading-container animate-fade-in">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <i class="bi bi-map spinner-icon"></i>
+      </div>
+      <p class="loading-text">Chargement des stations...</p>
     </div>
   }
 
+  <!-- Error State -->
   @if (error) {
-    <div class="alert alert-danger">
-      {{ error }}
+    <div class="error-container animate-fade-in">
+      <div class="error-icon">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <p>{{ error }}</p>
+      <button class="btn btn-primary" (click)="loadStations()">
+        <i class="bi bi-arrow-clockwise me-2"></i>Réessayer
+      </button>
     </div>
   }
 
   @if (!loading && !error) {
-    <!-- 🗺️ Carte Leaflet -->
-    <div id="map" class="mb-3"></div>
-
-    <!-- Tableau des stations -->
-    <div class="card">
-      <div class="card-header">
-        Stations de mesure
+    <!-- Map Section -->
+    <div class="map-section animate-fade-in-up stagger-1">
+      <div class="map-card">
+        <div id="map"></div>
+        <div class="map-legend">
+          <div class="legend-item good">
+            <span class="legend-dot"></span>
+            <span>Bonne qualité</span>
+          </div>
+          <div class="legend-item moderate">
+            <span class="legend-dot"></span>
+            <span>Qualité modérée</span>
+          </div>
+          <div class="legend-item bad">
+            <span class="legend-dot"></span>
+            <span>Mauvaise qualité</span>
+          </div>
+          <div class="legend-item alert">
+            <span class="legend-dot"></span>
+            <span>Alerte active</span>
+          </div>
+        </div>
       </div>
-      <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-          <thead class="table-light">
-          <tr>
-            <th>Code</th>
-            <th>Nom</th>
-            <th>Qualité actuelle</th>
-            <th>Score</th>
-            <th>Alerte</th>
-            <th>Dernière mesure</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let st of stations">
-            <td>{{ st.code }}</td>
-            <td>{{ st.name }}</td>
-            <td>
-              <span [ngClass]="getStatusBadgeClass(st.currentStatus)">
-                {{ st.currentStatus || 'N/A' }}
-              </span>
-            </td>
-            <td>
-              {{ st.currentScore !== null ? (st.currentScore | number:'1.0-1') + ' / 100' : 'N/A' }}
-            </td>
-            <td>
-              <span *ngIf="st.hasActiveAlert" class="badge bg-danger">
-                {{ st.latestAlertSeverity || 'ALERTE' }}
-              </span>
-              <span *ngIf="!st.hasActiveAlert" class="text-muted">Aucune</span>
-            </td>
-            <td>
-              {{ st.lastMeasurementTime || '–' }}
-            </td>
-            <td>
-              <button class="btn btn-sm btn-outline-primary"
-                      (click)="openDetail(st.stationId)">
-                Détails
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+    </div>
+
+    <!-- Stations Table -->
+    <div class="table-section animate-fade-in-up stagger-2">
+      <div class="table-card">
+        <div class="card-header">
+          <div class="header-left">
+            <i class="bi bi-list-ul me-2"></i>
+            Stations de Mesure
+          </div>
+          <span class="station-count">{{ stations.length }} station(s)</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Nom</th>
+                <th>Qualité</th>
+                <th>Score</th>
+                <th>Alerte</th>
+                <th>Dernière mesure</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let st of stations; let i = index" 
+                  class="table-row-animated" [style.animation-delay.ms]="i * 50">
+                <td>
+                  <span class="code-badge">{{ st.code }}</span>
+                </td>
+                <td>
+                  <span class="station-name">{{ st.name }}</span>
+                </td>
+                <td>
+                  <span class="status-badge" [ngClass]="getStatusBadgeClass(st.currentStatus)">
+                    {{ st.currentStatus || 'N/A' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="score-value" *ngIf="st.currentScore !== null">
+                    {{ st.currentScore | number:'1.0-1' }}
+                    <span class="score-max">/100</span>
+                  </span>
+                  <span class="text-muted" *ngIf="st.currentScore === null">N/A</span>
+                </td>
+                <td>
+                  <span *ngIf="st.hasActiveAlert" class="alert-badge">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    {{ st.latestAlertSeverity || 'ALERTE' }}
+                  </span>
+                  <span *ngIf="!st.hasActiveAlert" class="no-alert">
+                    <i class="bi bi-shield-check me-1"></i>Aucune
+                  </span>
+                </td>
+                <td>
+                  <span class="date-badge">
+                    <i class="bi bi-clock me-1"></i>
+                    {{ st.lastMeasurementTime || '–' }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-details" (click)="openDetail(st.stationId)">
+                    <i class="bi bi-eye me-1"></i>Détails
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   }

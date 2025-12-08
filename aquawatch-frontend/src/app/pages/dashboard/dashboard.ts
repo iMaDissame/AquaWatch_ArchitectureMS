@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { ApiService, StationOverview, Alert, QualityForecast } from '../../core/services/api.service';
@@ -86,7 +86,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {}
+  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef, private router: Router) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -210,5 +210,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Erreur acknowledge:', err)
     });
+  }
+
+  navigateTo(path: string): void {
+    this.router.navigate([path]);
   }
 }

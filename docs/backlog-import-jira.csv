@@ -1,0 +1,215 @@
+Summary,Issue Type,Description,Epic Link,Story Points,Sprint,Assignee,Labels,Priority
+"[US-1.1] Configuration de l'environnement de développement",Story,"En tant que développeur, je veux avoir un environnement de développement configuré afin de pouvoir développer et tester les microservices.
+
+Tâches:
+- Installer Java 17+ et configurer JAVA_HOME
+- Installer Maven 3.8+
+- Installer Node.js 18+ et npm
+- Installer et configurer Docker Desktop
+- Configurer IDE avec extensions
+- Cloner le repository",EPIC-1,3,Sprint 1,"Issame Imad, Amine Agoumi, Yahya Jabrane",infrastructure,Critical
+"[US-1.2] Structure du projet multi-modules Maven",Story,"En tant qu'architecte, je veux une structure de projet Maven parent-enfant afin de gérer les dépendances de manière centralisée.
+
+Tâches:
+- Créer le POM parent avec les versions des dépendances
+- Configurer Spring Boot 3.x comme parent
+- Définir les modules enfants
+- Configurer les plugins Maven communs
+- Documenter la structure du projet",EPIC-1,5,Sprint 1,Issame Imad,infrastructure,Critical
+"[US-1.3] Configuration Docker pour tous les services",Story,"En tant que DevOps, je veux des Dockerfiles et docker-compose afin de déployer facilement l'ensemble des services.
+
+Tâches:
+- Créer Dockerfile pour chaque microservice
+- Créer docker-compose.yml complet
+- Configurer les volumes et networks
+- Tester le démarrage de tous les services",EPIC-1,8,Sprint 1,Yahya Jabrane,infrastructure,Critical
+"[US-2.1] CRUD des Stations de surveillance",Story,"En tant qu'administrateur, je veux pouvoir créer, modifier et supprimer des stations afin de gérer le réseau de surveillance.
+
+Tâches:
+- Créer l'entité JPA Station
+- Créer le repository StationRepository
+- Implémenter StationService avec méthodes CRUD
+- Créer StationController (REST API)
+- Créer les DTOs
+- Ajouter validation des données
+- Tests unitaires et d'intégration
+- Documentation Swagger",EPIC-2,8,Sprint 2,Issame Imad,sensor-service,Critical
+"[US-2.2] Enregistrement des mesures des capteurs",Story,"En tant que système IoT, je veux envoyer les mesures des capteurs afin de stocker les données de qualité d'eau.
+
+Tâches:
+- Créer l'entité Measurement
+- Créer MeasurementRepository avec requêtes custom
+- Implémenter MeasurementService
+- Créer endpoint POST /measurements
+- Implémenter la validation des plages de valeurs
+- Créer endpoint GET avec pagination et filtres
+- Tests",EPIC-2,8,Sprint 2,Issame Imad,sensor-service,Critical
+"[US-2.3] Statistiques et agrégations des mesures",Story,"En tant qu'analyste, je veux voir les statistiques des mesures afin d'analyser les tendances de qualité.
+
+Tâches:
+- Créer requêtes SQL pour moyennes/min/max
+- Implémenter endpoint /stations/{id}/stats
+- Ajouter agrégation par période
+- Créer DTO StatisticsResponse
+- Optimiser les requêtes avec index",EPIC-2,5,Sprint 3,Issame Imad,sensor-service,High
+"[US-3.1] Configuration API Copernicus/Sentinel Hub",Story,"En tant que système, je veux me connecter aux APIs satellite afin de récupérer les images Sentinel.
+
+Tâches:
+- Créer compte Copernicus Open Access Hub
+- Obtenir les credentials API
+- Configurer application.yml avec credentials
+- Créer SentinelApiClient avec WebClient
+- Implémenter authentification OAuth2
+- Tester la connexion à l'API",EPIC-3,5,Sprint 2,Amine Agoumi,satellite-service,High
+"[US-3.2] Téléchargement et stockage des images satellite",Story,"En tant que système, je veux télécharger les images Sentinel-1/2 afin de les analyser pour la qualité de l'eau.
+
+Tâches:
+- Créer entité SatelliteImage
+- Configurer stockage fichiers
+- Implémenter service de téléchargement async
+- Créer job planifié @Scheduled
+- Gérer les erreurs et retry
+- Créer endpoint pour téléchargement manuel",EPIC-3,8,Sprint 3,Amine Agoumi,satellite-service,High
+"[US-3.3] Traitement des images pour extraction de données",Story,"En tant que système, je veux extraire les indicateurs de qualité des images afin de compléter les données des capteurs.
+
+Tâches:
+- Intégrer bibliothèque de traitement d'image
+- Implémenter calcul NDWI
+- Implémenter détection de turbidité par imagerie
+- Créer service de traitement asynchrone
+- Stocker les résultats d'analyse
+- Créer API pour récupérer les analyses",EPIC-3,13,Sprint 4,Amine Agoumi,satellite-service,High
+"[US-4.1] Calcul du Water Quality Index (WQI)",Story,"En tant que système, je veux calculer le score WQI afin d'évaluer la qualité globale de l'eau.
+
+Tâches:
+- Rechercher et documenter la formule WQI
+- Créer WQICalculator avec les poids des paramètres
+- Implémenter sous-indices pour chaque paramètre
+- Créer endpoint POST /predict
+- Créer DTOs PredictionRequest/PredictionResponse
+- Ajouter classification (Bon/Modéré/Mauvais)
+- Tests unitaires",EPIC-4,8,Sprint 3,Amine Agoumi,stmodel-service,High
+"[US-4.2] Génération de recommandations",Story,"En tant qu'utilisateur, je veux recevoir des recommandations basées sur le WQI afin de savoir quelles actions prendre.
+
+Tâches:
+- Créer base de règles pour recommandations
+- Implémenter RecommendationEngine
+- Ajouter recommandations par paramètre critique
+- Intégrer recommandations dans PredictionResponse
+- Internationalisation des messages (FR/EN)",EPIC-4,5,Sprint 4,Amine Agoumi,stmodel-service,Medium
+"[US-4.3] Historique des prédictions",Story,"En tant qu'utilisateur, je veux voir l'historique des prédictions afin de suivre l'évolution de la qualité.
+
+Tâches:
+- Créer entité PredictionHistory
+- Sauvegarder chaque prédiction en base
+- Créer endpoint GET /predictions/history
+- Ajouter filtres par station et période
+- Implémenter pagination",EPIC-4,5,Sprint 4,Amine Agoumi,stmodel-service,Medium
+"[US-5.1] Création et gestion des alertes",Story,"En tant que système, je veux créer des alertes automatiquement afin de notifier les utilisateurs des problèmes.
+
+Tâches:
+- Créer entité Alert
+- Créer AlertRepository
+- Implémenter AlertService
+- Définir les règles de seuils d'alerte
+- Créer endpoint POST /alerts
+- Créer endpoint GET /alerts avec filtres
+- Implémenter acknowledge et resolve",EPIC-5,8,Sprint 3,Yahya Jabrane,alert-service,High
+"[US-5.2] Règles de déclenchement d'alertes",Story,"En tant qu'administrateur, je veux configurer les seuils d'alerte afin de personnaliser les déclenchements.
+
+Tâches:
+- Créer entité AlertRule
+- Implémenter AlertRuleEngine
+- Créer CRUD pour AlertRule
+- Intégrer avec Sensor Service
+- Ajouter règles par défaut",EPIC-5,5,Sprint 4,Yahya Jabrane,alert-service,Medium
+"[US-5.3] Communication inter-services pour alertes",Story,"En tant que système, je veux recevoir les événements des autres services afin de déclencher les alertes appropriées.
+
+Tâches:
+- Configurer communication REST entre services
+- Créer Feign Client pour Sensor Service
+- Créer Feign Client pour STModel Service
+- Implémenter écoute des nouvelles mesures
+- Implémenter écoute des prédictions critiques",EPIC-5,5,Sprint 4,Yahya Jabrane,alert-service,Medium
+"[US-6.1] API de données géospatiales",Story,"En tant que frontend, je veux accéder aux données géolocalisées afin d'afficher les stations sur une carte.
+
+Tâches:
+- Créer endpoint GET /map/stations
+- Retourner données GeoJSON pour les stations
+- Agréger les dernières mesures par station
+- Créer endpoint GET /map/stations/{id}/detail
+- Intégrer avec Sensor et Alert services",EPIC-6,5,Sprint 3,Yahya Jabrane,map-service,Medium
+"[US-6.2] Agrégation des données multi-services",Story,"En tant que map-service, je veux combiner les données de plusieurs services afin de fournir une vue consolidée.
+
+Tâches:
+- Créer Feign Clients pour tous les services
+- Implémenter MapAggregationService
+- Créer DTO StationDetailDTO
+- Gérer les erreurs de services indisponibles
+- Ajouter cache pour optimiser les performances",EPIC-6,8,Sprint 4,Yahya Jabrane,map-service,Medium
+"[US-7.1] Structure du projet Angular et routing",Story,"En tant que développeur frontend, je veux une structure Angular bien organisée afin de développer les fonctionnalités UI.
+
+Tâches:
+- Initialiser projet Angular avec CLI
+- Configurer structure (core, pages, shared)
+- Installer dépendances (Bootstrap, Leaflet, Chart.js)
+- Configurer routing avec lazy loading
+- Créer layout principal (navbar, footer)
+- Configurer environnements (dev/prod)
+- Créer ApiService avec HttpClient",EPIC-7,8,Sprint 2,Yahya Jabrane,frontend,Critical
+"[US-7.2] Dashboard principal",Story,"En tant qu'utilisateur, je veux voir un tableau de bord synthétique afin d'avoir une vue d'ensemble rapide.
+
+Tâches:
+- Créer composant DashboardComponent
+- Créer cartes de statistiques (KPIs)
+- Intégrer graphique de qualité (ng2-charts)
+- Afficher liste des dernières alertes
+- Afficher tableau des stations récentes
+- Ajouter animations et design HD
+- Tests et responsive design",EPIC-7,13,Sprint 3,Yahya Jabrane,frontend,High
+"[US-7.3] Page de gestion des stations",Story,"En tant qu'utilisateur, je veux gérer les stations afin d'ajouter/modifier/supprimer des points de surveillance.
+
+Tâches:
+- Créer composant StationListComponent
+- Créer tableau avec tri et pagination
+- Créer composant StationAddComponent
+- Créer composant StationDetailComponent
+- Implémenter modales de confirmation
+- Ajouter validations de formulaire
+- Design HD et animations",EPIC-7,13,Sprint 4,Amine Agoumi,frontend,High
+"[US-7.4] Page de carte interactive",Story,"En tant qu'utilisateur, je veux voir les stations sur une carte afin de visualiser géographiquement le réseau.
+
+Tâches:
+- Créer composant StationMapComponent
+- Intégrer Leaflet avec OpenStreetMap
+- Afficher marqueurs des stations
+- Créer popups avec infos station
+- Ajouter couleurs selon qualité
+- Implémenter clustering pour beaucoup de stations",EPIC-7,8,Sprint 4,Yahya Jabrane,frontend,Medium
+"[US-7.5] Page des alertes",Story,"En tant qu'utilisateur, je veux voir et gérer les alertes afin de réagir aux problèmes de qualité.
+
+Tâches:
+- Créer composant AlertsComponent
+- Créer tableau des alertes avec filtres
+- Afficher badges de sévérité et status
+- Créer modale de détail d'alerte
+- Implémenter actions (acknowledge, resolve)
+- Ajouter compteurs par sévérité",EPIC-7,8,Sprint 5,Amine Agoumi,frontend,Medium
+"[US-7.6] Page de prédiction",Story,"En tant qu'utilisateur, je veux faire des prédictions de qualité afin d'anticiper les problèmes.
+
+Tâches:
+- Créer composant PredictionComponent
+- Créer formulaire de saisie des paramètres
+- Afficher résultat avec score visuel (cercle)
+- Afficher recommandations
+- Créer historique des prédictions
+- Ajouter graphiques des scores par paramètre",EPIC-7,8,Sprint 5,Amine Agoumi,frontend,Medium
+"[US-8.1] Configuration de Spring Cloud Gateway",Story,"En tant que système, je veux un point d'entrée unique pour les APIs afin de centraliser le routing et la sécurité.
+
+Tâches:
+- Créer projet gateway-service avec Spring Cloud Gateway
+- Configurer routes vers chaque microservice
+- Ajouter CORS configuration
+- Configurer load balancing
+- Ajouter logging des requêtes
+- Configurer rate limiting",EPIC-8,5,Sprint 2,Issame Imad,gateway,High

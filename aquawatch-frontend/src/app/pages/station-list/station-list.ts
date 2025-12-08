@@ -183,4 +183,20 @@ export class StationListComponent implements OnInit {
     if (score >= 60) return '#ffc107';
     return '#dc3545';
   }
+
+  getScoreLevel(score: number): string {
+    if (score >= 70) return 'good';
+    if (score >= 40) return 'moderate';
+    return 'bad';
+  }
+
+  getTypeLabel(type: string | null | undefined): string {
+    switch (type) {
+      case 'SURFACE': return 'Eau de surface';
+      case 'GROUNDWATER': return 'Eau souterraine';
+      case 'COASTAL': return 'Côtière';
+      case 'RESERVOIR': return 'Réservoir';
+      default: return 'Non défini';
+    }
+  }
 }

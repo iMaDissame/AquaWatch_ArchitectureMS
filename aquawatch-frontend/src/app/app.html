@@ -1,49 +1,64 @@
-<!-- AquaWatch Main Layout -->
+<!-- AquaWatch Main Layout - HD Design -->
 <div class="app-container">
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-aquawatch">
-    <div class="container-fluid">
-      <a class="navbar-brand" routerLink="/dashboard">
-        <i class="bi bi-droplet-fill"></i> AquaWatch
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-aquawatch animate-fade-in-down">
+    <div class="container-fluid px-4">
+      <!-- Brand -->
+      <a class="navbar-brand d-flex align-items-center" routerLink="/dashboard">
+        <div class="brand-icon me-2">
+          <i class="bi bi-droplet-fill"></i>
+        </div>
+        <span class="brand-text">AquaWatch</span>
       </a>
       
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       
+      <!-- Nav Items -->
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
+        <ul class="navbar-nav mx-auto gap-1">
           <li class="nav-item">
             <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
-              <i class="bi bi-speedometer2"></i> Dashboard
+              <i class="bi bi-speedometer2 me-1"></i> Dashboard
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/stations" routerLinkActive="active">
-              <i class="bi bi-map"></i> Carte des stations
+              <i class="bi bi-geo-alt me-1"></i> Carte
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/stations/list" routerLinkActive="active">
-              <i class="bi bi-list-ul"></i> Gérer Stations
+              <i class="bi bi-list-ul me-1"></i> Stations
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/stations/add" routerLinkActive="active">
-              <i class="bi bi-plus-circle"></i> Ajouter Station
+              <i class="bi bi-plus-lg me-1"></i> Ajouter
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/prediction" routerLinkActive="active">
-              <i class="bi bi-graph-up"></i> Prédiction
+              <i class="bi bi-graph-up-arrow me-1"></i> Prédiction
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/alerts" routerLinkActive="active">
-              <i class="bi bi-bell"></i> Alertes
+            <a class="nav-link position-relative" routerLink="/alerts" routerLinkActive="active">
+              <i class="bi bi-bell me-1"></i> Alertes
+              <span class="notification-dot"></span>
             </a>
           </li>
         </ul>
+        
+        <!-- Right Side -->
+        <div class="navbar-end d-flex align-items-center gap-3">
+          <div class="status-indicator">
+            <span class="status-dot online"></span>
+            <span class="status-text d-none d-lg-inline">En ligne</span>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
@@ -55,18 +70,25 @@
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6">
-          <span class="text-muted">
-            <i class="bi bi-droplet-fill text-primary"></i> 
-            AquaWatch - Surveillance qualite eau
+    <div class="container-fluid px-4">
+      <div class="row align-items-center">
+        <div class="col-md-4">
+          <div class="footer-brand">
+            <i class="bi bi-droplet-fill"></i>
+            <span>AquaWatch</span>
+          </div>
+        </div>
+        <div class="col-md-4 text-center">
+          <span class="footer-copy">
+            © 2025 Surveillance Qualité Eau
           </span>
         </div>
-        <div class="col-md-6 text-end">
-          <span class="text-muted">
-            <i class="bi bi-cpu"></i> Microservices: Eureka + PostgreSQL
-          </span>
+        <div class="col-md-4 text-md-end">
+          <div class="footer-tech">
+            <span class="tech-badge"><i class="bi bi-hdd-stack me-1"></i>Microservices</span>
+            <span class="tech-badge"><i class="bi bi-database me-1"></i>PostgreSQL</span>
+            <span class="tech-badge"><i class="bi bi-cloud me-1"></i>Eureka</span>
+          </div>
         </div>
       </div>
     </div>

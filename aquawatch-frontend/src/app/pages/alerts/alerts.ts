@@ -189,6 +189,24 @@ export class AlertsComponent implements OnInit {
     return '#dc3545';
   }
 
+  getScoreLevel(score: number): string {
+    if (score >= 80) return 'good';
+    if (score >= 60) return 'moderate';
+    return 'poor';
+  }
+
+  getCriticalCount(): number {
+    return this.alerts.filter(a => a.severity === 'CRITICAL').length;
+  }
+
+  getWarningCount(): number {
+    return this.alerts.filter(a => a.severity === 'WARNING').length;
+  }
+
+  getOpenCount(): number {
+    return this.alerts.filter(a => a.status === 'OPEN').length;
+  }
+
   getParamLabel(param: string): string {
     const labels: { [key: string]: string } = {
       'ph': 'pH',

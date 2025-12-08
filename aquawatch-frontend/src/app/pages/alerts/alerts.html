@@ -1,80 +1,111 @@
-<div class="container-fluid py-4">
-  <div class="row mb-4">
-    <div class="col">
-      <h1 class="h2">
-        <i class="bi bi-bell-fill text-warning me-2"></i>
-        Centre d'Alertes
-      </h1>
-      <p class="text-muted">Gérez les alertes de qualité d'eau de toutes les stations</p>
+<div class="alerts-container">
+  <!-- Page Header -->
+  <div class="page-header animate-fade-in-down">
+    <div class="header-content">
+      <div class="header-icon animate-pulse">
+        <i class="bi bi-bell-fill"></i>
+      </div>
+      <div class="header-text">
+        <h1>Centre d'Alertes</h1>
+        <p>Gérez les alertes de qualité d'eau de toutes les stations</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-chip critical">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>{{ getCriticalCount() }}</span>
+        <label>Critiques</label>
+      </div>
+      <div class="stat-chip warning">
+        <i class="bi bi-exclamation-circle-fill"></i>
+        <span>{{ getWarningCount() }}</span>
+        <label>Avertissements</label>
+      </div>
+      <div class="stat-chip open">
+        <i class="bi bi-envelope-open-fill"></i>
+        <span>{{ getOpenCount() }}</span>
+        <label>Ouvertes</label>
+      </div>
     </div>
   </div>
 
-  <!-- Filtres -->
-  <div class="row mb-4">
-    <div class="col-md-4 mb-2">
-      <label class="form-label">Filtrer par statut</label>
-      <select class="form-select" [(ngModel)]="filterStatus" [ngModelOptions]="{standalone: true}">
-        <option value="all">Tous les statuts</option>
-        <option value="OPEN">Ouvert</option>
-        <option value="ACKNOWLEDGED">Reconnu</option>
-        <option value="RESOLVED">Résolu</option>
-      </select>
-    </div>
-    <div class="col-md-4 mb-2">
-      <label class="form-label">Filtrer par sévérité</label>
-      <select class="form-select" [(ngModel)]="filterSeverity" [ngModelOptions]="{standalone: true}">
-        <option value="all">Toutes les sévérités</option>
-        <option value="CRITICAL">Critique</option>
-        <option value="WARNING">Avertissement</option>
-        <option value="INFO">Information</option>
-      </select>
-    </div>
-    <div class="col-md-4 d-flex align-items-end mb-2">
-      <button class="btn btn-outline-primary" (click)="loadData()">
-        <i class="bi bi-arrow-clockwise me-1"></i> Rafraîchir
-      </button>
+  <!-- Filters -->
+  <div class="filters-card animate-fade-in-up stagger-1">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label class="form-label">
+          <i class="bi bi-funnel me-1"></i> Statut
+        </label>
+        <select class="form-select" [(ngModel)]="filterStatus" [ngModelOptions]="{standalone: true}">
+          <option value="all">Tous les statuts</option>
+          <option value="OPEN">Ouvert</option>
+          <option value="ACKNOWLEDGED">Reconnu</option>
+          <option value="RESOLVED">Résolu</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="form-label">
+          <i class="bi bi-shield-exclamation me-1"></i> Sévérité
+        </label>
+        <select class="form-select" [(ngModel)]="filterSeverity" [ngModelOptions]="{standalone: true}">
+          <option value="all">Toutes les sévérités</option>
+          <option value="CRITICAL">Critique</option>
+          <option value="WARNING">Avertissement</option>
+          <option value="INFO">Information</option>
+        </select>
+      </div>
+      <div class="filter-group filter-actions">
+        <button class="btn btn-primary ripple-effect" (click)="loadData()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Rafraîchir
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Loading -->
   @if (loading) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Chargement...</span>
+    <div class="loading-container animate-fade-in">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <i class="bi bi-bell-fill spinner-icon"></i>
       </div>
-      <p class="mt-2 text-muted">Chargement des alertes...</p>
+      <p class="loading-text">Chargement des alertes...</p>
     </div>
   }
 
   <!-- Error -->
   @if (error && !loading) {
-    <div class="alert alert-danger">
+    <div class="alert alert-danger animate-fade-in">
       <i class="bi bi-exclamation-triangle me-2"></i>
       {{ error }}
+      <button class="btn btn-sm btn-outline-danger ms-3" (click)="loadData()">
+        <i class="bi bi-arrow-clockwise me-1"></i> Réessayer
+      </button>
     </div>
   }
 
   <!-- No alerts -->
   @if (!loading && !error && filteredAlerts.length === 0) {
-    <div class="card">
-      <div class="card-body text-center py-5">
-        <i class="bi bi-check-circle text-success display-1"></i>
-        <h3 class="mt-3">Aucune alerte</h3>
+    <div class="card empty-state-card animate-scale-in">
+      <div class="card-body">
+        <div class="success-icon">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <h3>Aucune alerte</h3>
         <p class="text-muted mb-4">
           @if (filterStatus === 'all' && filterSeverity === 'all') {
-            Toutes les stations ont une bonne qualité d'eau !<br>
-            Les alertes sont créées automatiquement lorsque la qualité de l'eau est <strong>MODERATE</strong> ou <strong>BAD</strong>.
+            Toutes les stations ont une bonne qualité d'eau !
           } @else {
             Aucune alerte ne correspond aux filtres sélectionnés.
           }
         </p>
-        <div class="alert alert-info d-inline-block text-start">
+        <div class="info-box">
           <h6><i class="bi bi-info-circle me-1"></i> Comment fonctionnent les alertes ?</h6>
-          <ul class="mb-0 small">
-            <li><strong>WARNING</strong> : Qualité d'eau modérée (attention requise)</li>
-            <li><strong>CRITICAL</strong> : Mauvaise qualité d'eau (intervention urgente)</li>
-            <li>Les alertes sont créées lors des prédictions ou observations</li>
-            <li>Vous pouvez les "reconnaître" puis les "résoudre"</li>
+          <ul class="info-list">
+            <li><span class="severity-dot warning"></span><strong>WARNING</strong> : Qualité d'eau modérée</li>
+            <li><span class="severity-dot critical"></span><strong>CRITICAL</strong> : Mauvaise qualité d'eau</li>
+            <li><i class="bi bi-arrow-right me-1"></i>Les alertes sont créées automatiquement lors des prédictions</li>
           </ul>
         </div>
       </div>
@@ -83,82 +114,90 @@
 
   <!-- Alerts list -->
   @if (!loading && filteredAlerts.length > 0) {
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span>
-              <i class="bi bi-list-ul me-2"></i>
-              {{ filteredAlerts.length }} alerte(s)
-            </span>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Sévérité</th>
-                  <th>Station</th>
-                  <th>Type</th>
-                  <th>Message</th>
-                  <th>Date</th>
-                  <th>Statut</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (alert of filteredAlerts; track alert.id) {
-                  <tr>
-                    <td>
-                      <span class="badge" [class]="getSeverityClass(alert.severity)">
-                        <i class="bi me-1" [class]="getSeverityIcon(alert.severity)"></i>
-                        {{ alert.severity }}
-                      </span>
-                    </td>
-                    <td>
-                      <a [routerLink]="['/stations', alert.stationId]" class="text-decoration-none">
-                        {{ getStationName(alert.stationId) }}
-                      </a>
-                    </td>
-                    <td>{{ getTypeLabel(alert.type) }}</td>
-                    <td class="text-wrap" style="max-width: 300px;">{{ alert.message }}</td>
-                    <td>{{ alert.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-                    <td>
-                      <span class="badge" [class]="getStatusClass(alert.status)">
-                        {{ getStatusLabel(alert.status) }}
-                      </span>
-                    </td>
-                    <td>
-                      <button class="btn btn-sm btn-info me-1" 
-                              (click)="viewAlertDetails(alert)" 
-                              title="Voir les détails et recommandations">
-                        <i class="bi bi-info-circle"></i>
-                      </button>
-                      @if (alert.status === 'OPEN') {
-                        <button class="btn btn-sm btn-warning me-1" 
-                                (click)="acknowledgeAlert(alert)" 
-                                title="Reconnaître l'alerte">
-                          <i class="bi bi-eye"></i>
-                        </button>
-                      }
-                      @if (alert.status === 'OPEN' || alert.status === 'ACKNOWLEDGED') {
-                        <button class="btn btn-sm btn-success" 
-                                (click)="resolveAlert(alert)" 
-                                title="Marquer comme résolu">
-                          <i class="bi bi-check-lg"></i>
-                        </button>
-                      }
-                      @if (alert.status === 'RESOLVED') {
-                        <span class="text-muted small">
-                          <i class="bi bi-check-circle text-success"></i> Résolu
-                        </span>
-                      }
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+    <div class="alerts-table-card animate-fade-in-up stagger-2">
+      <div class="card-header">
+        <div class="header-left">
+          <i class="bi bi-list-ul me-2"></i>
+          <span>{{ filteredAlerts.length }} alerte(s)</span>
         </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Sévérité</th>
+              <th>Station</th>
+              <th>Type</th>
+              <th>Message</th>
+              <th>Date</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (alert of filteredAlerts; track alert.id; let i = $index) {
+              <tr class="table-row-animated" [style.animation-delay.ms]="i * 50"
+                  [class.row-critical]="alert.severity === 'CRITICAL'"
+                  [class.row-warning]="alert.severity === 'WARNING'">
+                <td>
+                  <span class="severity-badge" [class]="'severity-' + alert.severity?.toLowerCase()">
+                    <i class="bi me-1" [class]="getSeverityIcon(alert.severity)"></i>
+                    {{ alert.severity }}
+                  </span>
+                </td>
+                <td>
+                  <a [routerLink]="['/stations', alert.stationId]" class="station-link">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    {{ getStationName(alert.stationId) }}
+                  </a>
+                </td>
+                <td>
+                  <span class="type-badge">{{ getTypeLabel(alert.type) }}</span>
+                </td>
+                <td class="message-cell">{{ alert.message }}</td>
+                <td>
+                  <span class="date-badge">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    {{ alert.createdAt | date:'dd/MM HH:mm' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="'status-' + alert.status?.toLowerCase()">
+                    {{ getStatusLabel(alert.status) }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn btn-action btn-info-action" 
+                            (click)="viewAlertDetails(alert)" 
+                            title="Voir les détails">
+                      <i class="bi bi-info-circle"></i>
+                    </button>
+                    @if (alert.status === 'OPEN') {
+                      <button class="btn btn-action btn-acknowledge" 
+                              (click)="acknowledgeAlert(alert)" 
+                              title="Reconnaître">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    }
+                    @if (alert.status === 'OPEN' || alert.status === 'ACKNOWLEDGED') {
+                      <button class="btn btn-action btn-resolve" 
+                              (click)="resolveAlert(alert)" 
+                              title="Résoudre">
+                        <i class="bi bi-check-lg"></i>
+                      </button>
+                    }
+                    @if (alert.status === 'RESOLVED') {
+                      <span class="resolved-badge">
+                        <i class="bi bi-check-circle-fill"></i>
+                      </span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   }
@@ -168,67 +207,65 @@
     <div class="modal-backdrop fade show" (click)="closeAlertDetails()"></div>
     <div class="modal fade show d-block" tabindex="-1">
       <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header" [class]="getSeverityClass(selectedAlert.severity)">
-            <h5 class="modal-title text-white">
-              <i class="bi me-2" [class]="getSeverityIcon(selectedAlert.severity)"></i>
-              Détails de l'alerte - {{ getStationName(selectedAlert.stationId) }}
-            </h5>
+        <div class="modal-content animate-scale-in">
+          <div class="modal-header" [class]="'modal-header-' + selectedAlert.severity?.toLowerCase()">
+            <div class="modal-header-icon">
+              <i class="bi" [class]="getSeverityIcon(selectedAlert.severity)"></i>
+            </div>
+            <h5 class="modal-title">Détails de l'alerte - {{ getStationName(selectedAlert.stationId) }}</h5>
             <button type="button" class="btn-close btn-close-white" (click)="closeAlertDetails()"></button>
           </div>
           <div class="modal-body">
             <!-- Alert Info -->
-            <div class="row mb-4">
+            <div class="row mb-4 g-4">
               <div class="col-md-6">
-                <h6><i class="bi bi-info-circle me-2"></i>Informations</h6>
-                <table class="table table-sm">
-                  <tr>
-                    <th>Score</th>
-                    <td>
-                      <span class="fw-bold" [style.color]="getScoreColor(selectedAlert.score)">
+                <div class="info-section">
+                  <h6><i class="bi bi-info-circle text-primary me-2"></i>Informations</h6>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <span class="info-label">Score</span>
+                      <span class="info-value score-value" [class]="'score-' + getScoreLevel(selectedAlert.score)">
                         {{ selectedAlert.score | number:'1.1-1' }}/100
                       </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Type</th>
-                    <td>{{ getTypeLabel(selectedAlert.type) }}</td>
-                  </tr>
-                  <tr>
-                    <th>Sévérité</th>
-                    <td>
-                      <span class="badge" [class]="getSeverityClass(selectedAlert.severity)">
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Type</span>
+                      <span class="info-value">{{ getTypeLabel(selectedAlert.type) }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Sévérité</span>
+                      <span class="severity-badge" [class]="'severity-' + selectedAlert.severity?.toLowerCase()">
                         {{ selectedAlert.severity }}
                       </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Statut</th>
-                    <td>
-                      <span class="badge" [class]="getStatusClass(selectedAlert.status)">
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Statut</span>
+                      <span class="status-badge" [class]="'status-' + selectedAlert.status?.toLowerCase()">
                         {{ getStatusLabel(selectedAlert.status) }}
                       </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Date</th>
-                    <td>{{ selectedAlert.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-                  </tr>
-                </table>
+                    </div>
+                    <div class="info-item full-width">
+                      <span class="info-label">Date</span>
+                      <span class="info-value">{{ selectedAlert.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="col-md-6">
-                <h6><i class="bi bi-chat-text me-2"></i>Message</h6>
-                <div class="alert alert-secondary">
-                  {{ selectedAlert.message }}
+                <div class="info-section">
+                  <h6><i class="bi bi-chat-text text-primary me-2"></i>Message</h6>
+                  <div class="message-box">
+                    {{ selectedAlert.message }}
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- Loading -->
             @if (loadingDetails) {
-              <div class="text-center py-3">
-                <div class="spinner-border text-primary" role="status"></div>
-                <p class="mt-2 text-muted">Chargement des recommandations...</p>
+              <div class="loading-details">
+                <div class="spinner-border text-primary"></div>
+                <p>Chargement des recommandations...</p>
               </div>
             }
 
@@ -236,45 +273,49 @@
             @if (!loadingDetails && selectedAlertHistory) {
               <!-- Parameter Scores -->
               @if (selectedAlertHistory.parameterScores) {
-                <h6><i class="bi bi-bar-chart me-2"></i>Scores par paramètre</h6>
-                <div class="parameter-scores mb-4">
-                  @for (param of ['ph', 'temperature', 'turbidity', 'dissolvedOxygen', 'conductivity']; track param) {
-                    @if (selectedAlertHistory.parameterScores[param] !== undefined) {
-                      <div class="score-bar-container mb-2">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                          <span class="param-name">{{ getParamLabel(param) }}</span>
-                          <span class="param-score" [style.color]="getScoreColor(selectedAlertHistory.parameterScores[param])">
-                            {{ selectedAlertHistory.parameterScores[param] | number:'1.0-0' }}/100
-                          </span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                          <div class="progress-bar" 
-                               [style.width.%]="selectedAlertHistory.parameterScores[param]"
-                               [style.background-color]="getScoreColor(selectedAlertHistory.parameterScores[param])">
+                <div class="parameters-section">
+                  <h6><i class="bi bi-bar-chart text-primary me-2"></i>Scores par paramètre</h6>
+                  <div class="parameters-grid">
+                    @for (param of ['ph', 'temperature', 'turbidity', 'dissolvedOxygen', 'conductivity']; track param) {
+                      @if (selectedAlertHistory.parameterScores[param] !== undefined) {
+                        <div class="param-card">
+                          <div class="param-header">
+                            <span class="param-name">{{ getParamLabel(param) }}</span>
+                            <span class="param-score" [class]="'score-' + getScoreLevel(selectedAlertHistory.parameterScores[param])">
+                              {{ selectedAlertHistory.parameterScores[param] | number:'1.0-0' }}
+                            </span>
+                          </div>
+                          <div class="param-progress">
+                            <div class="progress-fill" 
+                                 [style.width.%]="selectedAlertHistory.parameterScores[param]"
+                                 [class]="'fill-' + getScoreLevel(selectedAlertHistory.parameterScores[param])">
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      }
                     }
-                  }
+                  </div>
                 </div>
               }
 
               <!-- Recommendations -->
               @if (selectedAlertHistory.recommendations && selectedAlertHistory.recommendations.length > 0) {
-                <h6><i class="bi bi-lightbulb text-warning me-2"></i>Recommandations</h6>
-                <div class="recommendations-list">
-                  @for (recommendation of selectedAlertHistory.recommendations; track recommendation) {
-                    <div class="recommendation-item">
-                      <i class="bi bi-arrow-right-circle text-primary me-2"></i>
-                      {{ recommendation }}
-                    </div>
-                  }
+                <div class="recommendations-section">
+                  <h6><i class="bi bi-lightbulb text-warning me-2"></i>Recommandations</h6>
+                  <div class="recommendations-list">
+                    @for (recommendation of selectedAlertHistory.recommendations; track recommendation; let i = $index) {
+                      <div class="recommendation-item animate-fade-in-up" [style.animation-delay.ms]="i * 100">
+                        <div class="recommendation-number">{{ i + 1 }}</div>
+                        <span>{{ recommendation }}</span>
+                      </div>
+                    }
+                  </div>
                 </div>
               }
             }
 
             @if (!loadingDetails && !selectedAlertHistory) {
-              <div class="alert alert-info">
+              <div class="alert alert-info no-history-alert">
                 <i class="bi bi-info-circle me-2"></i>
                 Aucun historique de prédiction disponible pour cette station.
               </div>
@@ -302,38 +343,47 @@
   }
 
   <!-- How it works -->
-  <div class="row mt-4">
-    <div class="col-12">
-      <div class="card border-info">
-        <div class="card-header bg-info text-white">
-          <i class="bi bi-question-circle me-2"></i>
-          Comment fonctionnent les alertes ?
+  <div class="how-it-works-card animate-fade-in-up stagger-3">
+    <div class="card-header">
+      <i class="bi bi-question-circle me-2"></i>
+      Comment fonctionnent les alertes ?
+    </div>
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="info-block">
+            <div class="info-block-icon gradient-warning">
+              <i class="bi bi-lightning-fill"></i>
+            </div>
+            <h6>Création automatique</h6>
+            <p>Les alertes sont générées automatiquement lors de la détection d'une qualité d'eau 
+               <strong>MODERATE</strong> ou <strong>BAD</strong>.</p>
+          </div>
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-4">
-              <h6><i class="bi bi-lightning-fill text-warning me-2"></i>Création automatique</h6>
-              <p class="small text-muted">
-                Les alertes sont générées automatiquement lorsque le système détecte une qualité d'eau 
-                <strong>MODERATE</strong> ou <strong>BAD</strong> lors d'une prédiction ou observation.
-              </p>
+        <div class="col-md-4">
+          <div class="info-block">
+            <div class="info-block-icon gradient-primary">
+              <i class="bi bi-graph-up"></i>
             </div>
-            <div class="col-md-4">
-              <h6><i class="bi bi-graph-up text-info me-2"></i>Types de sévérité</h6>
-              <ul class="small text-muted">
-                <li><span class="badge bg-danger">CRITICAL</span> : Score &lt; 50 ou qualité BAD</li>
-                <li><span class="badge bg-warning text-dark">WARNING</span> : Qualité MODERATE</li>
-                <li><span class="badge bg-info">INFO</span> : Information générale</li>
-              </ul>
+            <h6>Types de sévérité</h6>
+            <ul class="severity-list">
+              <li><span class="severity-badge severity-critical">CRITICAL</span> Score &lt; 50</li>
+              <li><span class="severity-badge severity-warning">WARNING</span> Qualité modérée</li>
+              <li><span class="severity-badge severity-info">INFO</span> Information</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="info-block">
+            <div class="info-block-icon gradient-success">
+              <i class="bi bi-arrow-right-circle"></i>
             </div>
-            <div class="col-md-4">
-              <h6><i class="bi bi-arrow-right-circle text-success me-2"></i>Cycle de vie</h6>
-              <ol class="small text-muted">
-                <li><strong>OPEN</strong> : Nouvelle alerte détectée</li>
-                <li><strong>ACKNOWLEDGED</strong> : L'alerte a été vue</li>
-                <li><strong>RESOLVED</strong> : Le problème est résolu</li>
-              </ol>
-            </div>
+            <h6>Cycle de vie</h6>
+            <ol class="lifecycle-list">
+              <li><strong>OPEN</strong> → Nouvelle alerte</li>
+              <li><strong>ACKNOWLEDGED</strong> → Vue</li>
+              <li><strong>RESOLVED</strong> → Résolue</li>
+            </ol>
           </div>
         </div>
       </div>

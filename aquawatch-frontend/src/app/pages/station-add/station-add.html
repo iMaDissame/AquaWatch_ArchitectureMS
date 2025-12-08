@@ -1,128 +1,285 @@
-<div class="container my-4">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <!-- Header -->
-      <div class="d-flex align-items-center mb-4">
-        <a routerLink="/stations" class="btn btn-outline-secondary me-3">
-          <i class="bi bi-arrow-left"></i>
-        </a>
-        <div>
-          <h2 class="mb-0"><i class="bi bi-plus-circle text-primary"></i> Ajouter une Station</h2>
-          <p class="text-muted mb-0">Créer un nouveau point de surveillance</p>
+<div class="station-add-container">
+  <!-- Animated Background Elements -->
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header animate-fade-in">
+    <div class="header-content">
+      <a routerLink="/stations" class="back-btn">
+        <i class="bi bi-arrow-left"></i>
+        <span>Retour</span>
+      </a>
+      <div class="header-title">
+        <div class="icon-wrapper">
+          <i class="bi bi-plus-circle"></i>
+        </div>
+        <div class="title-text">
+          <h1>Ajouter une Station</h1>
+          <p>Créer un nouveau point de surveillance</p>
         </div>
       </div>
-
-      <!-- Success Message -->
-      @if (success) {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <i class="bi bi-check-circle me-2"></i>{{ success }}
-          <button type="button" class="btn-close" (click)="success = null"></button>
-        </div>
-      }
-
-      <!-- Error Message -->
-      @if (error) {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
-          <button type="button" class="btn-close" (click)="error = null"></button>
-        </div>
-      }
-
-      <!-- Form Card -->
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Informations de la station</h5>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="stationForm" (ngSubmit)="onSubmit()">
-            
-            <div class="row">
-              <!-- Code -->
-              <div class="col-md-4 mb-3">
-                <label for="code" class="form-label">Code Station *</label>
-                <input type="text" class="form-control" id="code" formControlName="code"
-                       placeholder="Ex: ST006" [class.is-invalid]="isFieldInvalid('code')">
-                @if (isFieldInvalid('code')) {
-                  <div class="invalid-feedback">{{ getFieldError('code') }}</div>
-                }
-              </div>
-
-              <!-- Name -->
-              <div class="col-md-8 mb-3">
-                <label for="name" class="form-label">Nom de la station *</label>
-                <input type="text" class="form-control" id="name" formControlName="name"
-                       placeholder="Ex: Station Oued Moulouya" [class.is-invalid]="isFieldInvalid('name')">
-                @if (isFieldInvalid('name')) {
-                  <div class="invalid-feedback">{{ getFieldError('name') }}</div>
-                }
-              </div>
-            </div>
-
-            <div class="row">
-              <!-- Type -->
-              <div class="col-md-4 mb-3">
-                <label for="type" class="form-label">Type *</label>
-                <select class="form-select" id="type" formControlName="type">
-                  @for (t of stationTypes; track t) {
-                    <option [value]="t">{{ t }}</option>
-                  }
-                </select>
-              </div>
-
-              <!-- Commune -->
-              <div class="col-md-8 mb-3">
-                <label for="commune" class="form-label">Commune</label>
-                <input type="text" class="form-control" id="commune" formControlName="commune"
-                       placeholder="Ex: Oujda">
-              </div>
-            </div>
-
-            <div class="row">
-              <!-- Latitude -->
-              <div class="col-md-6 mb-3">
-                <label for="latitude" class="form-label">Latitude * (°)</label>
-                <input type="number" step="0.0001" class="form-control" id="latitude" formControlName="latitude"
-                       placeholder="Ex: 34.6823" [class.is-invalid]="isFieldInvalid('latitude')">
-                @if (isFieldInvalid('latitude')) {
-                  <div class="invalid-feedback">{{ getFieldError('latitude') }}</div>
-                }
-                <small class="text-muted">Entre -90 et 90</small>
-              </div>
-
-              <!-- Longitude -->
-              <div class="col-md-6 mb-3">
-                <label for="longitude" class="form-label">Longitude * (°)</label>
-                <input type="number" step="0.0001" class="form-control" id="longitude" formControlName="longitude"
-                       placeholder="Ex: -1.9088" [class.is-invalid]="isFieldInvalid('longitude')">
-                @if (isFieldInvalid('longitude')) {
-                  <div class="invalid-feedback">{{ getFieldError('longitude') }}</div>
-                }
-                <small class="text-muted">Entre -180 et 180</small>
-              </div>
-            </div>
-
-            <!-- Description -->
-            <div class="mb-4">
-              <label for="description" class="form-label">Description</label>
-              <textarea class="form-control" id="description" formControlName="description" rows="3"
-                        placeholder="Description du point de surveillance..."></textarea>
-            </div>
-
-            <!-- Buttons -->
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary" [disabled]="loading">
-                @if (loading) {
-                  <span class="spinner-border spinner-border-sm me-2"></span>
-                }
-                <i class="bi bi-plus-lg me-1"></i> Créer la station
-              </button>
-              <a routerLink="/stations" class="btn btn-outline-secondary">Annuler</a>
-            </div>
-
-          </form>
-        </div>
-      </div>
-
     </div>
+  </div>
+
+  <!-- Alert Messages -->
+  <div class="messages-container">
+    @if (success) {
+      <div class="alert-message success animate-slide-down">
+        <div class="alert-icon">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="alert-content">
+          <span>{{ success }}</span>
+        </div>
+        <button class="alert-close" (click)="success = null">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    }
+
+    @if (error) {
+      <div class="alert-message error animate-slide-down">
+        <div class="alert-icon">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="alert-content">
+          <span>{{ error }}</span>
+        </div>
+        <button class="alert-close" (click)="error = null">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card animate-fade-in-up">
+    <div class="card-header">
+      <div class="header-icon">
+        <i class="bi bi-geo-alt-fill"></i>
+      </div>
+      <div class="header-text">
+        <h2>Informations de la station</h2>
+        <p>Remplissez les champs ci-dessous pour créer une nouvelle station</p>
+      </div>
+    </div>
+    
+    <div class="card-body">
+      <form [formGroup]="stationForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Section: Identification -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="bi bi-card-text"></i>
+            <span>Identification</span>
+          </div>
+          
+          <div class="row">
+            <!-- Code -->
+            <div class="col-md-4 mb-4">
+              <div class="form-group" [class.has-error]="isFieldInvalid('code')">
+                <label for="code" class="form-label">
+                  <i class="bi bi-hash"></i>
+                  Code Station <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="code" formControlName="code"
+                         placeholder="Ex: ST006">
+                  <div class="input-focus-effect"></div>
+                </div>
+                @if (isFieldInvalid('code')) {
+                  <div class="error-message">
+                    <i class="bi bi-exclamation-circle"></i>
+                    {{ getFieldError('code') }}
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Name -->
+            <div class="col-md-8 mb-4">
+              <div class="form-group" [class.has-error]="isFieldInvalid('name')">
+                <label for="name" class="form-label">
+                  <i class="bi bi-building"></i>
+                  Nom de la station <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="name" formControlName="name"
+                         placeholder="Ex: Station Oued Moulouya">
+                  <div class="input-focus-effect"></div>
+                </div>
+                @if (isFieldInvalid('name')) {
+                  <div class="error-message">
+                    <i class="bi bi-exclamation-circle"></i>
+                    {{ getFieldError('name') }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Type -->
+            <div class="col-md-4 mb-4">
+              <div class="form-group">
+                <label for="type" class="form-label">
+                  <i class="bi bi-diagram-3"></i>
+                  Type <span class="required">*</span>
+                </label>
+                <div class="select-wrapper">
+                  <select class="form-select" id="type" formControlName="type">
+                    @for (t of stationTypes; track t) {
+                      <option [value]="t">{{ t }}</option>
+                    }
+                  </select>
+                  <i class="bi bi-chevron-down select-arrow"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Commune -->
+            <div class="col-md-8 mb-4">
+              <div class="form-group">
+                <label for="commune" class="form-label">
+                  <i class="bi bi-geo"></i>
+                  Commune
+                </label>
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="commune" formControlName="commune"
+                         placeholder="Ex: Oujda">
+                  <div class="input-focus-effect"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Coordinates -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="bi bi-pin-map"></i>
+            <span>Coordonnées GPS</span>
+          </div>
+
+          <div class="row">
+            <!-- Latitude -->
+            <div class="col-md-6 mb-4">
+              <div class="form-group" [class.has-error]="isFieldInvalid('latitude')">
+                <label for="latitude" class="form-label">
+                  <i class="bi bi-arrows-vertical"></i>
+                  Latitude <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <input type="number" step="0.0001" class="form-control" id="latitude" formControlName="latitude"
+                         placeholder="Ex: 34.6823">
+                  <span class="input-suffix">°</span>
+                  <div class="input-focus-effect"></div>
+                </div>
+                <div class="input-hint">
+                  <i class="bi bi-info-circle"></i>
+                  Entre -90 et 90
+                </div>
+                @if (isFieldInvalid('latitude')) {
+                  <div class="error-message">
+                    <i class="bi bi-exclamation-circle"></i>
+                    {{ getFieldError('latitude') }}
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Longitude -->
+            <div class="col-md-6 mb-4">
+              <div class="form-group" [class.has-error]="isFieldInvalid('longitude')">
+                <label for="longitude" class="form-label">
+                  <i class="bi bi-arrows"></i>
+                  Longitude <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <input type="number" step="0.0001" class="form-control" id="longitude" formControlName="longitude"
+                         placeholder="Ex: -1.9088">
+                  <span class="input-suffix">°</span>
+                  <div class="input-focus-effect"></div>
+                </div>
+                <div class="input-hint">
+                  <i class="bi bi-info-circle"></i>
+                  Entre -180 et 180
+                </div>
+                @if (isFieldInvalid('longitude')) {
+                  <div class="error-message">
+                    <i class="bi bi-exclamation-circle"></i>
+                    {{ getFieldError('longitude') }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Description -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="bi bi-file-text"></i>
+            <span>Description</span>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">
+              <i class="bi bi-textarea-resize"></i>
+              Description de la station
+            </label>
+            <div class="textarea-wrapper">
+              <textarea class="form-control" id="description" formControlName="description" rows="4"
+                        placeholder="Décrivez le point de surveillance, son emplacement, ses caractéristiques..."></textarea>
+              <div class="textarea-focus-effect"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <a routerLink="/stations" class="btn-cancel">
+            <i class="bi bi-x-lg"></i>
+            <span>Annuler</span>
+          </a>
+          <button type="submit" class="btn-submit" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner"></span>
+            } @else {
+              <i class="bi bi-plus-lg"></i>
+            }
+            <span>Créer la station</span>
+            <div class="btn-ripple"></div>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Tips Card -->
+  <div class="tips-card animate-fade-in-up" style="animation-delay: 0.3s;">
+    <div class="tips-header">
+      <i class="bi bi-lightbulb"></i>
+      <span>Conseils</span>
+    </div>
+    <ul class="tips-list">
+      <li>
+        <i class="bi bi-check2"></i>
+        Utilisez un code unique pour chaque station (ex: ST001, ST002...)
+      </li>
+      <li>
+        <i class="bi bi-check2"></i>
+        Vérifiez les coordonnées GPS sur une carte avant de les saisir
+      </li>
+      <li>
+        <i class="bi bi-check2"></i>
+        Ajoutez une description détaillée pour faciliter l'identification
+      </li>
+    </ul>
   </div>
 </div>
