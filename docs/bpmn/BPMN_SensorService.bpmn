@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" 
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" 
+                  id="Definitions_SensorService" 
+                  targetNamespace="http://aquawatch.ma/bpmn/sensor">
+
+  <!-- ============================================= -->
+  <!-- SENSOR SERVICE - PROCESSUS MÉTIERS           -->
+  <!-- ============================================= -->
+
+  <bpmn:process id="Process_GestionStations" name="Processus de Gestion des Stations" isExecutable="true">
+    
+    <bpmn:startEvent id="Start_Station" name="Demande gestion station">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:exclusiveGateway id="Gateway_Action" name="Type d'action?">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_Create</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Update</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Delete</bpmn:outgoing>
+      <bpmn:outgoing>Flow_List</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="Task_SaisirInfoStation" name="Saisir informations station (code, nom, type, coordonnées GPS)">
+      <bpmn:incoming>Flow_Create</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:serviceTask id="Task_ValiderCoordonnees" name="Valider coordonnées GPS">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_SauvegarderStation" name="Sauvegarder dans sensor_db">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:userTask id="Task_ModifierStation" name="Modifier informations station">
+      <bpmn:incoming>Flow_Update</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:serviceTask id="Task_UpdateDB" name="Mettre à jour sensor_db">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_SupprimerStation" name="Supprimer station de sensor_db">
+      <bpmn:incoming>Flow_Delete</bpmn:incoming>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_ListerStations" name="Récupérer liste stations">
+      <bpmn:incoming>Flow_List</bpmn:incoming>
+      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_Join" name="">
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:incoming>Flow_8</bpmn:incoming>
+      <bpmn:outgoing>Flow_End</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:endEvent id="End_Station" name="Opération terminée">
+      <bpmn:incoming>Flow_End</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_Station" targetRef="Gateway_Action"/>
+    <bpmn:sequenceFlow id="Flow_Create" name="Créer" sourceRef="Gateway_Action" targetRef="Task_SaisirInfoStation"/>
+    <bpmn:sequenceFlow id="Flow_Update" name="Modifier" sourceRef="Gateway_Action" targetRef="Task_ModifierStation"/>
+    <bpmn:sequenceFlow id="Flow_Delete" name="Supprimer" sourceRef="Gateway_Action" targetRef="Task_SupprimerStation"/>
+    <bpmn:sequenceFlow id="Flow_List" name="Lister" sourceRef="Gateway_Action" targetRef="Task_ListerStations"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_SaisirInfoStation" targetRef="Task_ValiderCoordonnees"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_ValiderCoordonnees" targetRef="Task_SauvegarderStation"/>
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="Task_SauvegarderStation" targetRef="Gateway_Join"/>
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_ModifierStation" targetRef="Task_UpdateDB"/>
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_UpdateDB" targetRef="Gateway_Join"/>
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_SupprimerStation" targetRef="Gateway_Join"/>
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="Task_ListerStations" targetRef="Gateway_Join"/>
+    <bpmn:sequenceFlow id="Flow_End" sourceRef="Gateway_Join" targetRef="End_Station"/>
+
+  </bpmn:process>
+
+  <bpmn:process id="Process_CollecteMesures" name="Processus de Collecte des Mesures" isExecutable="true">
+    
+    <bpmn:startEvent id="Start_Mesure" name="Nouvelle mesure">
+      <bpmn:outgoing>Flow_M1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:userTask id="Task_SelectStation" name="Sélectionner station de mesure">
+      <bpmn:incoming>Flow_M1</bpmn:incoming>
+      <bpmn:outgoing>Flow_M2</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="Task_SaisirMesures" name="Saisir paramètres: pH, température, turbidité, oxygène dissous, conductivité">
+      <bpmn:incoming>Flow_M2</bpmn:incoming>
+      <bpmn:outgoing>Flow_M3</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:serviceTask id="Task_ValiderPlages" name="Valider plages de valeurs (pH: 0-14, Temp: -10-50°C, etc.)">
+      <bpmn:incoming>Flow_M3</bpmn:incoming>
+      <bpmn:outgoing>Flow_M4</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_Validation" name="Valeurs valides?">
+      <bpmn:incoming>Flow_M4</bpmn:incoming>
+      <bpmn:outgoing>Flow_M5</bpmn:outgoing>
+      <bpmn:outgoing>Flow_M6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="Task_SauvegarderMesure" name="Enregistrer SensorMeasurement dans sensor_db">
+      <bpmn:incoming>Flow_M5</bpmn:incoming>
+      <bpmn:outgoing>Flow_M7</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:userTask id="Task_AfficherErreur" name="Afficher message erreur validation">
+      <bpmn:incoming>Flow_M6</bpmn:incoming>
+      <bpmn:outgoing>Flow_M8</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_JoinM" name="">
+      <bpmn:incoming>Flow_M7</bpmn:incoming>
+      <bpmn:incoming>Flow_M8</bpmn:incoming>
+      <bpmn:outgoing>Flow_MEnd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:endEvent id="End_Mesure" name="Mesure traitée">
+      <bpmn:incoming>Flow_MEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_M1" sourceRef="Start_Mesure" targetRef="Task_SelectStation"/>
+    <bpmn:sequenceFlow id="Flow_M2" sourceRef="Task_SelectStation" targetRef="Task_SaisirMesures"/>
+    <bpmn:sequenceFlow id="Flow_M3" sourceRef="Task_SaisirMesures" targetRef="Task_ValiderPlages"/>
+    <bpmn:sequenceFlow id="Flow_M4" sourceRef="Task_ValiderPlages" targetRef="Gateway_Validation"/>
+    <bpmn:sequenceFlow id="Flow_M5" name="Oui" sourceRef="Gateway_Validation" targetRef="Task_SauvegarderMesure"/>
+    <bpmn:sequenceFlow id="Flow_M6" name="Non" sourceRef="Gateway_Validation" targetRef="Task_AfficherErreur"/>
+    <bpmn:sequenceFlow id="Flow_M7" sourceRef="Task_SauvegarderMesure" targetRef="Gateway_JoinM"/>
+    <bpmn:sequenceFlow id="Flow_M8" sourceRef="Task_AfficherErreur" targetRef="Gateway_JoinM"/>
+    <bpmn:sequenceFlow id="Flow_MEnd" sourceRef="Gateway_JoinM" targetRef="End_Mesure"/>
+
+  </bpmn:process>
+
+  <!-- DIAGRAMME BPMN - Gestion Stations -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Stations">
+    <bpmndi:BPMNPlane id="BPMNPlane_Stations" bpmnElement="Process_GestionStations">
+      
+      <bpmndi:BPMNShape id="Start_Station_di" bpmnElement="Start_Station">
+        <dc:Bounds x="152" y="232" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_Action_di" bpmnElement="Gateway_Action" isMarkerVisible="true">
+        <dc:Bounds x="245" y="225" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SaisirInfoStation_di" bpmnElement="Task_SaisirInfoStation">
+        <dc:Bounds x="350" y="80" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_ValiderCoordonnees_di" bpmnElement="Task_ValiderCoordonnees">
+        <dc:Bounds x="500" y="80" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SauvegarderStation_di" bpmnElement="Task_SauvegarderStation">
+        <dc:Bounds x="650" y="80" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_ModifierStation_di" bpmnElement="Task_ModifierStation">
+        <dc:Bounds x="350" y="180" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_UpdateDB_di" bpmnElement="Task_UpdateDB">
+        <dc:Bounds x="500" y="180" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SupprimerStation_di" bpmnElement="Task_SupprimerStation">
+        <dc:Bounds x="350" y="280" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_ListerStations_di" bpmnElement="Task_ListerStations">
+        <dc:Bounds x="350" y="380" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_Join_di" bpmnElement="Gateway_Join" isMarkerVisible="true">
+        <dc:Bounds x="795" y="225" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="End_Station_di" bpmnElement="End_Station">
+        <dc:Bounds x="902" y="232" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="250"/>
+        <di:waypoint x="245" y="250"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Create_di" bpmnElement="Flow_Create">
+        <di:waypoint x="270" y="225"/>
+        <di:waypoint x="270" y="120"/>
+        <di:waypoint x="350" y="120"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Update_di" bpmnElement="Flow_Update">
+        <di:waypoint x="295" y="250"/>
+        <di:waypoint x="323" y="250"/>
+        <di:waypoint x="323" y="220"/>
+        <di:waypoint x="350" y="220"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Delete_di" bpmnElement="Flow_Delete">
+        <di:waypoint x="270" y="275"/>
+        <di:waypoint x="270" y="320"/>
+        <di:waypoint x="350" y="320"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_List_di" bpmnElement="Flow_List">
+        <di:waypoint x="270" y="275"/>
+        <di:waypoint x="270" y="420"/>
+        <di:waypoint x="350" y="420"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="450" y="120"/>
+        <di:waypoint x="500" y="120"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="600" y="120"/>
+        <di:waypoint x="650" y="120"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <di:waypoint x="750" y="120"/>
+        <di:waypoint x="820" y="120"/>
+        <di:waypoint x="820" y="225"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="450" y="220"/>
+        <di:waypoint x="500" y="220"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="600" y="220"/>
+        <di:waypoint x="820" y="220"/>
+        <di:waypoint x="820" y="225"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <di:waypoint x="450" y="320"/>
+        <di:waypoint x="820" y="320"/>
+        <di:waypoint x="820" y="275"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8">
+        <di:waypoint x="450" y="420"/>
+        <di:waypoint x="820" y="420"/>
+        <di:waypoint x="820" y="275"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_End_di" bpmnElement="Flow_End">
+        <di:waypoint x="845" y="250"/>
+        <di:waypoint x="902" y="250"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</bpmn:definitions>

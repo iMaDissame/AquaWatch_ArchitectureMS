@@ -1,0 +1,103 @@
+@startuml UseCase_SensorService
+!theme cerulean
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+title **SENSOR-SERVICE - Diagramme de Cas d'Utilisation**\nPort: 8081
+
+left to right direction
+
+' ===== ACTEURS =====
+actor "Opérateur\nTerrain" as operator #LightBlue
+actor "Administrateur\nSystème" as admin #LightGreen
+actor "Capteur IoT\n(Simulé)" as iot #Orange
+actor "Map-Service" as mapservice #MediumPurple
+actor "STModel-Service" as stmodelservice #Orchid
+
+' ===== SYSTÈME =====
+rectangle "Sensor-Service (8081)" as system #E8F5E9 {
+    
+    ' Gestion des stations
+    package "Gestion des Stations" {
+        usecase "Consulter la liste\ndes stations" as UC1
+        usecase "Consulter les détails\nd'une station" as UC2
+        usecase "Créer une nouvelle\nstation" as UC3
+        usecase "Modifier une station" as UC4
+        usecase "Supprimer une station" as UC5
+    }
+    
+    ' Gestion des mesures
+    package "Gestion des Mesures" {
+        usecase "Enregistrer une mesure\nmanuelle" as UC6
+        usecase "Enregistrer une mesure\nIoT simulée" as UC7
+        usecase "Consulter les mesures\npar période" as UC8
+        usecase "Consulter la dernière\nmesure d'une station" as UC9
+    }
+}
+
+' ===== RELATIONS ACTEURS - CAS D'UTILISATION =====
+
+' Opérateur
+operator --> UC1
+operator --> UC2
+operator --> UC6
+operator --> UC8
+
+' Administrateur
+admin --> UC1
+admin --> UC2
+admin --> UC3
+admin --> UC4
+admin --> UC5
+admin --> UC8
+admin --> UC9
+
+' Capteur IoT
+iot --> UC7
+
+' Map-Service
+mapservice --> UC1
+mapservice --> UC2
+mapservice --> UC9
+
+' STModel-Service
+stmodelservice --> UC9
+
+' ===== RELATIONS ENTRE CAS D'UTILISATION =====
+
+UC6 ..> UC2 : <<include>>
+UC7 ..> UC2 : <<include>>
+UC8 ..> UC2 : <<include>>
+
+UC3 <.. UC4 : <<extend>>
+UC3 <.. UC5 : <<extend>>
+
+' ===== NOTES =====
+note right of UC6
+  **Paramètres de mesure:**
+  - pH (6.5-8.5)
+  - Température (°C)
+  - Turbidité (NTU)
+  - Oxygène dissous (mg/L)
+  - Conductivité (µS/cm)
+end note
+
+note right of UC7
+  Source: IOT_SIMULATED
+  Génération automatique
+  de données de test
+end note
+
+note bottom of system
+  **API REST Endpoints:**
+  GET /api/stations
+  GET /api/stations/{id}
+  POST /api/stations
+  PUT /api/stations/{id}
+  DELETE /api/stations/{id}
+  POST /api/measurements
+  GET /api/measurements?stationId=&from=&to=
+  GET /api/measurements/latest?stationId=
+end note
+
+@enduml

@@ -1,0 +1,114 @@
+@startuml UseCase_STModelService
+!theme cerulean
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+title **STMODEL-SERVICE - Diagramme de Cas d'Utilisation**\nPort: 8083 | Service de Modélisation & Prédiction
+
+left to right direction
+
+' ===== ACTEURS =====
+actor "Analyste\nQualité" as analyst #LightBlue
+actor "Système\nAutomatique" as system_auto #Orange
+actor "Map-Service" as mapservice #MediumPurple
+actor "Sensor-Service" as sensorservice #LightGreen
+actor "Satellite-Service" as satelliteservice #Cyan
+actor "Alert-Service" as alertservice #Red
+
+' ===== SYSTÈME =====
+rectangle "STModel-Service (8083)" as system #E1BEE7 {
+    
+    ' Calcul de qualité
+    package "Calcul de Qualité (WQI)" {
+        usecase "Calculer la qualité\nactuelle d'une station" as UC1
+        usecase "Récupérer les données\ncapteurs" as UC1a
+        usecase "Récupérer les données\nsatellites" as UC1b
+        usecase "Consulter la dernière\nobservation de qualité" as UC2
+    }
+    
+    ' Prévision
+    package "Prévision de Qualité" {
+        usecase "Créer une prévision\nde qualité" as UC3
+        usecase "Analyser la tendance\nhistorique" as UC3a
+        usecase "Appliquer les facteurs\nsaisonniers" as UC3b
+        usecase "Créer des prévisions\nmultiples (24h/48h/72h)" as UC4
+        usecase "Consulter une prévision\nsimple" as UC5
+    }
+    
+    ' Alertes
+    package "Génération d'Alertes" {
+        usecase "Déclencher une alerte\nsi qualité dégradée" as UC6
+    }
+}
+
+' ===== RELATIONS ACTEURS - CAS D'UTILISATION =====
+
+' Analyste Qualité
+analyst --> UC1
+analyst --> UC2
+analyst --> UC3
+analyst --> UC4
+analyst --> UC5
+
+' Système automatique
+system_auto --> UC1
+system_auto --> UC4
+system_auto --> UC6
+
+' Map-Service
+mapservice --> UC2
+mapservice --> UC5
+
+' Services externes (fournisseurs de données)
+sensorservice <-- UC1a
+satelliteservice <-- UC1b
+alertservice <-- UC6
+
+' ===== RELATIONS ENTRE CAS D'UTILISATION =====
+
+UC1 ..> UC1a : <<include>>
+UC1 ..> UC1b : <<include>>
+UC1 <.. UC6 : <<extend>>
+
+UC3 ..> UC2 : <<include>>
+UC3 ..> UC3a : <<include>>
+UC3 <.. UC3b : <<extend>>
+
+UC4 ..> UC3 : <<include>>
+
+' ===== NOTES =====
+note right of UC1
+  **Algorithme WQI:**
+  Score pondéré (0-100):
+  - pH: 20%
+  - Température: 15%
+  - Turbidité: 20%
+  - O₂ dissous: 25%
+  - Conductivité: 10%
+  - Satellite NDWI: 10%
+end note
+
+note right of UC3
+  **Modèles de prévision:**
+  1. TrendRegressionModel v2.0
+     (régression linéaire)
+  2. SimpleDegradationModel v1.0
+     (fallback)
+end note
+
+note right of UC6
+  **Règles d'alerte:**
+  - score < 50 → CRITICAL
+  - status = BAD → CRITICAL
+  - status = MODERATE → WARNING
+  - status = GOOD → Pas d'alerte
+end note
+
+note bottom of system
+  **Statuts de qualité:**
+  - GOOD: score ≥ 70
+  - MODERATE: 50 ≤ score < 70
+  - BAD: score < 50
+end note
+
+@enduml

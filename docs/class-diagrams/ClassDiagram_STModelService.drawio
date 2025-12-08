@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-01T00:00:00.000Z" agent="AquaWatch" version="21.0.0">
+  <diagram name="STModel Service - Class Diagram" id="class-stmodel">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="🧠 STMODEL-SERVICE - Diagramme de Classes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="450" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ENTITIES ==================== -->
+        
+        <!-- QualityObservation Entity -->
+        <mxCell id="observation" value="&lt;b&gt;QualityObservation&lt;/b&gt;&lt;br&gt;@Entity" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="100" y="100" width="280" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="observation_attrs" value="- id: Long&#xa;- stationId: Long&#xa;- timestamp: LocalDateTime&#xa;- score: Double&#xa;- status: QualityStatus&#xa;- confidence: Double&#xa;- modelVersion: String&#xa;- inputFeatures: String (JSON)&#xa;- details: String&#xa;- createdAt: LocalDateTime&#xa;- recommendation: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="observation">
+          <mxGeometry y="40" width="280" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="observation_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="observation">
+          <mxGeometry y="200" width="280" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="observation_methods" value="+ getId(): Long&#xa;+ getScore(): Double&#xa;+ getStatus(): QualityStatus&#xa;+ getRecommendation(): String&#xa;+ setters/getters" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="observation">
+          <mxGeometry y="208" width="280" height="72" as="geometry"/>
+        </mxCell>
+
+        <!-- QualityStatus Enum -->
+        <mxCell id="qualitystatus" value="&lt;b&gt;«enumeration»&lt;/b&gt;&#xa;QualityStatus" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="100" y="420" width="130" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="qualitystatus_vals" value="EXCELLENT&#xa;GOOD&#xa;MODERATE&#xa;POOR&#xa;VERY_POOR" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="qualitystatus">
+          <mxGeometry y="40" width="130" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- QualityForecast Entity -->
+        <mxCell id="forecast" value="&lt;b&gt;QualityForecast&lt;/b&gt;&lt;br&gt;@Entity" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="100" width="280" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="forecast_attrs" value="- id: Long&#xa;- stationId: Long&#xa;- forecastDate: LocalDate&#xa;- predictedScore: Double&#xa;- predictedStatus: QualityStatus&#xa;- confidenceInterval: Double&#xa;- modelVersion: String&#xa;- recommendation: String&#xa;- createdAt: LocalDateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="forecast">
+          <mxGeometry y="40" width="280" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="forecast_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="forecast">
+          <mxGeometry y="180" width="280" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="forecast_methods" value="+ getId(): Long&#xa;+ getPredictedScore(): Double&#xa;+ getRecommendation(): String&#xa;+ setters/getters" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="forecast">
+          <mxGeometry y="188" width="280" height="72" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== REPOSITORY ==================== -->
+        
+        <!-- QualityObservationRepository -->
+        <mxCell id="observationrepo" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;QualityObservationRepository" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#d5e8d4;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="750" y="100" width="380" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="observationrepo_ext" value="extends JpaRepository&lt;QualityObservation, Long&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="observationrepo">
+          <mxGeometry y="40" width="380" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="observationrepo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="observationrepo">
+          <mxGeometry y="60" width="380" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="observationrepo_methods" value="+ findByStationId(stationId: Long): List&lt;QualityObservation&gt;&#xa;+ findLatestByStationId(stationId: Long): Optional&lt;QualityObservation&gt;&#xa;+ findByStatus(status: QualityStatus): List&lt;QualityObservation&gt;&#xa;+ findByTimestampBetween(start, end): List&lt;QualityObservation&gt;&#xa;+ findByScoreLessThan(threshold: Double): List&lt;QualityObservation&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="observationrepo">
+          <mxGeometry y="68" width="380" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- QualityForecastRepository -->
+        <mxCell id="forecastrepo" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;QualityForecastRepository" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#d5e8d4;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="750" y="320" width="380" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="forecastrepo_ext" value="extends JpaRepository&lt;QualityForecast, Long&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="forecastrepo">
+          <mxGeometry y="40" width="380" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="forecastrepo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="forecastrepo">
+          <mxGeometry y="60" width="380" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="forecastrepo_methods" value="+ findByStationId(stationId: Long): List&lt;QualityForecast&gt;&#xa;+ findByStationIdAndForecastDate(stationId, date): Optional&lt;QualityForecast&gt;&#xa;+ findByForecastDateBetween(start, end): List&lt;QualityForecast&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="forecastrepo">
+          <mxGeometry y="68" width="380" height="92" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== SERVICE ==================== -->
+        
+        <!-- QualityPredictionService -->
+        <mxCell id="predictionservice" value="&lt;b&gt;QualityPredictionService&lt;/b&gt;&lt;br&gt;@Service" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#e1d5e7;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="100" width="380" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="predictionservice_attrs" value="- observationRepository: QualityObservationRepository&#xa;- forecastRepository: QualityForecastRepository&#xa;- alertServiceClient: AlertServiceClient&#xa;- sensorServiceClient: SensorServiceClient&#xa;- flaskApiUrl: String = &quot;http://localhost:5000&quot;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="predictionservice">
+          <mxGeometry y="40" width="380" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="predictionservice_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="predictionservice">
+          <mxGeometry y="120" width="380" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="predictionservice_methods" value="+ predictQuality(request: PredictionRequest): PredictionResponse&#xa;+ predictQualityForStation(stationId: Long): PredictionResponse&#xa;+ getObservationsByStation(stationId: Long): List&lt;ObservationResponse&gt;&#xa;+ getLatestObservation(stationId: Long): ObservationResponse&#xa;+ generateForecast(stationId: Long, days: int): List&lt;ForecastResponse&gt;&#xa;- callFlaskPredictionApi(features: Map): PredictionResult&#xa;- determineStatus(score: Double): QualityStatus&#xa;- generateRecommendation(status: QualityStatus): String&#xa;- createAlertIfNeeded(stationId: Long, score: Double, status): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="predictionservice">
+          <mxGeometry y="128" width="380" height="132" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== FEIGN CLIENTS ==================== -->
+        
+        <!-- AlertServiceClient -->
+        <mxCell id="alertclient" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;AlertServiceClient&#xa;@FeignClient" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=50;fillColor=#ffe6cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="250" y="420" width="300" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="alertclient_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="alertclient">
+          <mxGeometry y="50" width="300" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="alertclient_methods" value="@PostMapping(&quot;/api/alerts&quot;)&#xa;+ createAlert(request: AlertRequest): AlertResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="alertclient">
+          <mxGeometry y="58" width="300" height="62" as="geometry"/>
+        </mxCell>
+
+        <!-- SensorServiceClient -->
+        <mxCell id="sensorclient" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;SensorServiceClient&#xa;@FeignClient" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=50;fillColor=#ffe6cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="250" y="570" width="350" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="sensorclient_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="sensorclient">
+          <mxGeometry y="50" width="350" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="sensorclient_methods" value="@GetMapping(&quot;/api/stations/{id}&quot;)&#xa;+ getStation(id: Long): StationResponse&#xa;@GetMapping(&quot;/api/measurements/station/{stationId}/latest&quot;)&#xa;+ getLatestMeasurement(stationId: Long): MeasurementResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="sensorclient">
+          <mxGeometry y="58" width="350" height="82" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== CONTROLLER ==================== -->
+        
+        <!-- QualityPredictionController -->
+        <mxCell id="predictioncontroller" value="&lt;b&gt;QualityPredictionController&lt;/b&gt;&lt;br&gt;@RestController" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#f8cecc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="650" y="530" width="480" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="predictioncontroller_attrs" value="- predictionService: QualityPredictionService&#xa;@RequestMapping(&quot;/api/quality&quot;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="predictioncontroller">
+          <mxGeometry y="40" width="480" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="predictioncontroller_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="predictioncontroller">
+          <mxGeometry y="80" width="480" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="predictioncontroller_methods" value="@PostMapping(&quot;/predict&quot;) + predict(request: PredictionRequest): ResponseEntity&lt;PredictionResponse&gt;&#xa;@PostMapping(&quot;/predict/{stationId}&quot;) + predictForStation(stationId): ResponseEntity&lt;PredictionResponse&gt;&#xa;@GetMapping(&quot;/observations/station/{stationId}&quot;) + getObservations(stationId): ResponseEntity&lt;List&lt;...&gt;&gt;&#xa;@GetMapping(&quot;/observations/station/{stationId}/latest&quot;) + getLatest(stationId): ResponseEntity&lt;...&gt;&#xa;@PostMapping(&quot;/forecast/{stationId}&quot;) + generateForecast(stationId, days): ResponseEntity&lt;List&lt;...&gt;&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="predictioncontroller">
+          <mxGeometry y="88" width="480" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== DTOs ==================== -->
+        
+        <mxCell id="dtos" value="📦 DTOs" style="swimlane;horizontal=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="400" width="380" height="330" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="predrequest" value="PredictionRequest&#xa;- stationId: Long&#xa;- ph, temperature&#xa;- turbidity, dissolvedOxygen&#xa;- conductivity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="40" width="160" height="90" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="predresponse" value="PredictionResponse&#xa;- id, stationId&#xa;- score, status&#xa;- confidence&#xa;- recommendation&#xa;- timestamp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="200" y="40" width="160" height="100" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="obsresponse" value="ObservationResponse&#xa;- id, stationId&#xa;- score, status&#xa;- timestamp&#xa;- recommendation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="150" width="160" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="forecastresponse" value="ForecastResponse&#xa;- id, stationId&#xa;- forecastDate&#xa;- predictedScore&#xa;- predictedStatus&#xa;- recommendation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="200" y="150" width="160" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="alertrequest" value="AlertRequest&#xa;- stationId, sourceId&#xa;- sourceType, score&#xa;- status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="250" width="150" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== External: Flask API ==================== -->
+        
+        <mxCell id="flask" value="🐍 Flask Prediction API&#xa;(External - port 5000)" style="swimlane;horizontal=1;startSize=40;fillColor=#f0f0f0;strokeColor=#666666;fontColor=#333333;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="760" width="380" height="100" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="flask_endpoint" value="POST /predict&#xa;Input: {ph, temperature, turbidity, dissolved_oxygen, conductivity}&#xa;Output: {score, status, confidence, recommendation}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" vertex="1" parent="flask">
+          <mxGeometry x="10" y="45" width="360" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== RELATIONS ==================== -->
+        
+        <!-- Service uses Repositories -->
+        <mxCell id="rel1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="predictionservice" target="observationrepo">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Service uses Feign Clients -->
+        <mxCell id="rel2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="predictionservice" target="alertclient">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1370" y="400"/>
+              <mxPoint x="600" y="400"/>
+              <mxPoint x="600" y="480"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Controller uses Service -->
+        <mxCell id="rel3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="predictioncontroller" target="predictionservice">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Légende" style="swimlane;horizontal=1;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="720" width="200" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1" value="Entity" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="35" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="Repository" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="35" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="70" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4" value="Controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="70" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5" value="Feign Client" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="105" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg6" value="Enum" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="105" width="80" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

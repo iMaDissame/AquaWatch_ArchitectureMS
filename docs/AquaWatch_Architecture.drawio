@@ -1,0 +1,284 @@
+<mxfile host="app.diagrams.net" modified="2025-12-08T10:00:00.000Z" agent="5.0" version="21.0.0" type="device">
+  <diagram id="AquaWatch-Architecture" name="Architecture Microservices AquaWatch">
+    <mxGraphModel dx="1434" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="1">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- ==================== TITRE ==================== -->
+        <mxCell id="title" value="🌊 AQUAWATCH - Architecture Microservices" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;fontColor=#1a5276;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="600" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Système de Surveillance de Qualité de l'Eau en Temps Réel" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#5d6d7e;" vertex="1" parent="1">
+          <mxGeometry x="450" y="65" width="500" height="30" as="geometry"/>
+        </mxCell>
+        
+        <!-- ==================== CLIENT LAYER ==================== -->
+        <mxCell id="client-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f6f3;strokeColor=#1abc9c;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="100" width="360" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="client-label" value="👤 CLIENT LAYER" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#1abc9c;" vertex="1" parent="1">
+          <mxGeometry x="530" y="105" width="150" height="20" as="geometry"/>
+        </mxCell>
+        
+        <!-- Angular Frontend -->
+        <mxCell id="angular" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://angular.io/assets/images/logos/angular/angular.svg;" vertex="1" parent="1">
+          <mxGeometry x="545" y="130" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="frontend" value="&lt;b&gt;Frontend Angular 20&lt;/b&gt;&lt;br&gt;localhost:4200&lt;br&gt;&lt;font color=&quot;#7f8c8d&quot;&gt;TypeScript, Leaflet, Chart.js&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#3498db;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="125" width="250" height="70" as="geometry"/>
+        </mxCell>
+        
+        <!-- ==================== API GATEWAY ==================== -->
+        <mxCell id="gateway-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf2e9;strokeColor=#e67e22;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="480" y="250" width="440" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="gateway-icon" value="🚪" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;" vertex="1" parent="1">
+          <mxGeometry x="500" y="260" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="gateway" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;API GATEWAY&lt;/b&gt;&lt;br&gt;Spring Cloud Gateway - localhost:8080&lt;br&gt;&lt;font color=&quot;#95a5a6&quot;&gt;Routage: /sensor/**, /satellite/**, /stmodel/**, /alert/**, /map/**&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="555" y="260" width="350" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrow Frontend to Gateway -->
+        <mxCell id="arrow-fe-gw" value="HTTP/REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3498db;strokeWidth=2;fontColor=#3498db;" edge="1" parent="1" source="frontend" target="gateway-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- ==================== BACKEND SERVICES LAYER ==================== -->
+        <mxCell id="backend-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf2f8;strokeColor=#2980b9;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="1320" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="backend-label" value="⚙️ BACKEND MICROSERVICES LAYER" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#2980b9;" vertex="1" parent="1">
+          <mxGeometry x="50" y="365" width="280" height="20" as="geometry"/>
+        </mxCell>
+        
+        <!-- ========== SENSOR SERVICE ========== -->
+        <mxCell id="sensor-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#27ae60;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="400" width="220" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="sensor-header" value="📡 SENSOR SERVICE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="400" width="220" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="sensor-content" value="&lt;b&gt;Port: 8081&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Gestion des stations&lt;br&gt;• Mesures capteurs IoT&lt;br&gt;• pH, Temp, O2, Turbidité&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#7f8c8d&quot;&gt;Spring Boot 3.2, JPA&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="435" width="140" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="sensor-db" value="sensor_db" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#27ae60;strokeColor=#1e8449;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="210" y="470" width="60" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- ========== SATELLITE SERVICE ========== -->
+        <mxCell id="satellite-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#8e44ad;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="400" width="220" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="satellite-header" value="🛰️ SATELLITE SERVICE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#8e44ad;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="300" y="400" width="220" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="satellite-content" value="&lt;b&gt;Port: 8082&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Données Sentinel-1/2&lt;br&gt;• Calcul NDWI/MNDWI&lt;br&gt;• Water Mask, Turbidité&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#7f8c8d&quot;&gt;Spring Boot 3.2, JPA&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="435" width="140" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="satellite-db" value="satellite_db" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#8e44ad;strokeColor=#6c3483;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="470" width="60" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- ========== STMODEL SERVICE ========== -->
+        <mxCell id="stmodel-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#e74c3c;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="400" width="220" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="stmodel-header" value="🧠 STMODEL SERVICE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e74c3c;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="540" y="400" width="220" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="stmodel-content" value="&lt;b&gt;Port: 8083&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Fusion données&lt;br&gt;• Score qualité (0-100)&lt;br&gt;• Prédictions ML&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#7f8c8d&quot;&gt;Spring Boot, OpenFeign&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="550" y="435" width="140" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="stmodel-db" value="stmodel_db" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#e74c3c;strokeColor=#c0392b;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="690" y="470" width="60" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- ========== ALERT SERVICE ========== -->
+        <mxCell id="alert-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#f39c12;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="400" width="220" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="alert-header" value="🚨 ALERT SERVICE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f39c12;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="780" y="400" width="220" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="alert-content" value="&lt;b&gt;Port: 8084&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Gestion alertes&lt;br&gt;• Seuils OMS&lt;br&gt;• CRITICAL/WARNING&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#7f8c8d&quot;&gt;Spring Boot 3.2, JPA&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="435" width="140" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="alert-db" value="alert_db" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f39c12;strokeColor=#d68910;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="470" width="60" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- ========== MAP SERVICE ========== -->
+        <mxCell id="map-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#3498db;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="400" width="220" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="map-header" value="🗺️ MAP SERVICE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3498db;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="400" width="220" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="map-content" value="&lt;b&gt;Port: 8085&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Agrégateur SIG&lt;br&gt;• GeoJSON export&lt;br&gt;• Vue cartographique&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#7f8c8d&quot;&gt;Spring Boot, OpenFeign&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="435" width="140" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="map-db" value="map_db" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#3498db;strokeColor=#2874a6;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="470" width="60" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- ==================== GATEWAY TO SERVICES ARROWS ==================== -->
+        <mxCell id="gw-sensor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#27ae60;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway-box" target="sensor-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gw-satellite" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8e44ad;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway-box" target="satellite-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gw-stmodel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e74c3c;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway-box" target="stmodel-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gw-alert" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f39c12;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway-box" target="alert-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gw-map" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3498db;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway-box" target="map-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- ==================== FEIGN COMMUNICATIONS ==================== -->
+        <!-- STModel to Sensor -->
+        <mxCell id="st-sensor" value="Feign" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2ecc71;strokeWidth=2;dashed=1;dashPattern=5 5;startArrow=classic;startFill=1;" edge="1" parent="1" source="stmodel-box" target="sensor-box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="580"/>
+              <mxPoint x="170" y="580"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- STModel to Satellite -->
+        <mxCell id="st-satellite" value="Feign" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9b59b6;strokeWidth=2;dashed=1;dashPattern=5 5;startArrow=classic;startFill=1;" edge="1" parent="1" source="stmodel-box" target="satellite-box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="600"/>
+              <mxPoint x="410" y="600"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- STModel to Alert -->
+        <mxCell id="st-alert" value="Feign" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e67e22;strokeWidth=2;dashed=1;dashPattern=5 5;" edge="1" parent="1" source="stmodel-box" target="alert-box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="620"/>
+              <mxPoint x="890" y="620"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Map to all services -->
+        <mxCell id="map-sensor" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1abc9c;strokeWidth=1;dashed=1;dashPattern=3 3;" edge="1" parent="1" source="map-box" target="sensor-box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1130" y="640"/>
+              <mxPoint x="170" y="640"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- ==================== FLASK ML API ==================== -->
+        <mxCell id="flask-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef9e7;strokeColor=#f1c40f;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="780" width="220" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="flask-icon" value="🐍" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=32;" vertex="1" parent="1">
+          <mxGeometry x="550" y="795" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="flask-content" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;Flask ML API&lt;/b&gt;&lt;br&gt;localhost:5000&lt;br&gt;&lt;font color=&quot;#7f8c8d&quot;&gt;Python 3.9, NumPy, Scikit-learn&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="600" y="795" width="150" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- STModel to Flask -->
+        <mxCell id="st-flask" value="HTTP/REST (sync)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f1c40f;strokeWidth=3;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="stmodel-box" target="flask-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- ==================== EUREKA DISCOVERY ==================== -->
+        <mxCell id="eureka-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdedec;strokeColor=#e74c3c;strokeWidth=3;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="100" width="200" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="eureka-icon" value="📋" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=36;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="115" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="eureka-content" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;EUREKA SERVER&lt;/b&gt;&lt;br&gt;Discovery Service&lt;br&gt;localhost:8761&lt;br&gt;&lt;font color=&quot;#7f8c8d&quot;&gt;Spring Cloud Netflix&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="115" width="130" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Services to Eureka (registration) -->
+        <mxCell id="all-eureka" value="Service Registration" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e74c3c;strokeWidth=1;dashed=1;dashPattern=8 8;" edge="1" parent="1" source="backend-layer" target="eureka-box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1300" y="360"/>
+              <mxPoint x="1300" y="160"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- ==================== LEGEND ==================== -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#bdc3c7;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="780" width="300" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-title" value="📌 LÉGENDE" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="785" width="100" height="25" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="legend-1" value="Communication Synchrone (REST)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="815" width="200" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-1-line" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#3498db;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="55" y="825" as="sourcePoint"/>
+            <mxPoint x="85" y="825" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="legend-2" value="OpenFeign Client (Sync)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="840" width="200" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-2-line" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2ecc71;dashed=1;dashPattern=5 5;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="55" y="850" as="sourcePoint"/>
+            <mxPoint x="85" y="850" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="legend-3" value="Service Registration (Eureka)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="865" width="200" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-3-line" value="" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#e74c3c;dashed=1;dashPattern=8 8;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="55" y="875" as="sourcePoint"/>
+            <mxPoint x="85" y="875" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="legend-db" value="Base de données PostgreSQL" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="890" width="200" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-db-icon" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=5;fillColor=#3498db;strokeColor=#2874a6;fontSize=8;" vertex="1" parent="1">
+          <mxGeometry x="55" y="887" width="25" height="25" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="legend-tech" value="&lt;b&gt;Technologies:&lt;/b&gt; Java 17, Spring Boot 3.2, Spring Cloud 2023.0.0" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#7f8c8d;" vertex="1" parent="1">
+          <mxGeometry x="50" y="920" width="280" height="30" as="geometry"/>
+        </mxCell>
+        
+        <!-- ==================== COMMUNICATION TYPES BOX ==================== -->
+        <mxCell id="comm-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f8f5;strokeColor=#1abc9c;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="900" y="780" width="340" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="comm-title" value="🔗 COMMUNICATION INTER-SERVICES" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#1abc9c;" vertex="1" parent="1">
+          <mxGeometry x="910" y="785" width="280" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="comm-content" value="&lt;b&gt;Type:&lt;/b&gt; 100% Synchrone&lt;br&gt;&lt;br&gt;&lt;b&gt;Protocole:&lt;/b&gt; HTTP/REST&lt;br&gt;&lt;br&gt;&lt;b&gt;Client:&lt;/b&gt; OpenFeign (Spring Cloud)&lt;br&gt;&lt;br&gt;&lt;b&gt;Discovery:&lt;/b&gt; Netflix Eureka&lt;br&gt;&lt;br&gt;&lt;b&gt;Load Balancing:&lt;/b&gt; Spring Cloud LoadBalancer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="910" y="815" width="320" height="140" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

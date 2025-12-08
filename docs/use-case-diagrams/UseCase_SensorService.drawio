@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-01T00:00:00.000Z" agent="AquaWatch" version="21.0.0">
+  <diagram name="Sensor Service - Use Case Diagram" id="usecase-sensor">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="📊 SENSOR-SERVICE - Diagramme de Cas d'Utilisation" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- System Boundary -->
+        <mxCell id="system" value="Sensor-Service (Port 8081)" style="shape=umlFrame;whiteSpace=wrap;html=1;width=200;height=30;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="320" y="80" width="560" height="620" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ACTORS ==================== -->
+        
+        <!-- Admin/Operator Actor -->
+        <mxCell id="admin" value="Administrateur&#xa;/ Opérateur" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#1976D2;strokeColor=#0D47A1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- IoT Sensor Actor -->
+        <mxCell id="iot" value="Capteur IoT&#xa;(Automatique)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#4CAF50;strokeColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="100" y="400" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Other Microservices Actor -->
+        <mxCell id="microservices" value="Autres Services&#xa;(STModel, Map)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#FF9800;strokeColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="280" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== USE CASES - STATIONS ==================== -->
+        
+        <!-- UC: Créer Station -->
+        <mxCell id="uc_create_station" value="Créer une nouvelle&#xa;station de surveillance" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="110" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Consulter Stations -->
+        <mxCell id="uc_list_stations" value="Consulter la liste&#xa;des stations" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="110" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Modifier Station -->
+        <mxCell id="uc_update_station" value="Modifier les informations&#xa;d'une station" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="200" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Supprimer Station -->
+        <mxCell id="uc_delete_station" value="Supprimer&#xa;une station" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#D32F2F;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="200" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Consulter Détails Station -->
+        <mxCell id="uc_station_details" value="Consulter les détails&#xa;d'une station" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="290" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== USE CASES - MEASUREMENTS ==================== -->
+        
+        <!-- UC: Enregistrer Mesure Manuelle -->
+        <mxCell id="uc_manual_measure" value="Enregistrer une mesure&#xa;manuellement" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="290" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Recevoir Mesure IoT -->
+        <mxCell id="uc_iot_measure" value="Recevoir une mesure&#xa;IoT automatique" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="380" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Simuler Mesure -->
+        <mxCell id="uc_simulate" value="Simuler une mesure&#xa;IoT (test)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="380" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Consulter Historique -->
+        <mxCell id="uc_history" value="Consulter l'historique&#xa;des mesures" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="470" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Dernière Mesure -->
+        <mxCell id="uc_latest" value="Récupérer la dernière&#xa;mesure" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="470" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Filtrer par Type -->
+        <mxCell id="uc_filter" value="Filtrer stations&#xa;par type / commune" style="ellipse;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0288D1;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="560" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ASSOCIATIONS ==================== -->
+        
+        <!-- Admin associations -->
+        <mxCell id="assoc1" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="admin" target="uc_create_station">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc2" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="admin" target="uc_update_station">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc3" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="admin" target="uc_delete_station">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc4" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="admin" target="uc_list_stations">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc5" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="admin" target="uc_station_details">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc6" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="admin" target="uc_manual_measure">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc7" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="admin" target="uc_history">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc8" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="admin" target="uc_simulate">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- IoT associations -->
+        <mxCell id="assoc_iot" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#4CAF50;" edge="1" parent="1" source="iot" target="uc_iot_measure">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Microservices associations -->
+        <mxCell id="assoc_ms1" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#FF9800;" edge="1" parent="1" source="microservices" target="uc_list_stations">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc_ms2" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#FF9800;" edge="1" parent="1" source="microservices" target="uc_station_details">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc_ms3" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#FF9800;" edge="1" parent="1" source="microservices" target="uc_latest">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc_ms4" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#FF9800;" edge="1" parent="1" source="microservices" target="uc_history">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Include/Extend relationships -->
+        <mxCell id="include1" value="«include»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="uc_manual_measure" target="uc_station_details">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="include2" value="«include»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="uc_history" target="uc_station_details">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Légende" style="swimlane;horizontal=1;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="600" width="230" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1" value="Lecture (GET)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="35" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="Écriture (POST)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="35" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="Modification (PUT)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="75" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4" value="Suppression (DEL)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#D32F2F;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="75" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5" value="Test / Simulation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;" vertex="1" parent="legend">
+          <mxGeometry x="60" y="110" width="100" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

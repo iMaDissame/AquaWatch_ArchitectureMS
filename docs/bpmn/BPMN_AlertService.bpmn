@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" 
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" 
+                  id="Definitions_AlertService" 
+                  targetNamespace="http://aquawatch.ma/bpmn/alert">
+
+  <!-- ============================================= -->
+  <!-- ALERT SERVICE - PROCESSUS MÉTIERS            -->
+  <!-- ============================================= -->
+
+  <bpmn:process id="Process_GestionAlertes" name="Processus de Gestion des Alertes" isExecutable="true">
+    
+    <bpmn:startEvent id="Start_Alert" name="Réception demande d'alerte">
+      <bpmn:outgoing>Flow_A1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="Task_RecevoirDonnees" name="Recevoir données (stationId, score, status, sourceType)">
+      <bpmn:incoming>Flow_A1</bpmn:incoming>
+      <bpmn:outgoing>Flow_A2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_SourceType" name="Type de source?">
+      <bpmn:incoming>Flow_A2</bpmn:incoming>
+      <bpmn:outgoing>Flow_Observation</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Forecast</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:task id="Task_TypeObservation" name="AlertSourceType = OBSERVATION">
+      <bpmn:incoming>Flow_Observation</bpmn:incoming>
+      <bpmn:outgoing>Flow_O1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_TypeForecast" name="AlertSourceType = FORECAST">
+      <bpmn:incoming>Flow_Forecast</bpmn:incoming>
+      <bpmn:outgoing>Flow_F1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="Gateway_JoinType" name="">
+      <bpmn:incoming>Flow_O1</bpmn:incoming>
+      <bpmn:incoming>Flow_F1</bpmn:incoming>
+      <bpmn:outgoing>Flow_A3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:exclusiveGateway id="Gateway_Severity" name="Évaluer sévérité (score)">
+      <bpmn:incoming>Flow_A3</bpmn:incoming>
+      <bpmn:outgoing>Flow_Critical</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Warning</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Info</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:task id="Task_SeverityCritical" name="AlertSeverity = CRITICAL (score &lt; 40)">
+      <bpmn:incoming>Flow_Critical</bpmn:incoming>
+      <bpmn:outgoing>Flow_C1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_SeverityWarning" name="AlertSeverity = WARNING (40 ≤ score &lt; 60)">
+      <bpmn:incoming>Flow_Warning</bpmn:incoming>
+      <bpmn:outgoing>Flow_W1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_SeverityInfo" name="AlertSeverity = INFO (60 ≤ score &lt; 80)">
+      <bpmn:incoming>Flow_Info</bpmn:incoming>
+      <bpmn:outgoing>Flow_I1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="Gateway_JoinSeverity" name="">
+      <bpmn:incoming>Flow_C1</bpmn:incoming>
+      <bpmn:incoming>Flow_W1</bpmn:incoming>
+      <bpmn:incoming>Flow_I1</bpmn:incoming>
+      <bpmn:outgoing>Flow_A4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="Task_GenererMessage" name="Générer titre et message d'alerte">
+      <bpmn:incoming>Flow_A4</bpmn:incoming>
+      <bpmn:outgoing>Flow_A5</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_CreerAlert" name="Créer entité Alert (status = OPEN)">
+      <bpmn:incoming>Flow_A5</bpmn:incoming>
+      <bpmn:outgoing>Flow_A6</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_SauvegarderAlert" name="Sauvegarder dans alert_db">
+      <bpmn:incoming>Flow_A6</bpmn:incoming>
+      <bpmn:outgoing>Flow_A7</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_RetournerAlerte" name="Retourner AlertResponse">
+      <bpmn:incoming>Flow_A7</bpmn:incoming>
+      <bpmn:outgoing>Flow_AEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="End_Alert" name="Alerte créée">
+      <bpmn:incoming>Flow_AEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Sequence Flows -->
+    <bpmn:sequenceFlow id="Flow_A1" sourceRef="Start_Alert" targetRef="Task_RecevoirDonnees"/>
+    <bpmn:sequenceFlow id="Flow_A2" sourceRef="Task_RecevoirDonnees" targetRef="Gateway_SourceType"/>
+    <bpmn:sequenceFlow id="Flow_Observation" name="OBSERVATION" sourceRef="Gateway_SourceType" targetRef="Task_TypeObservation"/>
+    <bpmn:sequenceFlow id="Flow_Forecast" name="FORECAST" sourceRef="Gateway_SourceType" targetRef="Task_TypeForecast"/>
+    <bpmn:sequenceFlow id="Flow_O1" sourceRef="Task_TypeObservation" targetRef="Gateway_JoinType"/>
+    <bpmn:sequenceFlow id="Flow_F1" sourceRef="Task_TypeForecast" targetRef="Gateway_JoinType"/>
+    <bpmn:sequenceFlow id="Flow_A3" sourceRef="Gateway_JoinType" targetRef="Gateway_Severity"/>
+    <bpmn:sequenceFlow id="Flow_Critical" name="score &lt; 40" sourceRef="Gateway_Severity" targetRef="Task_SeverityCritical"/>
+    <bpmn:sequenceFlow id="Flow_Warning" name="40 ≤ score &lt; 60" sourceRef="Gateway_Severity" targetRef="Task_SeverityWarning"/>
+    <bpmn:sequenceFlow id="Flow_Info" name="60 ≤ score &lt; 80" sourceRef="Gateway_Severity" targetRef="Task_SeverityInfo"/>
+    <bpmn:sequenceFlow id="Flow_C1" sourceRef="Task_SeverityCritical" targetRef="Gateway_JoinSeverity"/>
+    <bpmn:sequenceFlow id="Flow_W1" sourceRef="Task_SeverityWarning" targetRef="Gateway_JoinSeverity"/>
+    <bpmn:sequenceFlow id="Flow_I1" sourceRef="Task_SeverityInfo" targetRef="Gateway_JoinSeverity"/>
+    <bpmn:sequenceFlow id="Flow_A4" sourceRef="Gateway_JoinSeverity" targetRef="Task_GenererMessage"/>
+    <bpmn:sequenceFlow id="Flow_A5" sourceRef="Task_GenererMessage" targetRef="Task_CreerAlert"/>
+    <bpmn:sequenceFlow id="Flow_A6" sourceRef="Task_CreerAlert" targetRef="Task_SauvegarderAlert"/>
+    <bpmn:sequenceFlow id="Flow_A7" sourceRef="Task_SauvegarderAlert" targetRef="Task_RetournerAlerte"/>
+    <bpmn:sequenceFlow id="Flow_AEnd" sourceRef="Task_RetournerAlerte" targetRef="End_Alert"/>
+
+  </bpmn:process>
+
+  <bpmn:process id="Process_TraitementAlerte" name="Processus de Traitement d'une Alerte" isExecutable="true">
+    
+    <bpmn:startEvent id="Start_Traitement" name="Alerte reçue par opérateur">
+      <bpmn:outgoing>Flow_T1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:userTask id="Task_ConsulterAlerte" name="Consulter détails de l'alerte">
+      <bpmn:incoming>Flow_T1</bpmn:incoming>
+      <bpmn:outgoing>Flow_T2</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_Action" name="Action choisie?">
+      <bpmn:incoming>Flow_T2</bpmn:incoming>
+      <bpmn:outgoing>Flow_Acknowledge</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Resolve</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Ignore</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="Task_Acknowledge" name="Acquitter alerte (status = ACKNOWLEDGED)">
+      <bpmn:incoming>Flow_Acknowledge</bpmn:incoming>
+      <bpmn:outgoing>Flow_Ack1</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_Resolve" name="Résoudre alerte (status = RESOLVED, resolvedAt = now)">
+      <bpmn:incoming>Flow_Resolve</bpmn:incoming>
+      <bpmn:outgoing>Flow_Res1</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:task id="Task_Ignore" name="Ignorer (aucune action)">
+      <bpmn:incoming>Flow_Ignore</bpmn:incoming>
+      <bpmn:outgoing>Flow_Ign1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="Gateway_JoinAction" name="">
+      <bpmn:incoming>Flow_Ack1</bpmn:incoming>
+      <bpmn:incoming>Flow_Res1</bpmn:incoming>
+      <bpmn:incoming>Flow_Ign1</bpmn:incoming>
+      <bpmn:outgoing>Flow_TEnd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:endEvent id="End_Traitement" name="Traitement terminé">
+      <bpmn:incoming>Flow_TEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_T1" sourceRef="Start_Traitement" targetRef="Task_ConsulterAlerte"/>
+    <bpmn:sequenceFlow id="Flow_T2" sourceRef="Task_ConsulterAlerte" targetRef="Gateway_Action"/>
+    <bpmn:sequenceFlow id="Flow_Acknowledge" name="Acquitter" sourceRef="Gateway_Action" targetRef="Task_Acknowledge"/>
+    <bpmn:sequenceFlow id="Flow_Resolve" name="Résoudre" sourceRef="Gateway_Action" targetRef="Task_Resolve"/>
+    <bpmn:sequenceFlow id="Flow_Ignore" name="Ignorer" sourceRef="Gateway_Action" targetRef="Task_Ignore"/>
+    <bpmn:sequenceFlow id="Flow_Ack1" sourceRef="Task_Acknowledge" targetRef="Gateway_JoinAction"/>
+    <bpmn:sequenceFlow id="Flow_Res1" sourceRef="Task_Resolve" targetRef="Gateway_JoinAction"/>
+    <bpmn:sequenceFlow id="Flow_Ign1" sourceRef="Task_Ignore" targetRef="Gateway_JoinAction"/>
+    <bpmn:sequenceFlow id="Flow_TEnd" sourceRef="Gateway_JoinAction" targetRef="End_Traitement"/>
+
+  </bpmn:process>
+
+  <!-- DIAGRAMME BPMN -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Alert">
+    <bpmndi:BPMNPlane id="BPMNPlane_Alert" bpmnElement="Process_GestionAlertes">
+      
+      <bpmndi:BPMNShape id="Start_Alert_di" bpmnElement="Start_Alert">
+        <dc:Bounds x="152" y="282" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_RecevoirDonnees_di" bpmnElement="Task_RecevoirDonnees">
+        <dc:Bounds x="240" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_SourceType_di" bpmnElement="Gateway_SourceType" isMarkerVisible="true">
+        <dc:Bounds x="395" y="275" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_TypeObservation_di" bpmnElement="Task_TypeObservation">
+        <dc:Bounds x="500" y="180" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_TypeForecast_di" bpmnElement="Task_TypeForecast">
+        <dc:Bounds x="500" y="340" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_JoinType_di" bpmnElement="Gateway_JoinType" isMarkerVisible="true">
+        <dc:Bounds x="655" y="275" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_Severity_di" bpmnElement="Gateway_Severity" isMarkerVisible="true">
+        <dc:Bounds x="755" y="275" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SeverityCritical_di" bpmnElement="Task_SeverityCritical">
+        <dc:Bounds x="860" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SeverityWarning_di" bpmnElement="Task_SeverityWarning">
+        <dc:Bounds x="860" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SeverityInfo_di" bpmnElement="Task_SeverityInfo">
+        <dc:Bounds x="860" y="360" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_JoinSeverity_di" bpmnElement="Gateway_JoinSeverity" isMarkerVisible="true">
+        <dc:Bounds x="1015" y="275" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_GenererMessage_di" bpmnElement="Task_GenererMessage">
+        <dc:Bounds x="1120" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CreerAlert_di" bpmnElement="Task_CreerAlert">
+        <dc:Bounds x="1270" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SauvegarderAlert_di" bpmnElement="Task_SauvegarderAlert">
+        <dc:Bounds x="1420" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_RetournerAlerte_di" bpmnElement="Task_RetournerAlerte">
+        <dc:Bounds x="1570" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="End_Alert_di" bpmnElement="End_Alert">
+        <dc:Bounds x="1722" y="282" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Edges -->
+      <bpmndi:BPMNEdge id="Flow_A1_di" bpmnElement="Flow_A1">
+        <di:waypoint x="188" y="300"/>
+        <di:waypoint x="240" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_A2_di" bpmnElement="Flow_A2">
+        <di:waypoint x="340" y="300"/>
+        <di:waypoint x="395" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Observation_di" bpmnElement="Flow_Observation">
+        <di:waypoint x="420" y="275"/>
+        <di:waypoint x="420" y="220"/>
+        <di:waypoint x="500" y="220"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Forecast_di" bpmnElement="Flow_Forecast">
+        <di:waypoint x="420" y="325"/>
+        <di:waypoint x="420" y="380"/>
+        <di:waypoint x="500" y="380"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_O1_di" bpmnElement="Flow_O1">
+        <di:waypoint x="600" y="220"/>
+        <di:waypoint x="680" y="220"/>
+        <di:waypoint x="680" y="275"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_F1_di" bpmnElement="Flow_F1">
+        <di:waypoint x="600" y="380"/>
+        <di:waypoint x="680" y="380"/>
+        <di:waypoint x="680" y="325"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_A3_di" bpmnElement="Flow_A3">
+        <di:waypoint x="705" y="300"/>
+        <di:waypoint x="755" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Critical_di" bpmnElement="Flow_Critical">
+        <di:waypoint x="780" y="275"/>
+        <di:waypoint x="780" y="200"/>
+        <di:waypoint x="860" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Warning_di" bpmnElement="Flow_Warning">
+        <di:waypoint x="805" y="300"/>
+        <di:waypoint x="860" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Info_di" bpmnElement="Flow_Info">
+        <di:waypoint x="780" y="325"/>
+        <di:waypoint x="780" y="400"/>
+        <di:waypoint x="860" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_C1_di" bpmnElement="Flow_C1">
+        <di:waypoint x="960" y="200"/>
+        <di:waypoint x="1040" y="200"/>
+        <di:waypoint x="1040" y="275"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_W1_di" bpmnElement="Flow_W1">
+        <di:waypoint x="960" y="300"/>
+        <di:waypoint x="1015" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_I1_di" bpmnElement="Flow_I1">
+        <di:waypoint x="960" y="400"/>
+        <di:waypoint x="1040" y="400"/>
+        <di:waypoint x="1040" y="325"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_A4_di" bpmnElement="Flow_A4">
+        <di:waypoint x="1065" y="300"/>
+        <di:waypoint x="1120" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_A5_di" bpmnElement="Flow_A5">
+        <di:waypoint x="1220" y="300"/>
+        <di:waypoint x="1270" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_A6_di" bpmnElement="Flow_A6">
+        <di:waypoint x="1370" y="300"/>
+        <di:waypoint x="1420" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_A7_di" bpmnElement="Flow_A7">
+        <di:waypoint x="1520" y="300"/>
+        <di:waypoint x="1570" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_AEnd_di" bpmnElement="Flow_AEnd">
+        <di:waypoint x="1670" y="300"/>
+        <di:waypoint x="1722" y="300"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</bpmn:definitions>

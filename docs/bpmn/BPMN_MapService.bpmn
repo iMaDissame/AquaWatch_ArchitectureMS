@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" 
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" 
+                  id="Definitions_MapService" 
+                  targetNamespace="http://aquawatch.ma/bpmn/map">
+
+  <!-- ============================================= -->
+  <!-- MAP SERVICE - PROCESSUS MÉTIERS              -->
+  <!-- ============================================= -->
+
+  <bpmn:process id="Process_AffichageCarte" name="Processus d'Affichage de la Carte" isExecutable="true">
+    
+    <bpmn:startEvent id="Start_Map" name="Demande d'affichage carte">
+      <bpmn:outgoing>Flow_M1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="Task_RecevoirRequete" name="Recevoir requête GET /api/map/stations">
+      <bpmn:incoming>Flow_M1</bpmn:incoming>
+      <bpmn:outgoing>Flow_M2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_AppelerSensorService" name="Appeler Sensor-Service via Feign (getAllStations)">
+      <bpmn:incoming>Flow_M2</bpmn:incoming>
+      <bpmn:outgoing>Flow_M3</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_AppelerSTModelService" name="Appeler STModel-Service via Feign (getLatestObservations)">
+      <bpmn:incoming>Flow_M3</bpmn:incoming>
+      <bpmn:outgoing>Flow_M4</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_AppelerAlertService" name="Appeler Alert-Service via Feign (getActiveAlerts)">
+      <bpmn:incoming>Flow_M4</bpmn:incoming>
+      <bpmn:outgoing>Flow_M5</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_AgregerDonnees" name="Agréger données (stations + observations + alertes)">
+      <bpmn:incoming>Flow_M5</bpmn:incoming>
+      <bpmn:outgoing>Flow_M6</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_CalculerStatuts" name="Calculer statut qualité par station">
+      <bpmn:incoming>Flow_M6</bpmn:incoming>
+      <bpmn:outgoing>Flow_M7</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_GenererGeoJSON" name="Générer GeoJSON avec coordonnées et propriétés">
+      <bpmn:incoming>Flow_M7</bpmn:incoming>
+      <bpmn:outgoing>Flow_M8</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_RetournerGeoJSON" name="Retourner réponse GeoJSON">
+      <bpmn:incoming>Flow_M8</bpmn:incoming>
+      <bpmn:outgoing>Flow_MEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="End_Map" name="Carte affichée">
+      <bpmn:incoming>Flow_MEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Sequence Flows -->
+    <bpmn:sequenceFlow id="Flow_M1" sourceRef="Start_Map" targetRef="Task_RecevoirRequete"/>
+    <bpmn:sequenceFlow id="Flow_M2" sourceRef="Task_RecevoirRequete" targetRef="Task_AppelerSensorService"/>
+    <bpmn:sequenceFlow id="Flow_M3" sourceRef="Task_AppelerSensorService" targetRef="Task_AppelerSTModelService"/>
+    <bpmn:sequenceFlow id="Flow_M4" sourceRef="Task_AppelerSTModelService" targetRef="Task_AppelerAlertService"/>
+    <bpmn:sequenceFlow id="Flow_M5" sourceRef="Task_AppelerAlertService" targetRef="Task_AgregerDonnees"/>
+    <bpmn:sequenceFlow id="Flow_M6" sourceRef="Task_AgregerDonnees" targetRef="Task_CalculerStatuts"/>
+    <bpmn:sequenceFlow id="Flow_M7" sourceRef="Task_CalculerStatuts" targetRef="Task_GenererGeoJSON"/>
+    <bpmn:sequenceFlow id="Flow_M8" sourceRef="Task_GenererGeoJSON" targetRef="Task_RetournerGeoJSON"/>
+    <bpmn:sequenceFlow id="Flow_MEnd" sourceRef="Task_RetournerGeoJSON" targetRef="End_Map"/>
+
+  </bpmn:process>
+
+  <bpmn:process id="Process_DetailsStation" name="Processus Détails d'une Station" isExecutable="true">
+    
+    <bpmn:startEvent id="Start_Details" name="Demande détails station">
+      <bpmn:outgoing>Flow_D1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="Task_RecevoirIdStation" name="Recevoir GET /api/map/stations/{id}">
+      <bpmn:incoming>Flow_D1</bpmn:incoming>
+      <bpmn:outgoing>Flow_D2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:parallelGateway id="Gateway_Parallel" name="Appels parallèles">
+      <bpmn:incoming>Flow_D2</bpmn:incoming>
+      <bpmn:outgoing>Flow_Station</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Mesures</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Observations</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Alertes</bpmn:outgoing>
+    </bpmn:parallelGateway>
+
+    <bpmn:serviceTask id="Task_GetStation" name="Récupérer infos station">
+      <bpmn:incoming>Flow_Station</bpmn:incoming>
+      <bpmn:outgoing>Flow_S1</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_GetMesures" name="Récupérer dernières mesures">
+      <bpmn:incoming>Flow_Mesures</bpmn:incoming>
+      <bpmn:outgoing>Flow_Me1</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_GetObservations" name="Récupérer historique observations">
+      <bpmn:incoming>Flow_Observations</bpmn:incoming>
+      <bpmn:outgoing>Flow_O1</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_GetAlertes" name="Récupérer alertes actives">
+      <bpmn:incoming>Flow_Alertes</bpmn:incoming>
+      <bpmn:outgoing>Flow_Al1</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:parallelGateway id="Gateway_Join" name="">
+      <bpmn:incoming>Flow_S1</bpmn:incoming>
+      <bpmn:incoming>Flow_Me1</bpmn:incoming>
+      <bpmn:incoming>Flow_O1</bpmn:incoming>
+      <bpmn:incoming>Flow_Al1</bpmn:incoming>
+      <bpmn:outgoing>Flow_D3</bpmn:outgoing>
+    </bpmn:parallelGateway>
+
+    <bpmn:serviceTask id="Task_ConstruirePopup" name="Construire données popup (StationMapDTO)">
+      <bpmn:incoming>Flow_D3</bpmn:incoming>
+      <bpmn:outgoing>Flow_D4</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_RetournerDetails" name="Retourner détails station">
+      <bpmn:incoming>Flow_D4</bpmn:incoming>
+      <bpmn:outgoing>Flow_DEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="End_Details" name="Popup affiché">
+      <bpmn:incoming>Flow_DEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_D1" sourceRef="Start_Details" targetRef="Task_RecevoirIdStation"/>
+    <bpmn:sequenceFlow id="Flow_D2" sourceRef="Task_RecevoirIdStation" targetRef="Gateway_Parallel"/>
+    <bpmn:sequenceFlow id="Flow_Station" sourceRef="Gateway_Parallel" targetRef="Task_GetStation"/>
+    <bpmn:sequenceFlow id="Flow_Mesures" sourceRef="Gateway_Parallel" targetRef="Task_GetMesures"/>
+    <bpmn:sequenceFlow id="Flow_Observations" sourceRef="Gateway_Parallel" targetRef="Task_GetObservations"/>
+    <bpmn:sequenceFlow id="Flow_Alertes" sourceRef="Gateway_Parallel" targetRef="Task_GetAlertes"/>
+    <bpmn:sequenceFlow id="Flow_S1" sourceRef="Task_GetStation" targetRef="Gateway_Join"/>
+    <bpmn:sequenceFlow id="Flow_Me1" sourceRef="Task_GetMesures" targetRef="Gateway_Join"/>
+    <bpmn:sequenceFlow id="Flow_O1" sourceRef="Task_GetObservations" targetRef="Gateway_Join"/>
+    <bpmn:sequenceFlow id="Flow_Al1" sourceRef="Task_GetAlertes" targetRef="Gateway_Join"/>
+    <bpmn:sequenceFlow id="Flow_D3" sourceRef="Gateway_Join" targetRef="Task_ConstruirePopup"/>
+    <bpmn:sequenceFlow id="Flow_D4" sourceRef="Task_ConstruirePopup" targetRef="Task_RetournerDetails"/>
+    <bpmn:sequenceFlow id="Flow_DEnd" sourceRef="Task_RetournerDetails" targetRef="End_Details"/>
+
+  </bpmn:process>
+
+  <bpmn:process id="Process_ExportGeoJSON" name="Processus Export GeoJSON" isExecutable="true">
+    
+    <bpmn:startEvent id="Start_Export" name="Demande export GeoJSON">
+      <bpmn:outgoing>Flow_E1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="Task_RecevoirExport" name="Recevoir GET /api/map/export/geojson">
+      <bpmn:incoming>Flow_E1</bpmn:incoming>
+      <bpmn:outgoing>Flow_E2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_CollecterStations" name="Collecter toutes les stations">
+      <bpmn:incoming>Flow_E2</bpmn:incoming>
+      <bpmn:outgoing>Flow_E3</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_CollecterQualite" name="Collecter données qualité actuelles">
+      <bpmn:incoming>Flow_E3</bpmn:incoming>
+      <bpmn:outgoing>Flow_E4</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_GenererFeatures" name="Générer FeatureCollection GeoJSON">
+      <bpmn:incoming>Flow_E4</bpmn:incoming>
+      <bpmn:outgoing>Flow_E5</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_RetournerExport" name="Retourner fichier GeoJSON">
+      <bpmn:incoming>Flow_E5</bpmn:incoming>
+      <bpmn:outgoing>Flow_EEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="End_Export" name="Export terminé">
+      <bpmn:incoming>Flow_EEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_E1" sourceRef="Start_Export" targetRef="Task_RecevoirExport"/>
+    <bpmn:sequenceFlow id="Flow_E2" sourceRef="Task_RecevoirExport" targetRef="Task_CollecterStations"/>
+    <bpmn:sequenceFlow id="Flow_E3" sourceRef="Task_CollecterStations" targetRef="Task_CollecterQualite"/>
+    <bpmn:sequenceFlow id="Flow_E4" sourceRef="Task_CollecterQualite" targetRef="Task_GenererFeatures"/>
+    <bpmn:sequenceFlow id="Flow_E5" sourceRef="Task_GenererFeatures" targetRef="Task_RetournerExport"/>
+    <bpmn:sequenceFlow id="Flow_EEnd" sourceRef="Task_RetournerExport" targetRef="End_Export"/>
+
+  </bpmn:process>
+
+  <!-- DIAGRAMME BPMN - Processus Principal -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Map">
+    <bpmndi:BPMNPlane id="BPMNPlane_Map" bpmnElement="Process_AffichageCarte">
+      
+      <bpmndi:BPMNShape id="Start_Map_di" bpmnElement="Start_Map">
+        <dc:Bounds x="152" y="182" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_RecevoirRequete_di" bpmnElement="Task_RecevoirRequete">
+        <dc:Bounds x="240" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_AppelerSensorService_di" bpmnElement="Task_AppelerSensorService">
+        <dc:Bounds x="390" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_AppelerSTModelService_di" bpmnElement="Task_AppelerSTModelService">
+        <dc:Bounds x="540" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_AppelerAlertService_di" bpmnElement="Task_AppelerAlertService">
+        <dc:Bounds x="690" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_AgregerDonnees_di" bpmnElement="Task_AgregerDonnees">
+        <dc:Bounds x="840" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CalculerStatuts_di" bpmnElement="Task_CalculerStatuts">
+        <dc:Bounds x="990" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_GenererGeoJSON_di" bpmnElement="Task_GenererGeoJSON">
+        <dc:Bounds x="1140" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_RetournerGeoJSON_di" bpmnElement="Task_RetournerGeoJSON">
+        <dc:Bounds x="1290" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="End_Map_di" bpmnElement="End_Map">
+        <dc:Bounds x="1442" y="182" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Edges -->
+      <bpmndi:BPMNEdge id="Flow_M1_di" bpmnElement="Flow_M1">
+        <di:waypoint x="188" y="200"/>
+        <di:waypoint x="240" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_M2_di" bpmnElement="Flow_M2">
+        <di:waypoint x="340" y="200"/>
+        <di:waypoint x="390" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_M3_di" bpmnElement="Flow_M3">
+        <di:waypoint x="490" y="200"/>
+        <di:waypoint x="540" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_M4_di" bpmnElement="Flow_M4">
+        <di:waypoint x="640" y="200"/>
+        <di:waypoint x="690" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_M5_di" bpmnElement="Flow_M5">
+        <di:waypoint x="790" y="200"/>
+        <di:waypoint x="840" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_M6_di" bpmnElement="Flow_M6">
+        <di:waypoint x="940" y="200"/>
+        <di:waypoint x="990" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_M7_di" bpmnElement="Flow_M7">
+        <di:waypoint x="1090" y="200"/>
+        <di:waypoint x="1140" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_M8_di" bpmnElement="Flow_M8">
+        <di:waypoint x="1240" y="200"/>
+        <di:waypoint x="1290" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_MEnd_di" bpmnElement="Flow_MEnd">
+        <di:waypoint x="1390" y="200"/>
+        <di:waypoint x="1442" y="200"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</bpmn:definitions>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-01T00:00:00.000Z" agent="AquaWatch" version="21.0.0">
+  <diagram name="Sensor Service - Class Diagram" id="class-sensor">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="📊 SENSOR-SERVICE - Diagramme de Classes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="400" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ENTITIES ==================== -->
+        
+        <!-- Station Entity -->
+        <mxCell id="station" value="&lt;b&gt;Station&lt;/b&gt;&lt;br&gt;@Entity" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="100" y="100" width="250" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="station_attrs" value="- id: Long&#xa;- code: String&#xa;- name: String&#xa;- type: StationType&#xa;- latitude: Double&#xa;- longitude: Double&#xa;- commune: String&#xa;- description: String&#xa;- createdAt: LocalDateTime&#xa;- updatedAt: LocalDateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="station">
+          <mxGeometry y="40" width="250" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="station_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="station">
+          <mxGeometry y="180" width="250" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="station_methods" value="+ getId(): Long&#xa;+ setters/getters&#xa;+ toString(): String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="station">
+          <mxGeometry y="188" width="250" height="72" as="geometry"/>
+        </mxCell>
+
+        <!-- StationType Enum -->
+        <mxCell id="stationtype" value="&lt;b&gt;«enumeration»&lt;/b&gt;&#xa;StationType" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="100" y="400" width="150" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationtype_vals" value="RIVER&#xa;LAKE&#xa;COASTAL&#xa;GROUNDWATER&#xa;RESERVOIR" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stationtype">
+          <mxGeometry y="40" width="150" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- SensorMeasurement Entity -->
+        <mxCell id="measurement" value="&lt;b&gt;SensorMeasurement&lt;/b&gt;&lt;br&gt;@Entity" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="400" y="100" width="250" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurement_attrs" value="- id: Long&#xa;- station: Station&#xa;- timestamp: LocalDateTime&#xa;- ph: Double&#xa;- temperature: Double&#xa;- turbidity: Double&#xa;- dissolvedOxygen: Double&#xa;- conductivity: Double&#xa;- source: MeasurementSource&#xa;- createdAt: LocalDateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="measurement">
+          <mxGeometry y="40" width="250" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurement_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="measurement">
+          <mxGeometry y="200" width="250" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurement_methods" value="+ getId(): Long&#xa;+ getStation(): Station&#xa;+ setters/getters" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="measurement">
+          <mxGeometry y="208" width="250" height="72" as="geometry"/>
+        </mxCell>
+
+        <!-- MeasurementSource Enum -->
+        <mxCell id="msource" value="&lt;b&gt;«enumeration»&lt;/b&gt;&#xa;MeasurementSource" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="400" y="420" width="150" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="msource_vals" value="IOT_SENSOR&#xa;MANUAL&#xa;SATELLITE&#xa;SIMULATION" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="msource">
+          <mxGeometry y="40" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== REPOSITORY ==================== -->
+        
+        <!-- StationRepository -->
+        <mxCell id="stationrepo" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;StationRepository" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#d5e8d4;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="700" y="100" width="280" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationrepo_ext" value="extends JpaRepository&lt;Station, Long&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="stationrepo">
+          <mxGeometry y="40" width="280" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationrepo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="stationrepo">
+          <mxGeometry y="60" width="280" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationrepo_methods" value="+ findByCode(code: String): Optional&lt;Station&gt;&#xa;+ findByType(type: StationType): List&lt;Station&gt;&#xa;+ findByCommune(commune: String): List&lt;Station&gt;&#xa;+ existsByCode(code: String): boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stationrepo">
+          <mxGeometry y="68" width="280" height="92" as="geometry"/>
+        </mxCell>
+
+        <!-- SensorMeasurementRepository -->
+        <mxCell id="measurementrepo" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;SensorMeasurementRepository" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#d5e8d4;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="700" y="300" width="350" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementrepo_ext" value="extends JpaRepository&lt;SensorMeasurement, Long&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="measurementrepo">
+          <mxGeometry y="40" width="350" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementrepo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="measurementrepo">
+          <mxGeometry y="60" width="350" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementrepo_methods" value="+ findByStationId(stationId: Long): List&lt;SensorMeasurement&gt;&#xa;+ findLatestByStationId(stationId: Long): Optional&lt;SensorMeasurement&gt;&#xa;+ findByTimestampBetween(start, end): List&lt;SensorMeasurement&gt;&#xa;+ findBySource(source: MeasurementSource): List&lt;...&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="measurementrepo">
+          <mxGeometry y="68" width="350" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== SERVICE ==================== -->
+        
+        <!-- StationService -->
+        <mxCell id="stationservice" value="&lt;b&gt;StationService&lt;/b&gt;&lt;br&gt;@Service" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#e1d5e7;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="100" width="350" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationservice_attrs" value="- stationRepository: StationRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stationservice">
+          <mxGeometry y="40" width="350" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationservice_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="stationservice">
+          <mxGeometry y="65" width="350" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationservice_methods" value="+ getAllStations(): List&lt;StationResponse&gt;&#xa;+ getStationById(id: Long): StationResponse&#xa;+ createStation(request: StationRequest): StationResponse&#xa;+ updateStation(id: Long, request: StationRequest): StationResponse&#xa;+ deleteStation(id: Long): void&#xa;+ getStationsByType(type: StationType): List&lt;StationResponse&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stationservice">
+          <mxGeometry y="73" width="350" height="127" as="geometry"/>
+        </mxCell>
+
+        <!-- MeasurementService -->
+        <mxCell id="measurementservice" value="&lt;b&gt;SensorMeasurementService&lt;/b&gt;&lt;br&gt;@Service" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#e1d5e7;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="340" width="380" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementservice_attrs" value="- measurementRepository: SensorMeasurementRepository&#xa;- stationRepository: StationRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="measurementservice">
+          <mxGeometry y="40" width="380" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementservice_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="measurementservice">
+          <mxGeometry y="80" width="380" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementservice_methods" value="+ recordMeasurement(request: MeasurementRequest): MeasurementResponse&#xa;+ getMeasurementsByStation(stationId: Long): List&lt;MeasurementResponse&gt;&#xa;+ getLatestMeasurement(stationId: Long): MeasurementResponse&#xa;+ simulateIoTMeasurement(stationId: Long): MeasurementResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="measurementservice">
+          <mxGeometry y="88" width="380" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== CONTROLLER ==================== -->
+        
+        <!-- StationController -->
+        <mxCell id="stationcontroller" value="&lt;b&gt;StationController&lt;/b&gt;&lt;br&gt;@RestController" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#f8cecc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="100" y="580" width="400" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationcontroller_attrs" value="- stationService: StationService&#xa;@RequestMapping(&quot;/api/stations&quot;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stationcontroller">
+          <mxGeometry y="40" width="400" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationcontroller_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="stationcontroller">
+          <mxGeometry y="80" width="400" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="stationcontroller_methods" value="@GetMapping + getAllStations(): ResponseEntity&lt;List&lt;StationResponse&gt;&gt;&#xa;@GetMapping(&quot;/{id}&quot;) + getStation(id): ResponseEntity&lt;StationResponse&gt;&#xa;@PostMapping + createStation(request): ResponseEntity&lt;StationResponse&gt;&#xa;@PutMapping(&quot;/{id}&quot;) + updateStation(id, request): ResponseEntity&lt;...&gt;&#xa;@DeleteMapping(&quot;/{id}&quot;) + deleteStation(id): ResponseEntity&lt;Void&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stationcontroller">
+          <mxGeometry y="88" width="400" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- MeasurementController -->
+        <mxCell id="measurementcontroller" value="&lt;b&gt;SensorMeasurementController&lt;/b&gt;&lt;br&gt;@RestController" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#f8cecc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="550" y="580" width="450" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementcontroller_attrs" value="- measurementService: SensorMeasurementService&#xa;@RequestMapping(&quot;/api/measurements&quot;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="measurementcontroller">
+          <mxGeometry y="40" width="450" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementcontroller_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="measurementcontroller">
+          <mxGeometry y="80" width="450" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="measurementcontroller_methods" value="@PostMapping + recordMeasurement(request): ResponseEntity&lt;MeasurementResponse&gt;&#xa;@GetMapping(&quot;/station/{stationId}&quot;) + getByStation(stationId): ResponseEntity&lt;List&lt;...&gt;&gt;&#xa;@GetMapping(&quot;/station/{stationId}/latest&quot;) + getLatest(stationId): ResponseEntity&lt;...&gt;&#xa;@PostMapping(&quot;/simulate/{stationId}&quot;) + simulateIoT(stationId): ResponseEntity&lt;...&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="measurementcontroller">
+          <mxGeometry y="88" width="450" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== DTO ==================== -->
+        
+        <!-- DTOs Group -->
+        <mxCell id="dtos" value="📦 DTOs" style="swimlane;horizontal=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="580" width="500" height="200" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="stationrequest" value="StationRequest&#xa;- code, name, type&#xa;- latitude, longitude&#xa;- commune, description" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="40" width="140" height="70" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="stationresponse" value="StationResponse&#xa;- id, code, name, type&#xa;- latitude, longitude&#xa;- commune, description&#xa;- createdAt, updatedAt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="180" y="40" width="150" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="measurementrequest" value="MeasurementRequest&#xa;- stationId, timestamp&#xa;- ph, temperature&#xa;- turbidity, dissolvedOxygen&#xa;- conductivity, source" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="120" width="160" height="70" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="measurementresponse" value="MeasurementResponse&#xa;- id, stationId, timestamp&#xa;- ph, temperature, turbidity&#xa;- dissolvedOxygen&#xa;- conductivity, source" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="200" y="120" width="160" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== RELATIONS ==================== -->
+        
+        <!-- Station - SensorMeasurement (1..*) -->
+        <mxCell id="rel1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=diamondThin;endFill=1;strokeWidth=2;" edge="1" parent="1" source="measurement_attrs" target="station_attrs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel1_label" value="1..*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="355" y="180" width="30" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Repository uses Entity -->
+        <mxCell id="rel2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="stationrepo" target="station">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Service uses Repository -->
+        <mxCell id="rel3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="stationservice" target="stationrepo">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Controller uses Service -->
+        <mxCell id="rel4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="stationcontroller" target="stationservice">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="560"/>
+              <mxPoint x="1275" y="560"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Légende" style="swimlane;horizontal=1;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="100" width="200" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1" value="Entity (@Entity)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="35" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="Repository" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="35" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="70" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4" value="Controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="70" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5" value="Enum" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="105" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg6" value="DTO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="105" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg7" value="--- &gt; Dependency" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="140" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg8" value="◆ Composition" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="140" width="90" height="20" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

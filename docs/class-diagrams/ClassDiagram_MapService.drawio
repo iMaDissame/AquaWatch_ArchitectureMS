@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-01T00:00:00.000Z" agent="AquaWatch" version="21.0.0">
+  <diagram name="Map Service - Class Diagram" id="class-map">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="🗺️ MAP-SERVICE - Diagramme de Classes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="400" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== FEIGN CLIENTS ==================== -->
+        
+        <!-- SensorServiceClient -->
+        <mxCell id="sensorclient" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;SensorServiceClient&#xa;@FeignClient(&quot;sensor-service&quot;)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=60;fillColor=#ffe6cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="100" y="100" width="350" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="sensorclient_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="sensorclient">
+          <mxGeometry y="60" width="350" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="sensorclient_methods" value="@GetMapping(&quot;/api/stations&quot;)&#xa;+ getAllStations(): List&lt;StationResponse&gt;&#xa;@GetMapping(&quot;/api/stations/{id}&quot;)&#xa;+ getStation(id: Long): StationResponse&#xa;@GetMapping(&quot;/api/measurements/station/{id}/latest&quot;)&#xa;+ getLatestMeasurement(id: Long): MeasurementResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="sensorclient">
+          <mxGeometry y="68" width="350" height="92" as="geometry"/>
+        </mxCell>
+
+        <!-- STModelServiceClient -->
+        <mxCell id="stmodelclient" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;STModelServiceClient&#xa;@FeignClient(&quot;stmodel-service&quot;)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=60;fillColor=#ffe6cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="500" y="100" width="380" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="stmodelclient_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="stmodelclient">
+          <mxGeometry y="60" width="380" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="stmodelclient_methods" value="@GetMapping(&quot;/api/quality/observations/station/{id}/latest&quot;)&#xa;+ getLatestObservation(id: Long): ObservationResponse&#xa;@GetMapping(&quot;/api/quality/observations/station/{id}&quot;)&#xa;+ getObservationsByStation(id: Long): List&lt;ObservationResponse&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stmodelclient">
+          <mxGeometry y="68" width="380" height="92" as="geometry"/>
+        </mxCell>
+
+        <!-- AlertServiceClient -->
+        <mxCell id="alertclient" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;AlertServiceClient&#xa;@FeignClient(&quot;alert-service&quot;)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=60;fillColor=#ffe6cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="930" y="100" width="350" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="alertclient_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="alertclient">
+          <mxGeometry y="60" width="350" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="alertclient_methods" value="@GetMapping(&quot;/api/alerts/active&quot;)&#xa;+ getActiveAlerts(): List&lt;AlertResponse&gt;&#xa;@GetMapping(&quot;/api/alerts/station/{stationId}&quot;)&#xa;+ getAlertsByStation(stationId: Long): List&lt;AlertResponse&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="alertclient">
+          <mxGeometry y="68" width="350" height="72" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== SERVICE ==================== -->
+        
+        <!-- MapService -->
+        <mxCell id="mapservice" value="&lt;b&gt;MapService&lt;/b&gt;&lt;br&gt;@Service" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#e1d5e7;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="100" y="300" width="450" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="mapservice_attrs" value="- sensorServiceClient: SensorServiceClient&#xa;- stmodelServiceClient: STModelServiceClient&#xa;- alertServiceClient: AlertServiceClient" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="mapservice">
+          <mxGeometry y="40" width="450" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="mapservice_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="mapservice">
+          <mxGeometry y="90" width="450" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="mapservice_methods" value="+ getAllStationsForMap(): List&lt;StationMapDTO&gt;&#xa;+ getStationDetails(stationId: Long): StationMapDetailDTO&#xa;+ getGeoJsonFeatureCollection(): GeoJsonFeatureCollection&#xa;+ getStationsWithQualityStatus(): List&lt;StationQualityDTO&gt;&#xa;+ getActiveAlertsForMap(): List&lt;AlertMapDTO&gt;&#xa;+ getMapStatistics(): MapStatisticsDTO&#xa;- aggregateStationData(station: StationResponse): StationMapDTO&#xa;- buildGeoJsonFeature(station: StationMapDTO): GeoJsonFeature&#xa;- determineMarkerColor(status: QualityStatus): String&#xa;- calculateBounds(stations: List&lt;StationMapDTO&gt;): BoundingBox" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="mapservice">
+          <mxGeometry y="98" width="450" height="182" as="geometry"/>
+        </mxCell>
+
+        <!-- GeoJsonService -->
+        <mxCell id="geojsonservice" value="&lt;b&gt;GeoJsonService&lt;/b&gt;&lt;br&gt;@Service" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#e1d5e7;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="600" y="300" width="400" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="geojsonservice_attrs" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="geojsonservice">
+          <mxGeometry y="40" width="400" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="geojsonservice_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="geojsonservice">
+          <mxGeometry y="60" width="400" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="geojsonservice_methods" value="+ createFeatureCollection(stations: List&lt;StationMapDTO&gt;): GeoJsonFeatureCollection&#xa;+ createFeature(station: StationMapDTO): GeoJsonFeature&#xa;+ createPointGeometry(lat: Double, lon: Double): GeoJsonGeometry&#xa;+ createProperties(station: StationMapDTO): Map&lt;String, Object&gt;&#xa;+ exportToFile(collection: GeoJsonFeatureCollection, path: String): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="geojsonservice">
+          <mxGeometry y="68" width="400" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== CONTROLLER ==================== -->
+        
+        <!-- MapController -->
+        <mxCell id="mapcontroller" value="&lt;b&gt;MapController&lt;/b&gt;&lt;br&gt;@RestController" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#f8cecc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="100" y="620" width="500" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="mapcontroller_attrs" value="- mapService: MapService&#xa;- geoJsonService: GeoJsonService&#xa;@RequestMapping(&quot;/api/map&quot;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="mapcontroller">
+          <mxGeometry y="40" width="500" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="mapcontroller_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="mapcontroller">
+          <mxGeometry y="90" width="500" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="mapcontroller_methods" value="@GetMapping(&quot;/stations&quot;) + getAllStations(): ResponseEntity&lt;List&lt;StationMapDTO&gt;&gt;&#xa;@GetMapping(&quot;/stations/{id}&quot;) + getStationDetails(id): ResponseEntity&lt;StationMapDetailDTO&gt;&#xa;@GetMapping(&quot;/geojson&quot;) + getGeoJson(): ResponseEntity&lt;GeoJsonFeatureCollection&gt;&#xa;@GetMapping(&quot;/quality&quot;) + getStationsWithQuality(): ResponseEntity&lt;List&lt;StationQualityDTO&gt;&gt;&#xa;@GetMapping(&quot;/alerts&quot;) + getActiveAlerts(): ResponseEntity&lt;List&lt;AlertMapDTO&gt;&gt;&#xa;@GetMapping(&quot;/statistics&quot;) + getStatistics(): ResponseEntity&lt;MapStatisticsDTO&gt;&#xa;@GetMapping(&quot;/export/geojson&quot;) + exportGeoJson(): ResponseEntity&lt;Resource&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="mapcontroller">
+          <mxGeometry y="98" width="500" height="122" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== DTOs ==================== -->
+        
+        <mxCell id="dtos" value="📦 DTOs" style="swimlane;horizontal=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="650" y="520" width="650" height="340" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="stationmapdto" value="StationMapDTO&#xa;- id, code, name&#xa;- latitude, longitude&#xa;- type, commune&#xa;- latestScore: Double&#xa;- qualityStatus: String&#xa;- alertCount: Integer&#xa;- markerColor: String" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="40" width="180" height="130" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="stationdetaildto" value="StationMapDetailDTO&#xa;- station: StationMapDTO&#xa;- latestMeasurement: MeasurementResponse&#xa;- latestObservation: ObservationResponse&#xa;- activeAlerts: List&lt;AlertResponse&gt;&#xa;- historicalData: List&lt;...&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="220" y="40" width="200" height="100" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="geojsonfc" value="GeoJsonFeatureCollection&#xa;- type: &quot;FeatureCollection&quot;&#xa;- features: List&lt;GeoJsonFeature&gt;&#xa;- bbox: double[4]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="440" y="40" width="190" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="geojsonfeature" value="GeoJsonFeature&#xa;- type: &quot;Feature&quot;&#xa;- id: String&#xa;- geometry: GeoJsonGeometry&#xa;- properties: Map&lt;String, Object&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="440" y="135" width="190" height="90" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="geojsongeometry" value="GeoJsonGeometry&#xa;- type: &quot;Point&quot;&#xa;- coordinates: double[2]&#xa;  [longitude, latitude]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="440" y="240" width="190" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="alertmapdto" value="AlertMapDTO&#xa;- alertId, stationId&#xa;- stationName&#xa;- latitude, longitude&#xa;- severity, title&#xa;- createdAt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="185" width="150" height="110" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="mapstatsdto" value="MapStatisticsDTO&#xa;- totalStations: Integer&#xa;- excellentCount: Integer&#xa;- goodCount: Integer&#xa;- moderateCount: Integer&#xa;- poorCount: Integer&#xa;- activeAlertsCount: Integer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="190" y="155" width="180" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== RELATIONS ==================== -->
+        
+        <!-- Service uses Feign Clients -->
+        <mxCell id="rel1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="mapservice" target="sensorclient">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="280"/>
+              <mxPoint x="275" y="280"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="rel2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="mapservice" target="stmodelclient">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="380"/>
+              <mxPoint x="550" y="180"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="rel3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="mapservice" target="alertclient">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="420"/>
+              <mxPoint x="890" y="420"/>
+              <mxPoint x="890" y="170"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Controller uses Service -->
+        <mxCell id="rel4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="mapcontroller" target="mapservice">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Légende" style="swimlane;horizontal=1;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="300" width="230" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1" value="Feign Client" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="35" width="100" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="35" width="100" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="Controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="70" width="100" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4" value="DTO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="70" width="100" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5" value="GeoJSON Model" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="105" width="100" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg6" value="--- &gt; Dependency" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="105" width="100" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

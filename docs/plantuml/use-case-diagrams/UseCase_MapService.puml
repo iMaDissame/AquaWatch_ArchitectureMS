@@ -1,0 +1,133 @@
+@startuml UseCase_MapService
+!theme cerulean
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+title **MAP-SERVICE - Diagramme de Cas d'Utilisation**\nPort: 8085 | Service d'Agrégation pour le Dashboard
+
+left to right direction
+
+' ===== ACTEURS =====
+actor "Utilisateur\nDashboard" as user #LightBlue
+actor "Analyste\nEnvironnement" as analyst #LightGreen
+actor "Application\nAngular Frontend" as frontend #Orange
+
+' ===== ACTEURS SYSTÈME (Services) =====
+actor "Sensor-Service" as sensorservice #MediumSeaGreen
+actor "STModel-Service" as stmodelservice #Orchid
+actor "Alert-Service" as alertservice #Tomato
+
+' ===== SYSTÈME =====
+rectangle "Map-Service (8085)" as system #E0F2F1 {
+    
+    ' Vue carte
+    package "Vue Carte & Dashboard" {
+        usecase "Afficher la vue\nd'ensemble des stations" as UC1
+        usecase "Afficher la carte\ninteractive" as UC2
+    }
+    
+    ' Vue détail
+    package "Vue Détail Station" {
+        usecase "Consulter les détails\ncomplets d'une station" as UC3
+        usecase "Afficher la dernière\nmesure" as UC3a
+        usecase "Afficher l'observation\nde qualité" as UC3b
+        usecase "Afficher la prévision\nde qualité" as UC3c
+        usecase "Afficher les alertes\nactives" as UC3d
+    }
+    
+    ' Agrégation
+    package "Agrégation de Données" {
+        usecase "Récupérer les données\nde Sensor-Service" as UC4
+        usecase "Récupérer les données\nde STModel-Service" as UC5
+        usecase "Récupérer les données\nd'Alert-Service" as UC6
+    }
+}
+
+' ===== RELATIONS ACTEURS - CAS D'UTILISATION =====
+
+' Utilisateur Dashboard
+user --> UC1
+user --> UC2
+user --> UC3
+
+' Analyste
+analyst --> UC1
+analyst --> UC2
+analyst --> UC3
+
+' Frontend Angular
+frontend --> UC1
+frontend --> UC3
+
+' Services externes (appelés par Map-Service)
+sensorservice <-- UC4
+stmodelservice <-- UC5
+alertservice <-- UC6
+
+' ===== RELATIONS ENTRE CAS D'UTILISATION =====
+
+UC1 ..> UC4 : <<include>>
+UC1 ..> UC5 : <<include>>
+UC1 ..> UC6 : <<include>>
+
+UC2 ..> UC1 : <<include>>
+
+UC3 ..> UC3a : <<include>>
+UC3 ..> UC3b : <<include>>
+UC3 ..> UC3c : <<include>>
+UC3 ..> UC3d : <<include>>
+
+UC3a ..> UC4 : <<include>>
+UC3b ..> UC5 : <<include>>
+UC3c ..> UC5 : <<include>>
+UC3d ..> UC6 : <<include>>
+
+' ===== NOTES =====
+note right of UC1
+  **StationOverviewDTO:**
+  - Position GPS (lat/lng)
+  - Score de qualité actuel
+  - Statut (GOOD/MODERATE/BAD)
+  - Indicateur d'alerte active
+  - Heure dernière mesure
+end note
+
+note right of UC3
+  **StationDetailDTO:**
+  Agrège toutes les informations
+  disponibles sur une station:
+  - Métadonnées station
+  - Dernière mesure capteurs
+  - Observation de qualité
+  - Prévision 24h
+  - Liste des alertes actives
+end note
+
+note right of UC4
+  **Appels Feign vers Sensor-Service:**
+  GET /api/stations
+  GET /api/stations/{id}
+  GET /api/measurements/latest
+end note
+
+note right of UC5
+  **Appels Feign vers STModel-Service:**
+  GET /api/quality/observations/latest
+  GET /api/forecasts/simple
+end note
+
+note right of UC6
+  **Appels Feign vers Alert-Service:**
+  GET /api/alerts/station/{id}/active
+end note
+
+note bottom of system
+  **API REST Endpoints:**
+  GET /api/map/stations → List<StationOverviewDTO>
+  GET /api/map/stations/{stationId} → StationDetailDTO
+  
+  **Communication:**
+  OpenFeign + Eureka Discovery
+end note
+
+@enduml

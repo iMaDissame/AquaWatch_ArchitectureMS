@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-01T00:00:00.000Z" agent="AquaWatch" version="21.0.0">
+  <diagram name="STModel Service - Use Case Diagram" id="usecase-stmodel">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="🧠 STMODEL-SERVICE - Diagramme de Cas d'Utilisation" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- System Boundary -->
+        <mxCell id="system" value="STModel-Service (Port 8083)" style="shape=umlFrame;whiteSpace=wrap;html=1;width=220;height=30;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="320" y="80" width="560" height="620" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ACTORS ==================== -->
+        
+        <!-- Data Scientist Actor -->
+        <mxCell id="scientist" value="Data Scientist&#xa;/ Analyste" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#9C27B0;strokeColor=#6A1B9A;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Operator Actor -->
+        <mxCell id="operator" value="Opérateur" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#1976D2;strokeColor=#0D47A1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="400" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Sensor Service -->
+        <mxCell id="sensorservice" value="Sensor-Service" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#4CAF50;strokeColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="150" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Alert Service -->
+        <mxCell id="alertservice" value="Alert-Service" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#F44336;strokeColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="300" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Flask ML API -->
+        <mxCell id="flaskapi" value="Flask ML API&#xa;(Python)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#FF9800;strokeColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="450" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== USE CASES - PREDICTION ==================== -->
+        
+        <!-- UC: Prédire Qualité -->
+        <mxCell id="uc_predict" value="Prédire la qualité&#xa;de l'eau" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="110" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Prédire pour Station -->
+        <mxCell id="uc_predict_station" value="Prédire la qualité&#xa;pour une station" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="110" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Récupérer Mesures -->
+        <mxCell id="uc_get_measures" value="Récupérer les mesures&#xa;capteurs" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FF8F00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="200" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== USE CASES - OBSERVATIONS ==================== -->
+        
+        <!-- UC: Consulter Observations -->
+        <mxCell id="uc_observations" value="Consulter les observations&#xa;de qualité" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="200" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Dernière Observation -->
+        <mxCell id="uc_latest_obs" value="Récupérer la dernière&#xa;observation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="290" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Historique par Station -->
+        <mxCell id="uc_history" value="Consulter l'historique&#xa;par station" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="290" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== USE CASES - FORECAST ==================== -->
+        
+        <!-- UC: Générer Prévisions -->
+        <mxCell id="uc_forecast" value="Générer des prévisions&#xa;(7 jours)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="380" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Consulter Prévisions -->
+        <mxCell id="uc_view_forecast" value="Consulter les&#xa;prévisions" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="380" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== USE CASES - ALERTS ==================== -->
+        
+        <!-- UC: Déclencher Alerte -->
+        <mxCell id="uc_trigger_alert" value="Déclencher une alerte&#xa;(si score critique)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#D32F2F;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="470" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Appeler ML Model -->
+        <mxCell id="uc_call_ml" value="Appeler le modèle&#xa;ML (Flask API)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FF8F00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="470" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Générer Recommandation -->
+        <mxCell id="uc_recommendation" value="Générer une&#xa;recommandation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="560" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ASSOCIATIONS ==================== -->
+        
+        <!-- Data Scientist associations -->
+        <mxCell id="assoc1" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_predict">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc2" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_observations">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc3" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_forecast">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc4" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_history">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Operator associations -->
+        <mxCell id="assoc_op1" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#1976D2;" edge="1" parent="1" source="operator" target="uc_latest_obs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc_op2" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#1976D2;" edge="1" parent="1" source="operator" target="uc_view_forecast">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc_op3" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#1976D2;" edge="1" parent="1" source="operator" target="uc_recommendation">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Sensor Service associations -->
+        <mxCell id="assoc_sensor" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#4CAF50;" edge="1" parent="1" source="sensorservice" target="uc_get_measures">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Alert Service associations -->
+        <mxCell id="assoc_alert" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#F44336;" edge="1" parent="1" source="alertservice" target="uc_trigger_alert">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flask API associations -->
+        <mxCell id="assoc_flask" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#FF9800;" edge="1" parent="1" source="flaskapi" target="uc_call_ml">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Include relationships -->
+        <mxCell id="include1" value="«include»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="uc_predict_station" target="uc_get_measures">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="include2" value="«include»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="uc_predict" target="uc_call_ml">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="include3" value="«include»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="uc_predict" target="uc_recommendation">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Extend relationship -->
+        <mxCell id="extend1" value="«extend»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;strokeColor=#666666;" edge="1" parent="1" source="uc_trigger_alert" target="uc_predict">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="extend2" value="«extend»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;strokeColor=#666666;" edge="1" parent="1" source="uc_predict_station" target="uc_predict">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Légende" style="swimlane;horizontal=1;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="580" width="230" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1" value="Lecture (GET)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="35" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="Prédiction (ML)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="35" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="Recommandation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="75" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4" value="Alerte" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#D32F2F;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="75" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5" value="Appel Externe" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FF8F00;" vertex="1" parent="legend">
+          <mxGeometry x="60" y="110" width="100" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

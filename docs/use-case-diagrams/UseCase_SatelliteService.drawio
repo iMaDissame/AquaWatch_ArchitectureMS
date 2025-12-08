@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-01T00:00:00.000Z" agent="AquaWatch" version="21.0.0">
+  <diagram name="Satellite Service - Use Case Diagram" id="usecase-satellite">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="🛰️ SATELLITE-SERVICE - Diagramme de Cas d'Utilisation" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- System Boundary -->
+        <mxCell id="system" value="Satellite-Service (Port 8082)" style="shape=umlFrame;whiteSpace=wrap;html=1;width=220;height=30;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="320" y="80" width="560" height="580" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ACTORS ==================== -->
+        
+        <!-- Data Scientist Actor -->
+        <mxCell id="scientist" value="Data Scientist&#xa;/ Analyste" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#9C27B0;strokeColor=#6A1B9A;" vertex="1" parent="1">
+          <mxGeometry x="100" y="180" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Administrator Actor -->
+        <mxCell id="admin" value="Administrateur" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#1976D2;strokeColor=#0D47A1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="380" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- External System: Copernicus -->
+        <mxCell id="copernicus" value="API Copernicus&#xa;(Sentinel Hub)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#FF5722;strokeColor=#BF360C;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="150" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Other Microservices -->
+        <mxCell id="microservices" value="Autres Services&#xa;(STModel)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#FF9800;strokeColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="350" width="50" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== USE CASES - SCENE MANAGEMENT ==================== -->
+        
+        <!-- UC: Ingérer Scene -->
+        <mxCell id="uc_ingest" value="Ingérer une scène&#xa;satellite (Sentinel)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="110" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Télécharger Image -->
+        <mxCell id="uc_download" value="Télécharger l'image&#xa;depuis Copernicus" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FF8F00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="110" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Consulter Scenes -->
+        <mxCell id="uc_list_scenes" value="Consulter les scènes&#xa;disponibles" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="200" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Filtrer par Satellite -->
+        <mxCell id="uc_filter_sat" value="Filtrer par satellite&#xa;(S1, S2, Landsat)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0288D1;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="200" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== USE CASES - PROCESSING ==================== -->
+        
+        <!-- UC: Traiter Scene -->
+        <mxCell id="uc_process" value="Traiter une scène&#xa;(pré-traitement)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="290" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Calculer NDWI -->
+        <mxCell id="uc_ndwi" value="Calculer l'indice&#xa;NDWI" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="290" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Générer Water Mask -->
+        <mxCell id="uc_watermask" value="Générer un masque&#xa;d'eau (Water Mask)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="380" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Consulter Résultats NDWI -->
+        <mxCell id="uc_ndwi_results" value="Consulter les résultats&#xa;NDWI" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="380" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Consulter Water Masks -->
+        <mxCell id="uc_watermask_results" value="Consulter les masques&#xa;d'eau générés" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="470" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Exporter Données -->
+        <mxCell id="uc_export" value="Exporter les données&#xa;(GeoTIFF, JSON)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#B2DFDB;strokeColor=#00796B;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="470" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- UC: Configurer Seuil -->
+        <mxCell id="uc_threshold" value="Configurer le seuil&#xa;NDWI" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="560" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ASSOCIATIONS ==================== -->
+        
+        <!-- Data Scientist associations -->
+        <mxCell id="assoc1" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_ingest">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc2" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_list_scenes">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc3" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_process">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc4" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_ndwi">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc5" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_watermask">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc6" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;" edge="1" parent="1" source="scientist" target="uc_ndwi_results">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Admin associations -->
+        <mxCell id="assoc_admin1" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#1976D2;" edge="1" parent="1" source="admin" target="uc_watermask_results">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc_admin2" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#1976D2;" edge="1" parent="1" source="admin" target="uc_export">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc_admin3" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#1976D2;" edge="1" parent="1" source="admin" target="uc_threshold">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Copernicus associations -->
+        <mxCell id="assoc_cop" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#FF5722;" edge="1" parent="1" source="copernicus" target="uc_download">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Microservices associations -->
+        <mxCell id="assoc_ms1" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#FF9800;" edge="1" parent="1" source="microservices" target="uc_ndwi_results">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="assoc_ms2" style="edgeStyle=none;html=1;endArrow=none;strokeWidth=1.5;strokeColor=#FF9800;" edge="1" parent="1" source="microservices" target="uc_watermask_results">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Include relationships -->
+        <mxCell id="include1" value="«include»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="uc_ingest" target="uc_download">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="include2" value="«include»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="uc_watermask" target="uc_ndwi">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="include3" value="«include»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;" edge="1" parent="1" source="uc_ndwi" target="uc_process">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Extend relationship -->
+        <mxCell id="extend1" value="«extend»" style="edgeStyle=none;html=1;dashed=1;endArrow=open;strokeWidth=1;strokeColor=#666666;" edge="1" parent="1" source="uc_filter_sat" target="uc_list_scenes">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Légende" style="swimlane;horizontal=1;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="550" width="230" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1" value="Lecture (GET)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="35" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="Écriture (POST)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="35" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="Traitement" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="75" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4" value="Export" style="ellipse;whiteSpace=wrap;html=1;fillColor=#B2DFDB;strokeColor=#00796B;" vertex="1" parent="legend">
+          <mxGeometry x="120" y="75" width="100" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5" value="Externe" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FF8F00;" vertex="1" parent="legend">
+          <mxGeometry x="60" y="110" width="100" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

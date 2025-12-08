@@ -1,0 +1,150 @@
+@startuml ClassDiagram_SensorService
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+
+title **SENSOR-SERVICE - Diagramme de Classes**\nPort: 8081 | Base de données: sensor_db
+
+package "domain.entity" {
+    class Station {
+        - id: Long
+        - code: String
+        - name: String
+        - type: String
+        - latitude: Double
+        - longitude: Double
+        - commune: String
+        - description: String
+    }
+    
+    class SensorMeasurement {
+        - id: Long
+        - station: Station
+        - timestamp: LocalDateTime
+        - ph: Double
+        - temperature: Double
+        - turbidity: Double
+        - dissolvedOxygen: Double
+        - conductivity: Double
+        - source: MeasurementSource
+    }
+}
+
+package "domain.enums" {
+    enum MeasurementSource {
+        MANUAL_FORM
+        IOT_SIMULATED
+    }
+}
+
+package "repository" {
+    interface StationRepository {
+        + findAll(): List<Station>
+        + findById(id: Long): Optional<Station>
+        + findByCode(code: String): Optional<Station>
+        + save(station: Station): Station
+        + deleteById(id: Long): void
+    }
+    
+    interface SensorMeasurementRepository {
+        + findByStationAndTimestampBetween(station: Station, from: LocalDateTime, to: LocalDateTime): List<SensorMeasurement>
+        + findFirstByStationOrderByTimestampDesc(station: Station): Optional<SensorMeasurement>
+    }
+}
+
+package "service" {
+    class StationService {
+        - stationRepository: StationRepository
+        + findAll(): List<Station>
+        + findById(id: Long): Optional<Station>
+        + getById(id: Long): Station
+        + save(station: Station): Station
+        + delete(id: Long): void
+    }
+    
+    class SensorMeasurementService {
+        - measurementRepository: SensorMeasurementRepository
+        - stationService: StationService
+        + createManualMeasurement(stationId: Long, ph: Double, temperature: Double, turbidity: Double, dissolvedOxygen: Double, conductivity: Double): SensorMeasurement
+        + getMeasurementsForStation(stationId: Long, from: LocalDateTime, to: LocalDateTime): List<SensorMeasurement>
+        + getLatestMeasurement(stationId: Long): SensorMeasurement
+    }
+}
+
+package "web.controller" {
+    class StationController {
+        - stationService: StationService
+        + getAll(): List<Station>
+        + getById(id: Long): ResponseEntity<Station>
+        + create(station: Station): Station
+        + update(id: Long, station: Station): ResponseEntity<Station>
+        + delete(id: Long): ResponseEntity<Void>
+    }
+    
+    class SensorMeasurementController {
+        - measurementService: SensorMeasurementService
+        + create(request: MeasurementCreateRequest): MeasurementResponse
+        + listByStationAndRange(stationId: Long, from: LocalDateTime, to: LocalDateTime): List<SensorMeasurement>
+        + getLatest(stationId: Long): MeasurementResponse
+    }
+}
+
+package "web.dto" {
+    class MeasurementCreateRequest {
+        - stationId: Long
+        - ph: Double
+        - temperature: Double
+        - turbidity: Double
+        - dissolvedOxygen: Double
+        - conductivity: Double
+    }
+    
+    class MeasurementResponse {
+        - id: Long
+        - stationId: Long
+        - stationName: String
+        - timestamp: LocalDateTime
+        - ph: Double
+        - temperature: Double
+        - turbidity: Double
+        - dissolvedOxygen: Double
+        - conductivity: Double
+    }
+}
+
+' Relations
+Station "1" *-- "0..*" SensorMeasurement : contains >
+SensorMeasurement --> MeasurementSource : uses >
+
+StationRepository ..> Station : manages >
+SensorMeasurementRepository ..> SensorMeasurement : manages >
+
+StationService --> StationRepository : uses >
+SensorMeasurementService --> SensorMeasurementRepository : uses >
+SensorMeasurementService --> StationService : uses >
+
+StationController --> StationService : uses >
+SensorMeasurementController --> SensorMeasurementService : uses >
+
+SensorMeasurementController ..> MeasurementCreateRequest : receives >
+SensorMeasurementController ..> MeasurementResponse : returns >
+
+note right of Station
+  Représente une station de mesure
+  avec ses coordonnées GPS
+  et informations descriptives
+end note
+
+note right of SensorMeasurement
+  Mesure des paramètres de qualité:
+  - pH (6.5-8.5 optimal)
+  - Température (°C)
+  - Turbidité (NTU)
+  - Oxygène dissous (mg/L)
+  - Conductivité (µS/cm)
+end note
+
+@enduml

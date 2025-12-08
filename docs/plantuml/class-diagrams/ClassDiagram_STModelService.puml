@@ -1,0 +1,233 @@
+@startuml ClassDiagram_STModelService
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+
+title **STMODEL-SERVICE - Diagramme de Classes**\nPort: 8083 | Base de données: stmodel_db
+
+package "domain.entity" {
+    class QualityObservation {
+        - id: Long
+        - stationId: Long
+        - timestamp: LocalDateTime
+        - score: Double
+        - status: QualityStatus
+        - details: String
+    }
+    
+    class QualityForecast {
+        - id: Long
+        - stationId: Long
+        - createdAt: LocalDateTime
+        - forecastTime: LocalDateTime
+        - predictedScore: Double
+        - predictedStatus: QualityStatus
+        - modelName: String
+        - modelVersion: String
+        - confidence: Double
+        - lowerBound: Double
+        - upperBound: Double
+    }
+    
+    class PredictionHistory {
+        - id: Long
+        - stationId: Long
+        - predictionTimestamp: LocalDateTime
+        - ph: Double
+        - temperature: Double
+        - turbidity: Double
+        - dissolvedOxygen: Double
+        - conductivity: Double
+        - score: Double
+        - status: QualityStatus
+        - details: String
+        - parameterScoresJson: String
+        - recommendationsJson: String
+    }
+}
+
+package "domain.enums" {
+    enum QualityStatus {
+        GOOD
+        MODERATE
+        BAD
+    }
+    
+    enum MetricType {
+        NDWI
+        NDVI
+        TURBIDITY
+        CHLOROPHYLL
+    }
+}
+
+package "repository" {
+    interface QualityObservationRepository {
+        + findByStationIdOrderByTimestampDesc(stationId: Long): List<QualityObservation>
+        + findFirstByStationIdOrderByTimestampDesc(stationId: Long): Optional<QualityObservation>
+    }
+    
+    interface QualityForecastRepository {
+        + findByStationIdOrderByCreatedAtDesc(stationId: Long): List<QualityForecast>
+        + findFirstByStationIdOrderByCreatedAtDesc(stationId: Long): Optional<QualityForecast>
+    }
+    
+    interface PredictionHistoryRepository {
+        + findByStationIdOrderByPredictionTimestampDesc(stationId: Long): List<PredictionHistory>
+    }
+}
+
+package "client" {
+    interface SensorClient <<FeignClient>> {
+        + getLatestMeasurement(stationId: Long): SensorMeasurementDTO
+    }
+    
+    interface SatelliteClient <<FeignClient>> {
+        + getLatestMetricsForStation(stationId: Long): List<SatelliteMetricDTO>
+    }
+    
+    interface AlertClient <<FeignClient>> {
+        + createAlertFromObservation(observation: QualityObservationAlertDTO): AlertDTO
+    }
+}
+
+package "service" {
+    class QualityCalculationService {
+        - sensorClient: SensorClient
+        - satelliteClient: SatelliteClient
+        - observationRepository: QualityObservationRepository
+        --
+        + computeCurrentQuality(stationId: Long): QualityObservation
+        + getLatestObservation(stationId: Long): QualityObservation
+        - calculatePhScore(ph: Double, issues: List<String>): double
+        - calculateTemperatureScore(temp: Double, issues: List<String>): double
+        - calculateTurbidityScore(turbidity: Double, issues: List<String>): double
+        - calculateDissolvedOxygenScore(do: Double, issues: List<String>): double
+        - calculateConductivityScore(cond: Double, issues: List<String>): double
+        - calculateSatelliteScore(metrics: List<SatelliteMetricDTO>, issues: List<String>): double
+        - determineStatus(score: double): QualityStatus
+    }
+    
+    class ForecastService {
+        - qualityCalculationService: QualityCalculationService
+        - forecastRepository: QualityForecastRepository
+        - observationRepository: QualityObservationRepository
+        --
+        + createForecast(stationId: Long, horizonHours: int): QualityForecast
+        + createMultipleForecasts(stationId: Long): List<QualityForecast>
+        - analyzeTrend(observations: List<QualityObservation>): TrendAnalysis
+        - predictWithTrend(currentScore: double, horizonHours: int, trend: TrendAnalysis): double
+        - applySeasonalFactors(score: double, targetTime: LocalDateTime): double
+    }
+}
+
+package "web.controller" {
+    class QualityController {
+        - calculationService: QualityCalculationService
+        - alertClient: AlertClient
+        + computeQuality(stationId: Long): QualityObservationResponse
+        + getLatestObservation(stationId: Long): QualityObservationResponse
+    }
+    
+    class ForecastController {
+        - forecastService: ForecastService
+        + createForecast(stationId: Long, horizonHours: int): QualityForecastResponse
+        + getSimpleForecast(stationId: Long): QualityForecastResponse
+    }
+}
+
+package "web.dto" {
+    class SensorMeasurementDTO {
+        - stationId: Long
+        - ph: Double
+        - temperature: Double
+        - turbidity: Double
+        - dissolvedOxygen: Double
+        - conductivity: Double
+    }
+    
+    class SatelliteMetricDTO {
+        - metricType: MetricType
+        - value: Double
+        - createdAt: LocalDateTime
+    }
+    
+    class QualityObservationResponse {
+        - id: Long
+        - stationId: Long
+        - timestamp: LocalDateTime
+        - score: Double
+        - status: String
+        - details: String
+    }
+    
+    class QualityForecastResponse {
+        - id: Long
+        - stationId: Long
+        - forecastTime: LocalDateTime
+        - predictedScore: Double
+        - predictedStatus: String
+        - modelName: String
+        - confidence: Double
+    }
+    
+    class PredictionRequest {
+        - stationId: Long
+        - ph: Double
+        - temperature: Double
+        - turbidity: Double
+        - dissolvedOxygen: Double
+        - conductivity: Double
+    }
+    
+    class PredictionResponse {
+        - score: Double
+        - status: String
+        - details: String
+        - recommendations: List<String>
+    }
+}
+
+' Relations
+QualityObservation --> QualityStatus : uses >
+QualityForecast --> QualityStatus : uses >
+PredictionHistory --> QualityStatus : uses >
+
+QualityObservationRepository ..> QualityObservation : manages >
+QualityForecastRepository ..> QualityForecast : manages >
+PredictionHistoryRepository ..> PredictionHistory : manages >
+
+QualityCalculationService --> SensorClient : calls >
+QualityCalculationService --> SatelliteClient : calls >
+QualityCalculationService --> QualityObservationRepository : uses >
+
+ForecastService --> QualityCalculationService : uses >
+ForecastService --> QualityForecastRepository : uses >
+ForecastService --> QualityObservationRepository : uses >
+
+QualityController --> QualityCalculationService : uses >
+QualityController --> AlertClient : calls >
+ForecastController --> ForecastService : uses >
+
+note right of QualityCalculationService
+  **Algorithme WQI (Water Quality Index)**
+  Pondération des paramètres:
+  - pH: 20%
+  - Température: 15%
+  - Turbidité: 20%
+  - Oxygène dissous: 25%
+  - Conductivité: 10%
+  - Satellite (NDWI): 10%
+end note
+
+note right of ForecastService
+  **Modèles de prédiction:**
+  - TrendRegressionModel v2.0
+  - SimpleDegradationModel v1.0
+  Horizons: 24h, 48h, 72h
+end note
+
+@enduml

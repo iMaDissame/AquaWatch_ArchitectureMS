@@ -1,0 +1,167 @@
+@startuml ClassDiagram_AlertService
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+
+title **ALERT-SERVICE - Diagramme de Classes**\nPort: 8084 | Base de données: alert_db
+
+package "domain.entity" {
+    class Alert {
+        - id: Long
+        - stationId: Long
+        - sourceId: Long
+        - createdAt: LocalDateTime
+        - sourceType: AlertSourceType
+        - eventTime: LocalDateTime
+        - severity: AlertSeverity
+        - status: AlertStatus
+        - type: String
+        - title: String
+        - message: String
+        - score: Double
+        - resolvedAt: LocalDateTime
+        --
+        + prePersist(): void
+    }
+}
+
+package "domain.enums" {
+    enum AlertSeverity {
+        INFO
+        WARNING
+        CRITICAL
+    }
+    
+    enum AlertStatus {
+        OPEN
+        ACKNOWLEDGED
+        RESOLVED
+    }
+    
+    enum AlertSourceType {
+        OBSERVATION
+        FORECAST
+        MANUAL
+    }
+}
+
+package "repository" {
+    interface AlertRepository {
+        + findByStatus(status: AlertStatus): List<Alert>
+        + findByStationId(stationId: Long): List<Alert>
+        + findByStationIdAndStatus(stationId: Long, status: AlertStatus): List<Alert>
+    }
+}
+
+package "service" {
+    class AlertService {
+        - alertRepository: AlertRepository
+        --
+        + createAlertFromObservation(obs: QualityObservationDTO): AlertResponse
+        + createAlertFromForecast(forecast: QualityForecastDTO): AlertResponse
+        + getActiveAlerts(): List<AlertResponse>
+        + getActiveAlertsForStation(stationId: Long): List<AlertResponse>
+        + getAlertsForStation(stationId: Long, status: AlertStatus): List<AlertResponse>
+        + acknowledge(id: Long): AlertResponse
+        + resolve(id: Long): AlertResponse
+        - toResponse(alert: Alert): AlertResponse
+        - determineSeverity(status: String, score: Double): AlertSeverity
+    }
+}
+
+package "web.controller" {
+    class AlertController {
+        - alertService: AlertService
+        --
+        + createFromObservation(obs: QualityObservationDTO): AlertResponse
+        + createFromForecast(forecast: QualityForecastDTO): AlertResponse
+        + getActive(): List<AlertResponse>
+        + getActiveForStation(stationId: Long): List<AlertResponse>
+        + getForStation(stationId: Long, status: AlertStatus): List<AlertResponse>
+        + acknowledge(id: Long): AlertResponse
+        + resolve(id: Long): AlertResponse
+    }
+}
+
+package "web.dto" {
+    class QualityObservationDTO {
+        - id: Long
+        - stationId: Long
+        - timestamp: LocalDateTime
+        - score: Double
+        - status: String
+        - details: String
+    }
+    
+    class QualityForecastDTO {
+        - id: Long
+        - stationId: Long
+        - forecastTime: LocalDateTime
+        - predictedScore: Double
+        - predictedStatus: String
+        - modelName: String
+    }
+    
+    class AlertResponse {
+        - id: Long
+        - stationId: Long
+        - createdAt: LocalDateTime
+        - eventTime: LocalDateTime
+        - severity: String
+        - status: String
+        - type: String
+        - title: String
+        - message: String
+        - score: Double
+        - resolvedAt: LocalDateTime
+    }
+}
+
+' Relations
+Alert --> AlertSeverity : uses >
+Alert --> AlertStatus : uses >
+Alert --> AlertSourceType : uses >
+
+AlertRepository ..> Alert : manages >
+
+AlertService --> AlertRepository : uses >
+
+AlertController --> AlertService : uses >
+
+AlertController ..> QualityObservationDTO : receives >
+AlertController ..> QualityForecastDTO : receives >
+AlertController ..> AlertResponse : returns >
+
+AlertService ..> AlertResponse : creates >
+
+note right of Alert
+  **Types d'alertes:**
+  - THRESHOLD_BREACH: Dépassement de seuil
+  - FORECAST_RISK: Risque prédit
+  
+  **Cycle de vie:**
+  OPEN → ACKNOWLEDGED → RESOLVED
+end note
+
+note right of AlertService
+  **Règles de création d'alertes:**
+  - score < 50 → CRITICAL
+  - status = "BAD" → CRITICAL
+  - status = "MODERATE" → WARNING
+  - status = "GOOD" → Pas d'alerte
+end note
+
+note bottom of AlertController
+  **Endpoints REST:**
+  POST /api/alerts/from-observation
+  POST /api/alerts/from-forecast
+  GET /api/alerts/active
+  GET /api/alerts/station/{stationId}/active
+  PATCH /api/alerts/{id}/acknowledge
+  PATCH /api/alerts/{id}/resolve
+end note
+
+@enduml

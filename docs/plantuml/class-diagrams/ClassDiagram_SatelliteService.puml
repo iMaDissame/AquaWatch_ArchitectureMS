@@ -1,0 +1,154 @@
+@startuml ClassDiagram_SatelliteService
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+
+title **SATELLITE-SERVICE - Diagramme de Classes**\nPort: 8082 | Base de données: satellite_db
+
+package "domain.entity" {
+    class SatelliteScene {
+        - id: Long
+        - satellite: SatelliteType
+        - acquiredAt: LocalDateTime
+        - productId: String
+        - tileId: String
+        - aoiName: String
+        - boundingBoxWkt: String
+        - cloudCoverage: Double
+        - rawProductPath: String
+        - waterMaskPath: String
+        - probabilityMapPath: String
+    }
+    
+    class SatelliteMetric {
+        - id: Long
+        - stationId: Long
+        - scene: SatelliteScene
+        - metricType: MetricType
+        - unit: String
+        - value: Double
+        - createdAt: LocalDateTime
+    }
+}
+
+package "domain.enums" {
+    enum SatelliteType {
+        SENTINEL_1
+        SENTINEL_2
+        LANDSAT_8
+        LANDSAT_9
+    }
+    
+    enum MetricType {
+        NDWI
+        NDVI
+        TURBIDITY
+        CHLOROPHYLL
+        WATER_MASK
+    }
+}
+
+package "repository" {
+    interface SatelliteSceneRepository {
+        + findAll(): List<SatelliteScene>
+        + findById(id: Long): Optional<SatelliteScene>
+        + save(scene: SatelliteScene): SatelliteScene
+    }
+    
+    interface SatelliteMetricRepository {
+        + findTop10ByStationIdOrderByCreatedAtDesc(stationId: Long): List<SatelliteMetric>
+        + save(metric: SatelliteMetric): SatelliteMetric
+    }
+}
+
+package "service" {
+    class SatelliteSceneService {
+        - sceneRepository: SatelliteSceneRepository
+        + create(scene: SatelliteScene): SatelliteScene
+        + getById(id: Long): SatelliteScene
+        + findAll(): List<SatelliteScene>
+    }
+    
+    class SatelliteMetricService {
+        - metricRepository: SatelliteMetricRepository
+        - sceneService: SatelliteSceneService
+        + createMetric(stationId: Long, sceneId: Long, type: MetricType, value: Double, unit: String): SatelliteMetric
+        + getLatestMetricsForStation(stationId: Long): List<SatelliteMetric>
+    }
+}
+
+package "web.controller" {
+    class SatelliteSceneController {
+        - sceneService: SatelliteSceneService
+        + getAll(): List<SatelliteScene>
+        + getById(id: Long): SatelliteScene
+        + create(request: SceneCreateRequest): SatelliteScene
+    }
+    
+    class SatelliteMetricController {
+        - metricService: SatelliteMetricService
+        + createMetric(request: MetricCreateRequest): SatelliteMetric
+        + getLatestForStation(stationId: Long): List<SatelliteMetric>
+    }
+}
+
+package "web.dto" {
+    class SceneCreateRequest {
+        - satellite: SatelliteType
+        - productId: String
+        - tileId: String
+        - aoiName: String
+        - cloudCoverage: Double
+    }
+    
+    class MetricCreateRequest {
+        - stationId: Long
+        - sceneId: Long
+        - metricType: MetricType
+        - value: Double
+        - unit: String
+    }
+    
+    class StationMetricSummaryDto {
+        - stationId: Long
+        - latestNdwi: Double
+        - latestTurbidity: Double
+        - sceneCount: Integer
+    }
+}
+
+' Relations
+SatelliteScene "1" *-- "0..*" SatelliteMetric : contains >
+SatelliteScene --> SatelliteType : uses >
+SatelliteMetric --> MetricType : uses >
+
+SatelliteSceneRepository ..> SatelliteScene : manages >
+SatelliteMetricRepository ..> SatelliteMetric : manages >
+
+SatelliteSceneService --> SatelliteSceneRepository : uses >
+SatelliteMetricService --> SatelliteMetricRepository : uses >
+SatelliteMetricService --> SatelliteSceneService : uses >
+
+SatelliteSceneController --> SatelliteSceneService : uses >
+SatelliteMetricController --> SatelliteMetricService : uses >
+
+SatelliteSceneController ..> SceneCreateRequest : receives >
+SatelliteMetricController ..> MetricCreateRequest : receives >
+
+note right of SatelliteScene
+  Représente une scène satellite
+  Sentinel-1/2 ou Landsat
+  avec métadonnées et chemins
+  vers les produits traités
+end note
+
+note right of MetricType
+  NDWI: Normalized Difference Water Index
+  NDVI: Normalized Difference Vegetation Index
+  Calculés à partir des bandes spectrales
+end note
+
+@enduml

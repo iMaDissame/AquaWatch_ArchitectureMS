@@ -1,0 +1,112 @@
+@startuml UseCase_AlertService
+!theme cerulean
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+title **ALERT-SERVICE - Diagramme de Cas d'Utilisation**\nPort: 8084 | Gestion des Alertes
+
+left to right direction
+
+' ===== ACTEURS =====
+actor "Opérateur\nSuperviseur" as operator #LightBlue
+actor "Administrateur" as admin #LightGreen
+actor "STModel-Service" as stmodelservice #Orchid
+actor "Map-Service" as mapservice #MediumPurple
+
+' ===== SYSTÈME =====
+rectangle "Alert-Service (8084)" as system #FFCDD2 {
+    
+    ' Création d'alertes
+    package "Création d'Alertes" {
+        usecase "Créer une alerte\ndepuis une observation" as UC1
+        usecase "Créer une alerte\ndepuis une prévision" as UC2
+        usecase "Déterminer la sévérité\nautomatiquement" as UC2a
+    }
+    
+    ' Consultation d'alertes
+    package "Consultation d'Alertes" {
+        usecase "Consulter les alertes\nactives" as UC3
+        usecase "Consulter les alertes\nactives d'une station" as UC4
+        usecase "Consulter les alertes\npar statut" as UC5
+    }
+    
+    ' Gestion du cycle de vie
+    package "Gestion du Cycle de Vie" {
+        usecase "Acquitter une alerte" as UC6
+        usecase "Résoudre une alerte" as UC7
+    }
+}
+
+' ===== RELATIONS ACTEURS - CAS D'UTILISATION =====
+
+' Opérateur/Superviseur
+operator --> UC3
+operator --> UC4
+operator --> UC5
+operator --> UC6
+operator --> UC7
+
+' Administrateur
+admin --> UC3
+admin --> UC4
+admin --> UC5
+admin --> UC6
+admin --> UC7
+
+' STModel-Service
+stmodelservice --> UC1
+stmodelservice --> UC2
+
+' Map-Service
+mapservice --> UC3
+mapservice --> UC4
+
+' ===== RELATIONS ENTRE CAS D'UTILISATION =====
+
+UC1 ..> UC2a : <<include>>
+UC2 ..> UC2a : <<include>>
+
+UC6 <.. UC7 : <<extend>>
+
+' ===== NOTES =====
+note right of UC1
+  **Source: OBSERVATION**
+  Type: THRESHOLD_BREACH
+  Créée quand qualité actuelle
+  est MODERATE ou BAD
+end note
+
+note right of UC2
+  **Source: FORECAST**
+  Type: FORECAST_RISK
+  Créée quand prévision
+  indique BAD
+end note
+
+note right of UC2a
+  **Règles de sévérité:**
+  - score < 50 → CRITICAL
+  - status = BAD → CRITICAL
+  - status = MODERATE → WARNING
+end note
+
+note right of UC6
+  **Cycle de vie:**
+  OPEN → ACKNOWLEDGED → RESOLVED
+  
+  L'acquittement indique que
+  l'opérateur a pris connaissance
+end note
+
+note bottom of system
+  **API REST Endpoints:**
+  POST /api/alerts/from-observation
+  POST /api/alerts/from-forecast
+  GET /api/alerts/active
+  GET /api/alerts/station/{stationId}/active
+  GET /api/alerts?stationId=&status=
+  PATCH /api/alerts/{id}/acknowledge
+  PATCH /api/alerts/{id}/resolve
+end note
+
+@enduml

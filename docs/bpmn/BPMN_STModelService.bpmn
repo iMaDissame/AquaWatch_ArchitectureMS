@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" 
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" 
+                  id="Definitions_STModelService" 
+                  targetNamespace="http://aquawatch.ma/bpmn/stmodel">
+
+  <!-- ============================================= -->
+  <!-- STMODEL SERVICE - PROCESSUS MÉTIERS          -->
+  <!-- ============================================= -->
+
+  <bpmn:process id="Process_PredictionQualite" name="Processus de Prédiction de Qualité de l'Eau" isExecutable="true">
+    
+    <bpmn:startEvent id="Start_Prediction" name="Demande de prédiction">
+      <bpmn:outgoing>Flow_P1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="Task_RecevoirParametres" name="Recevoir paramètres (stationId, pH, turbidité, O2, température, conductivité)">
+      <bpmn:incoming>Flow_P1</bpmn:incoming>
+      <bpmn:outgoing>Flow_P2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_AppelerSensorService" name="[Feign] Récupérer infos station depuis Sensor Service (:8081)">
+      <bpmn:incoming>Flow_P2</bpmn:incoming>
+      <bpmn:outgoing>Flow_P3</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_AppelerSatelliteService" name="[Feign] Récupérer dernières métriques satellite (:8082)">
+      <bpmn:incoming>Flow_P3</bpmn:incoming>
+      <bpmn:outgoing>Flow_P4</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_FusionnerDonnees" name="Fusionner données capteur + satellite">
+      <bpmn:incoming>Flow_P4</bpmn:incoming>
+      <bpmn:outgoing>Flow_P5</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_AppelerFlaskML" name="[HTTP] Appeler Flask ML API (:5000/predict)">
+      <bpmn:incoming>Flow_P5</bpmn:incoming>
+      <bpmn:outgoing>Flow_P6</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_RecevoirScore" name="Recevoir score (0-100) et parameterScores">
+      <bpmn:incoming>Flow_P6</bpmn:incoming>
+      <bpmn:outgoing>Flow_P7</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_Score" name="Évaluer score">
+      <bpmn:incoming>Flow_P7</bpmn:incoming>
+      <bpmn:outgoing>Flow_Good</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Moderate</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Bad</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:task id="Task_StatusGood" name="Status = GOOD">
+      <bpmn:incoming>Flow_Good</bpmn:incoming>
+      <bpmn:outgoing>Flow_G1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_StatusModerate" name="Status = MODERATE">
+      <bpmn:incoming>Flow_Moderate</bpmn:incoming>
+      <bpmn:outgoing>Flow_M1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_StatusBad" name="Status = BAD">
+      <bpmn:incoming>Flow_Bad</bpmn:incoming>
+      <bpmn:outgoing>Flow_B1</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="Gateway_JoinStatus" name="">
+      <bpmn:incoming>Flow_G1</bpmn:incoming>
+      <bpmn:incoming>Flow_M1</bpmn:incoming>
+      <bpmn:incoming>Flow_B1</bpmn:incoming>
+      <bpmn:outgoing>Flow_P8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="Task_GenererRecommandations" name="Générer recommandations basées sur parameterScores">
+      <bpmn:incoming>Flow_P8</bpmn:incoming>
+      <bpmn:outgoing>Flow_P9</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="Task_SauvegarderHistorique" name="Sauvegarder PredictionHistory dans stmodel_db">
+      <bpmn:incoming>Flow_P9</bpmn:incoming>
+      <bpmn:outgoing>Flow_P10</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_AlerteNecessaire" name="Alerte nécessaire?">
+      <bpmn:incoming>Flow_P10</bpmn:incoming>
+      <bpmn:outgoing>Flow_AlerteOui</bpmn:outgoing>
+      <bpmn:outgoing>Flow_AlerteNon</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="Task_CreerAlerte" name="[Feign] Créer alerte via Alert Service (:8084)">
+      <bpmn:incoming>Flow_AlerteOui</bpmn:incoming>
+      <bpmn:outgoing>Flow_P11</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_JoinAlerte" name="">
+      <bpmn:incoming>Flow_AlerteNon</bpmn:incoming>
+      <bpmn:incoming>Flow_P11</bpmn:incoming>
+      <bpmn:outgoing>Flow_P12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="Task_RetournerResultat" name="Retourner PredictionResponse (score, status, recommendations)">
+      <bpmn:incoming>Flow_P12</bpmn:incoming>
+      <bpmn:outgoing>Flow_PEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="End_Prediction" name="Prédiction terminée">
+      <bpmn:incoming>Flow_PEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Sequence Flows -->
+    <bpmn:sequenceFlow id="Flow_P1" sourceRef="Start_Prediction" targetRef="Task_RecevoirParametres"/>
+    <bpmn:sequenceFlow id="Flow_P2" sourceRef="Task_RecevoirParametres" targetRef="Task_AppelerSensorService"/>
+    <bpmn:sequenceFlow id="Flow_P3" sourceRef="Task_AppelerSensorService" targetRef="Task_AppelerSatelliteService"/>
+    <bpmn:sequenceFlow id="Flow_P4" sourceRef="Task_AppelerSatelliteService" targetRef="Task_FusionnerDonnees"/>
+    <bpmn:sequenceFlow id="Flow_P5" sourceRef="Task_FusionnerDonnees" targetRef="Task_AppelerFlaskML"/>
+    <bpmn:sequenceFlow id="Flow_P6" sourceRef="Task_AppelerFlaskML" targetRef="Task_RecevoirScore"/>
+    <bpmn:sequenceFlow id="Flow_P7" sourceRef="Task_RecevoirScore" targetRef="Gateway_Score"/>
+    <bpmn:sequenceFlow id="Flow_Good" name="score ≥ 80" sourceRef="Gateway_Score" targetRef="Task_StatusGood"/>
+    <bpmn:sequenceFlow id="Flow_Moderate" name="60 ≤ score &lt; 80" sourceRef="Gateway_Score" targetRef="Task_StatusModerate"/>
+    <bpmn:sequenceFlow id="Flow_Bad" name="score &lt; 60" sourceRef="Gateway_Score" targetRef="Task_StatusBad"/>
+    <bpmn:sequenceFlow id="Flow_G1" sourceRef="Task_StatusGood" targetRef="Gateway_JoinStatus"/>
+    <bpmn:sequenceFlow id="Flow_M1" sourceRef="Task_StatusModerate" targetRef="Gateway_JoinStatus"/>
+    <bpmn:sequenceFlow id="Flow_B1" sourceRef="Task_StatusBad" targetRef="Gateway_JoinStatus"/>
+    <bpmn:sequenceFlow id="Flow_P8" sourceRef="Gateway_JoinStatus" targetRef="Task_GenererRecommandations"/>
+    <bpmn:sequenceFlow id="Flow_P9" sourceRef="Task_GenererRecommandations" targetRef="Task_SauvegarderHistorique"/>
+    <bpmn:sequenceFlow id="Flow_P10" sourceRef="Task_SauvegarderHistorique" targetRef="Gateway_AlerteNecessaire"/>
+    <bpmn:sequenceFlow id="Flow_AlerteOui" name="MODERATE ou BAD" sourceRef="Gateway_AlerteNecessaire" targetRef="Task_CreerAlerte"/>
+    <bpmn:sequenceFlow id="Flow_AlerteNon" name="GOOD" sourceRef="Gateway_AlerteNecessaire" targetRef="Gateway_JoinAlerte"/>
+    <bpmn:sequenceFlow id="Flow_P11" sourceRef="Task_CreerAlerte" targetRef="Gateway_JoinAlerte"/>
+    <bpmn:sequenceFlow id="Flow_P12" sourceRef="Gateway_JoinAlerte" targetRef="Task_RetournerResultat"/>
+    <bpmn:sequenceFlow id="Flow_PEnd" sourceRef="Task_RetournerResultat" targetRef="End_Prediction"/>
+
+  </bpmn:process>
+
+  <!-- DIAGRAMME BPMN -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_STModel">
+    <bpmndi:BPMNPlane id="BPMNPlane_STModel" bpmnElement="Process_PredictionQualite">
+      
+      <bpmndi:BPMNShape id="Start_Prediction_di" bpmnElement="Start_Prediction">
+        <dc:Bounds x="152" y="282" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_RecevoirParametres_di" bpmnElement="Task_RecevoirParametres">
+        <dc:Bounds x="240" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_AppelerSensorService_di" bpmnElement="Task_AppelerSensorService">
+        <dc:Bounds x="390" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_AppelerSatelliteService_di" bpmnElement="Task_AppelerSatelliteService">
+        <dc:Bounds x="540" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_FusionnerDonnees_di" bpmnElement="Task_FusionnerDonnees">
+        <dc:Bounds x="690" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_AppelerFlaskML_di" bpmnElement="Task_AppelerFlaskML">
+        <dc:Bounds x="840" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_RecevoirScore_di" bpmnElement="Task_RecevoirScore">
+        <dc:Bounds x="990" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_Score_di" bpmnElement="Gateway_Score" isMarkerVisible="true">
+        <dc:Bounds x="1145" y="275" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_StatusGood_di" bpmnElement="Task_StatusGood">
+        <dc:Bounds x="1250" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_StatusModerate_di" bpmnElement="Task_StatusModerate">
+        <dc:Bounds x="1250" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_StatusBad_di" bpmnElement="Task_StatusBad">
+        <dc:Bounds x="1250" y="360" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_JoinStatus_di" bpmnElement="Gateway_JoinStatus" isMarkerVisible="true">
+        <dc:Bounds x="1405" y="275" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_GenererRecommandations_di" bpmnElement="Task_GenererRecommandations">
+        <dc:Bounds x="1505" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SauvegarderHistorique_di" bpmnElement="Task_SauvegarderHistorique">
+        <dc:Bounds x="1655" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_AlerteNecessaire_di" bpmnElement="Gateway_AlerteNecessaire" isMarkerVisible="true">
+        <dc:Bounds x="1805" y="275" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CreerAlerte_di" bpmnElement="Task_CreerAlerte">
+        <dc:Bounds x="1905" y="360" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_JoinAlerte_di" bpmnElement="Gateway_JoinAlerte" isMarkerVisible="true">
+        <dc:Bounds x="2055" y="275" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_RetournerResultat_di" bpmnElement="Task_RetournerResultat">
+        <dc:Bounds x="2155" y="260" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="End_Prediction_di" bpmnElement="End_Prediction">
+        <dc:Bounds x="2312" y="282" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Edges -->
+      <bpmndi:BPMNEdge id="Flow_P1_di" bpmnElement="Flow_P1">
+        <di:waypoint x="188" y="300"/>
+        <di:waypoint x="240" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P2_di" bpmnElement="Flow_P2">
+        <di:waypoint x="340" y="300"/>
+        <di:waypoint x="390" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P3_di" bpmnElement="Flow_P3">
+        <di:waypoint x="490" y="300"/>
+        <di:waypoint x="540" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P4_di" bpmnElement="Flow_P4">
+        <di:waypoint x="640" y="300"/>
+        <di:waypoint x="690" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P5_di" bpmnElement="Flow_P5">
+        <di:waypoint x="790" y="300"/>
+        <di:waypoint x="840" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P6_di" bpmnElement="Flow_P6">
+        <di:waypoint x="940" y="300"/>
+        <di:waypoint x="990" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P7_di" bpmnElement="Flow_P7">
+        <di:waypoint x="1090" y="300"/>
+        <di:waypoint x="1145" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Good_di" bpmnElement="Flow_Good">
+        <di:waypoint x="1170" y="275"/>
+        <di:waypoint x="1170" y="200"/>
+        <di:waypoint x="1250" y="200"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Moderate_di" bpmnElement="Flow_Moderate">
+        <di:waypoint x="1195" y="300"/>
+        <di:waypoint x="1250" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_Bad_di" bpmnElement="Flow_Bad">
+        <di:waypoint x="1170" y="325"/>
+        <di:waypoint x="1170" y="400"/>
+        <di:waypoint x="1250" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_G1_di" bpmnElement="Flow_G1">
+        <di:waypoint x="1350" y="200"/>
+        <di:waypoint x="1430" y="200"/>
+        <di:waypoint x="1430" y="275"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_M1_di" bpmnElement="Flow_M1">
+        <di:waypoint x="1350" y="300"/>
+        <di:waypoint x="1405" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_B1_di" bpmnElement="Flow_B1">
+        <di:waypoint x="1350" y="400"/>
+        <di:waypoint x="1430" y="400"/>
+        <di:waypoint x="1430" y="325"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P8_di" bpmnElement="Flow_P8">
+        <di:waypoint x="1455" y="300"/>
+        <di:waypoint x="1505" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P9_di" bpmnElement="Flow_P9">
+        <di:waypoint x="1605" y="300"/>
+        <di:waypoint x="1655" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P10_di" bpmnElement="Flow_P10">
+        <di:waypoint x="1755" y="300"/>
+        <di:waypoint x="1805" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_AlerteOui_di" bpmnElement="Flow_AlerteOui">
+        <di:waypoint x="1830" y="325"/>
+        <di:waypoint x="1830" y="400"/>
+        <di:waypoint x="1905" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_AlerteNon_di" bpmnElement="Flow_AlerteNon">
+        <di:waypoint x="1855" y="300"/>
+        <di:waypoint x="2055" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P11_di" bpmnElement="Flow_P11">
+        <di:waypoint x="2005" y="400"/>
+        <di:waypoint x="2080" y="400"/>
+        <di:waypoint x="2080" y="325"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_P12_di" bpmnElement="Flow_P12">
+        <di:waypoint x="2105" y="300"/>
+        <di:waypoint x="2155" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_PEnd_di" bpmnElement="Flow_PEnd">
+        <di:waypoint x="2255" y="300"/>
+        <di:waypoint x="2312" y="300"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</bpmn:definitions>

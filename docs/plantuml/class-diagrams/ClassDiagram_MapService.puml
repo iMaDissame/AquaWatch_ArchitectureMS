@@ -1,0 +1,174 @@
+@startuml ClassDiagram_MapService
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+
+title **MAP-SERVICE - Diagramme de Classes**\nPort: 8085 | Service d'agrégation
+
+package "client" {
+    interface SensorClient <<FeignClient>> {
+        + getAllStations(): List<StationDTO>
+        + getStationById(id: Long): StationDTO
+        + getLatestMeasurement(stationId: Long): MeasurementDTO
+        + getMeasurementsByStation(stationId: Long): List<MeasurementDTO>
+    }
+    
+    interface StModelClient <<FeignClient>> {
+        + getLatestObservation(stationId: Long): QualityObservationDTO
+        + getSimpleForecast(stationId: Long): QualityForecastDTO
+    }
+    
+    interface AlertClient <<FeignClient>> {
+        + getActiveAlertsForStation(stationId: Long): List<AlertDTO>
+    }
+}
+
+package "web.controller" {
+    class MapController {
+        - sensorClient: SensorClient
+        - stModelClient: StModelClient
+        - alertClient: AlertClient
+        --
+        + getStationOverview(): List<StationOverviewDTO>
+        + getStationDetail(stationId: Long): StationDetailDTO
+    }
+}
+
+package "web.dto" {
+    class StationDTO {
+        - id: Long
+        - code: String
+        - name: String
+        - type: String
+        - latitude: Double
+        - longitude: Double
+        - commune: String
+        - description: String
+    }
+    
+    class MeasurementDTO {
+        - id: Long
+        - stationId: Long
+        - stationName: String
+        - timestamp: LocalDateTime
+        - ph: Double
+        - temperature: Double
+        - turbidity: Double
+        - dissolvedOxygen: Double
+        - conductivity: Double
+    }
+    
+    class QualityObservationDTO {
+        - id: Long
+        - stationId: Long
+        - timestamp: LocalDateTime
+        - score: Double
+        - status: String
+        - details: String
+    }
+    
+    class QualityForecastDTO {
+        - id: Long
+        - stationId: Long
+        - forecastTime: LocalDateTime
+        - predictedScore: Double
+        - predictedStatus: String
+        - modelName: String
+        - confidence: Double
+    }
+    
+    class AlertDTO {
+        - id: Long
+        - stationId: Long
+        - severity: String
+        - status: String
+        - title: String
+        - message: String
+        - createdAt: LocalDateTime
+    }
+    
+    class StationOverviewDTO {
+        - stationId: Long
+        - code: String
+        - name: String
+        - latitude: Double
+        - longitude: Double
+        - currentScore: Double
+        - currentStatus: String
+        - hasActiveAlert: Boolean
+        - latestAlertSeverity: String
+        - lastMeasurementTime: String
+    }
+    
+    class StationDetailDTO {
+        - stationId: Long
+        - code: String
+        - name: String
+        - type: String
+        - latitude: Double
+        - longitude: Double
+        - commune: String
+        - description: String
+        - latestMeasurement: MeasurementDTO
+        - latestObservation: QualityObservationDTO
+        - latestForecast: QualityForecastDTO
+        - activeAlerts: List<AlertDTO>
+    }
+}
+
+' Relations
+MapController --> SensorClient : calls >
+MapController --> StModelClient : calls >
+MapController --> AlertClient : calls >
+
+MapController ..> StationOverviewDTO : returns >
+MapController ..> StationDetailDTO : returns >
+
+SensorClient ..> StationDTO : returns >
+SensorClient ..> MeasurementDTO : returns >
+StModelClient ..> QualityObservationDTO : returns >
+StModelClient ..> QualityForecastDTO : returns >
+AlertClient ..> AlertDTO : returns >
+
+StationDetailDTO *-- MeasurementDTO : contains >
+StationDetailDTO *-- QualityObservationDTO : contains >
+StationDetailDTO *-- QualityForecastDTO : contains >
+StationDetailDTO *-- AlertDTO : contains >
+
+note right of MapController
+  **Service d'agrégation**
+  Combine les données de:
+  - sensor-service (stations, mesures)
+  - stmodel-service (qualité, prévisions)
+  - alert-service (alertes actives)
+  
+  Pour alimenter la carte et le dashboard
+end note
+
+note right of StationOverviewDTO
+  **Vue résumée pour la carte**
+  Affiche:
+  - Position GPS
+  - Score de qualité actuel
+  - Indicateur d'alerte
+  - Dernière mise à jour
+end note
+
+note bottom of StationDetailDTO
+  **Vue détaillée pour une station**
+  Agrège toutes les informations
+  disponibles sur une station
+  incluant mesures, qualité,
+  prévisions et alertes
+end note
+
+note top of SensorClient
+  **Communication inter-services**
+  Via OpenFeign + Eureka Discovery
+  Les appels sont résilients avec fallback
+end note
+
+@enduml

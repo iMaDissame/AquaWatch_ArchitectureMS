@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-01T00:00:00.000Z" agent="AquaWatch" version="21.0.0">
+  <diagram name="Satellite Service - Class Diagram" id="class-satellite">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="🛰️ SATELLITE-SERVICE - Diagramme de Classes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="450" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== ENTITIES ==================== -->
+        
+        <!-- SatelliteScene Entity -->
+        <mxCell id="scene" value="&lt;b&gt;SatelliteScene&lt;/b&gt;&lt;br&gt;@Entity" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="100" y="100" width="280" height="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="scene_attrs" value="- id: Long&#xa;- satellite: SatelliteType&#xa;- acquiredAt: LocalDateTime&#xa;- productId: String&#xa;- tileId: String&#xa;- boundingBoxWkt: String&#xa;- cloudCoverage: Double&#xa;- processingLevel: String&#xa;- downloadUrl: String&#xa;- localPath: String&#xa;- status: SceneStatus&#xa;- createdAt: LocalDateTime&#xa;- processedAt: LocalDateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="scene">
+          <mxGeometry y="40" width="280" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="scene_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="scene">
+          <mxGeometry y="240" width="280" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="scene_methods" value="+ getId(): Long&#xa;+ getSatellite(): SatelliteType&#xa;+ setters/getters&#xa;+ toString(): String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="scene">
+          <mxGeometry y="248" width="280" height="72" as="geometry"/>
+        </mxCell>
+
+        <!-- SatelliteType Enum -->
+        <mxCell id="sattype" value="&lt;b&gt;«enumeration»&lt;/b&gt;&#xa;SatelliteType" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="100" y="460" width="120" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="sattype_vals" value="SENTINEL_1&#xa;SENTINEL_2&#xa;LANDSAT_8&#xa;LANDSAT_9" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="sattype">
+          <mxGeometry y="40" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- SceneStatus Enum -->
+        <mxCell id="scenestatus" value="&lt;b&gt;«enumeration»&lt;/b&gt;&#xa;SceneStatus" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="240" y="460" width="140" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="scenestatus_vals" value="PENDING&#xa;DOWNLOADING&#xa;DOWNLOADED&#xa;PROCESSING&#xa;PROCESSED&#xa;FAILED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="scenestatus">
+          <mxGeometry y="40" width="140" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- WaterMask Entity -->
+        <mxCell id="watermask" value="&lt;b&gt;WaterMask&lt;/b&gt;&lt;br&gt;@Entity" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="100" width="250" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermask_attrs" value="- id: Long&#xa;- scene: SatelliteScene&#xa;- algorithmUsed: String&#xa;- ndwiThreshold: Double&#xa;- waterPercentage: Double&#xa;- maskFilePath: String&#xa;- boundingBoxWkt: String&#xa;- pixelResolution: Double&#xa;- createdAt: LocalDateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="watermask">
+          <mxGeometry y="40" width="250" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermask_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="watermask">
+          <mxGeometry y="180" width="250" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermask_methods" value="+ getId(): Long&#xa;+ getScene(): SatelliteScene&#xa;+ getWaterPercentage(): Double&#xa;+ setters/getters" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="watermask">
+          <mxGeometry y="188" width="250" height="72" as="geometry"/>
+        </mxCell>
+
+        <!-- NdwiResult Entity -->
+        <mxCell id="ndwi" value="&lt;b&gt;NdwiResult&lt;/b&gt;&lt;br&gt;@Entity" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="400" width="250" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="ndwi_attrs" value="- id: Long&#xa;- scene: SatelliteScene&#xa;- meanNdwi: Double&#xa;- minNdwi: Double&#xa;- maxNdwi: Double&#xa;- stdDevNdwi: Double&#xa;- ndwiFilePath: String&#xa;- createdAt: LocalDateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="ndwi">
+          <mxGeometry y="40" width="250" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="ndwi_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="ndwi">
+          <mxGeometry y="160" width="250" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="ndwi_methods" value="+ getId(): Long&#xa;+ getMeanNdwi(): Double&#xa;+ setters/getters" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="ndwi">
+          <mxGeometry y="168" width="250" height="52" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== REPOSITORY ==================== -->
+        
+        <!-- SatelliteSceneRepository -->
+        <mxCell id="scenerepo" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;SatelliteSceneRepository" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#d5e8d4;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="720" y="100" width="350" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="scenerepo_ext" value="extends JpaRepository&lt;SatelliteScene, Long&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="scenerepo">
+          <mxGeometry y="40" width="350" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="scenerepo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="scenerepo">
+          <mxGeometry y="60" width="350" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="scenerepo_methods" value="+ findBySatellite(satellite: SatelliteType): List&lt;SatelliteScene&gt;&#xa;+ findByStatus(status: SceneStatus): List&lt;SatelliteScene&gt;&#xa;+ findByProductId(productId: String): Optional&lt;SatelliteScene&gt;&#xa;+ findByAcquiredAtBetween(start, end): List&lt;SatelliteScene&gt;&#xa;+ findByCloudCoverageLessThan(max: Double): List&lt;...&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="scenerepo">
+          <mxGeometry y="68" width="350" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- WaterMaskRepository -->
+        <mxCell id="watermaskrepo" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;WaterMaskRepository" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#d5e8d4;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="720" y="320" width="350" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermaskrepo_ext" value="extends JpaRepository&lt;WaterMask, Long&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="watermaskrepo">
+          <mxGeometry y="40" width="350" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermaskrepo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="watermaskrepo">
+          <mxGeometry y="60" width="350" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermaskrepo_methods" value="+ findBySceneId(sceneId: Long): Optional&lt;WaterMask&gt;&#xa;+ findByWaterPercentageGreaterThan(threshold: Double): List&lt;...&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="watermaskrepo">
+          <mxGeometry y="68" width="350" height="72" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== SERVICE ==================== -->
+        
+        <!-- SatelliteSceneService -->
+        <mxCell id="sceneservice" value="&lt;b&gt;SatelliteSceneService&lt;/b&gt;&lt;br&gt;@Service" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#e1d5e7;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="100" width="400" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="sceneservice_attrs" value="- sceneRepository: SatelliteSceneRepository&#xa;- waterMaskRepository: WaterMaskRepository&#xa;- ndwiResultRepository: NdwiResultRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="sceneservice">
+          <mxGeometry y="40" width="400" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="sceneservice_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="sceneservice">
+          <mxGeometry y="90" width="400" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="sceneservice_methods" value="+ ingestScene(request: SceneIngestRequest): SceneResponse&#xa;+ getSceneById(id: Long): SceneResponse&#xa;+ getScenesBySatellite(satellite: SatelliteType): List&lt;SceneResponse&gt;&#xa;+ processScene(id: Long): ProcessingResult&#xa;+ calculateNdwi(sceneId: Long): NdwiResultResponse&#xa;+ generateWaterMask(sceneId: Long, threshold: Double): WaterMaskResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="sceneservice">
+          <mxGeometry y="98" width="400" height="122" as="geometry"/>
+        </mxCell>
+
+        <!-- ImageProcessingService -->
+        <mxCell id="imgservice" value="&lt;b&gt;ImageProcessingService&lt;/b&gt;&lt;br&gt;@Service" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#e1d5e7;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="360" width="400" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="imgservice_attrs" value="- pythonScriptPath: String&#xa;- tempDirectory: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="imgservice">
+          <mxGeometry y="40" width="400" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="imgservice_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="imgservice">
+          <mxGeometry y="75" width="400" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="imgservice_methods" value="+ calculateNdwi(greenBand: byte[], nirBand: byte[]): double[][]&#xa;+ generateWaterMask(ndwiRaster: double[][], threshold: Double): byte[][]&#xa;+ extractBands(scenePath: String): Map&lt;String, byte[]&gt;&#xa;+ saveTiff(raster: double[][], outputPath: String): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="imgservice">
+          <mxGeometry y="83" width="400" height="97" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== CONTROLLER ==================== -->
+        
+        <!-- SatelliteSceneController -->
+        <mxCell id="scenecontroller" value="&lt;b&gt;SatelliteSceneController&lt;/b&gt;&lt;br&gt;@RestController" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#f8cecc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="100" y="640" width="450" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="scenecontroller_attrs" value="- sceneService: SatelliteSceneService&#xa;@RequestMapping(&quot;/api/satellite/scenes&quot;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="scenecontroller">
+          <mxGeometry y="40" width="450" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="scenecontroller_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="scenecontroller">
+          <mxGeometry y="80" width="450" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="scenecontroller_methods" value="@PostMapping(&quot;/ingest&quot;) + ingestScene(request): ResponseEntity&lt;SceneResponse&gt;&#xa;@GetMapping(&quot;/{id}&quot;) + getScene(id): ResponseEntity&lt;SceneResponse&gt;&#xa;@GetMapping(&quot;/satellite/{type}&quot;) + getBySatellite(type): ResponseEntity&lt;List&lt;...&gt;&gt;&#xa;@PostMapping(&quot;/{id}/process&quot;) + processScene(id): ResponseEntity&lt;ProcessingResult&gt;&#xa;@PostMapping(&quot;/{id}/ndwi&quot;) + calculateNdwi(id): ResponseEntity&lt;NdwiResultResponse&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="scenecontroller">
+          <mxGeometry y="88" width="450" height="112" as="geometry"/>
+        </mxCell>
+
+        <!-- WaterMaskController -->
+        <mxCell id="watermaskcontroller" value="&lt;b&gt;WaterMaskController&lt;/b&gt;&lt;br&gt;@RestController" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#f8cecc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="600" y="640" width="450" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermaskcontroller_attrs" value="- sceneService: SatelliteSceneService&#xa;@RequestMapping(&quot;/api/satellite/watermasks&quot;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="watermaskcontroller">
+          <mxGeometry y="40" width="450" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermaskcontroller_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="watermaskcontroller">
+          <mxGeometry y="80" width="450" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="watermaskcontroller_methods" value="@PostMapping(&quot;/scene/{sceneId}&quot;) + generateMask(sceneId, threshold): ResponseEntity&lt;...&gt;&#xa;@GetMapping(&quot;/scene/{sceneId}&quot;) + getMaskByScene(sceneId): ResponseEntity&lt;WaterMaskResponse&gt;&#xa;@GetMapping(&quot;/{id}&quot;) + getMaskById(id): ResponseEntity&lt;WaterMaskResponse&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="watermaskcontroller">
+          <mxGeometry y="88" width="450" height="92" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== DTOs ==================== -->
+        
+        <mxCell id="dtos" value="📦 DTOs" style="swimlane;horizontal=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="580" width="450" height="260" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="scenerequest" value="SceneIngestRequest&#xa;- satellite, productId&#xa;- tileId, acquiredAt&#xa;- downloadUrl, cloudCoverage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="40" width="180" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="sceneresponse" value="SceneResponse&#xa;- id, satellite, productId&#xa;- acquiredAt, status&#xa;- cloudCoverage, tileId" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="220" y="40" width="180" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="ndwiresponse" value="NdwiResultResponse&#xa;- id, sceneId&#xa;- meanNdwi, minNdwi&#xa;- maxNdwi, stdDevNdwi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="20" y="140" width="160" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="watermaskresponse" value="WaterMaskResponse&#xa;- id, sceneId&#xa;- waterPercentage&#xa;- algorithmUsed, threshold" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="dtos">
+          <mxGeometry x="200" y="140" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== RELATIONS ==================== -->
+        
+        <!-- Scene - WaterMask (1..1) -->
+        <mxCell id="rel1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=diamondThin;endFill=1;strokeWidth=2;" edge="1" parent="1" source="watermask" target="scene">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel1_label" value="1..1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="385" y="180" width="30" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Scene - NdwiResult (1..1) -->
+        <mxCell id="rel2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=diamondThin;endFill=1;strokeWidth=2;" edge="1" parent="1" source="ndwi" target="scene">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="500"/>
+              <mxPoint x="400" y="260"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Légende" style="swimlane;horizontal=1;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="500" width="200" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1" value="Entity" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="35" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="Repository" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="35" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="70" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4" value="Controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="legend">
+          <mxGeometry x="100" y="70" width="80" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
