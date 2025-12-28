@@ -1,0 +1,157 @@
+name: AquaWatch CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, master ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  JAVA_VERSION: '17'
+
+jobs:
+  # ============================================
+  # Build and Test All Services
+  # ============================================
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service:
+          - alert-service
+          - sensor-service
+          - satellite-service
+          - stmodel-service
+          - map-service
+          - discovery-service
+          - gateway-service
+      fail-fast: false
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ☕ Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
+
+      - name: 📦 Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: 🔨 Build ${{ matrix.service }}
+        run: |
+          cd ${{ matrix.service }}
+          mvn clean compile -DskipTests -q
+
+      - name: 🧪 Run Tests for ${{ matrix.service }}
+        run: |
+          cd ${{ matrix.service }}
+          mvn test -q
+
+      - name: 📊 Generate JaCoCo Report
+        if: success()
+        run: |
+          cd ${{ matrix.service }}
+          mvn jacoco:report -q
+
+      - name: 📤 Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.service }}
+          path: ${{ matrix.service }}/target/surefire-reports/
+          retention-days: 7
+
+      - name: 📤 Upload Coverage Report
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.service }}
+          path: ${{ matrix.service }}/target/site/jacoco/
+          retention-days: 7
+
+  # ============================================
+  # SonarCloud Analysis
+  # ============================================
+  sonarcloud:
+    name: SonarCloud Analysis
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ☕ Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
+
+      - name: 📦 Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: 📦 Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: 🔍 Build and Analyze with SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          for service in alert-service sensor-service stmodel-service; do
+            echo "📊 Analyzing $service..."
+            cd $service
+            mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+              -Dsonar.projectKey=iMaDissame_AquaWatch_ArchitectureMS \
+              -Dsonar.organization=imadissame \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -q || true
+            cd ..
+          done
+
+  # ============================================
+  # Build Summary
+  # ============================================
+  build-summary:
+    name: Build Summary
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: 📊 Check Build Status
+        run: |
+          echo "## 🏗️ Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| alert-service | ${{ needs.build-and-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| sensor-service | ${{ needs.build-and-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| satellite-service | ${{ needs.build-and-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| stmodel-service | ${{ needs.build-and-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| map-service | ${{ needs.build-and-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| discovery-service | ${{ needs.build-and-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| gateway-service | ${{ needs.build-and-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📅 Build completed at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
