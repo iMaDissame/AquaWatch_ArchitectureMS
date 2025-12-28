@@ -119,7 +119,21 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           cd alert-service
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=iMaDissame_AquaWatch_ArchitectureMS -DskipTests || true
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=iMaDissame_AquaWatch_alert-service -DskipTests || true
+
+      - name: Build and analyze sensor-service
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd sensor-service
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=iMaDissame_AquaWatch_sensor-service -DskipTests || true
+
+      - name: Build and analyze stmodel-service
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd stmodel-service
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=iMaDissame_AquaWatch_stmodel-service -DskipTests || true
 
   # ============================================
   # Build Summary
