@@ -210,14 +210,12 @@ cd alert-service
 
 ---
 
-## 📞 Contact
+## 👥 Équipe
 
-**Développé par** : ISSAME Imad - AGOUMI Mohammed Amine - JABRANE Mohamed Yahya
+Ce projet a été développé par :
 
-[![GitHub](https://img.shields.io/badge/GitHub-iMaDissame-black?style=flat-square&logo=github)](https://github.com/iMaDissame)
-
----
-
-## 📄 License
-
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+| Membre | GitHub |
+|--------|--------|
+| **ISSAME Imad** | [![GitHub](https://img.shields.io/badge/GitHub-iMaDissame-181717?style=flat-square&logo=github)](https://github.com/iMaDissame) |
+| **AGOUMI Mohammed Amine** | [![GitHub](https://img.shields.io/badge/GitHub-aminegumi-181717?style=flat-square&logo=github)](https://github.com/aminegumi) |
+| **JABRANE Mohamed Yahya** | [![GitHub](https://img.shields.io/badge/GitHub-yahya--x-181717?style=flat-square&logo=github)](https://github.com/yahya-x) |
