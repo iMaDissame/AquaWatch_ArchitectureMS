@@ -24,11 +24,9 @@
 
 ## 🎬 Démo Vidéo
 
-https://github.com/user-attachments/assets/demo-video
+> **Regardez la démonstration complète de l'application AquaWatch**
 
-> *Cliquez sur l'image pour voir la démonstration complète de l'application*
-
-[![AquaWatch Demo](https://img.shields.io/badge/▶️_Voir_la_Démo-blue?style=for-the-badge&logo=youtube)](./Aqua%20Watch%20Demo.mp4)
+[![Voir la Démo sur Google Drive](https://img.shields.io/badge/▶️_Voir_la_Démo_Vidéo-4285F4?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/13l916RqiVfixDqiGkdN0d51MmVEOosi_/view?usp=sharing)
 
 ---
 
@@ -207,7 +205,7 @@ cd alert-service
 
 ## 📞 Contact
 
-**Développé par** : iMaD ISSAME
+**Développé par** : ISSAME Imad - AGOUMI Mohammed Amine - JABRANE Mohamed Yahya
 
 [![GitHub](https://img.shields.io/badge/GitHub-iMaDissame-black?style=flat-square&logo=github)](https://github.com/iMaDissame)
 
