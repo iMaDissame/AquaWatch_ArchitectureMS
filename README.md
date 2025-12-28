@@ -147,8 +147,10 @@ Le pipeline GitHub Actions automatise :
 
 ### Pipeline Screenshots
 
-<img width="1269" height="669" alt="image" src="https://github.com/user-attachments/assets/9f6dc412-44ad-4936-9660-e5243ecd4c8b" />
+Capture 1: 
+<img width="1268" height="669" alt="image" src="https://github.com/user-attachments/assets/9f6dc412-44ad-4936-9660-e5243ecd4c8b" />
 
+Capture 2:
 <img width="1268" height="671" alt="image" src="https://github.com/user-attachments/assets/8256f2e8-3244-4101-9868-7d3b7639de62" />
 
 ---
