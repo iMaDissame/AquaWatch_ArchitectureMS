@@ -2,7 +2,6 @@
 
 [![CI/CD Pipeline](https://github.com/iMaDissame/AquaWatch_ArchitectureMS/actions/workflows/ci.yml/badge.svg)](https://github.com/iMaDissame/AquaWatch_ArchitectureMS/actions/workflows/ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=iMaDissame_AquaWatch_ArchitectureMS&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=iMaDissame_AquaWatch_ArchitectureMS)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=iMaDissame_AquaWatch_ArchitectureMS&metric=coverage)](https://sonarcloud.io/summary/new_code?id=iMaDissame_AquaWatch_ArchitectureMS)
 
 > **Une plateforme de surveillance en temps réel de la qualité de l'eau basée sur une architecture microservices**
 
