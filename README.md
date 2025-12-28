@@ -125,13 +125,18 @@ AquaWatch_ArchitectureMS/
 | Sensor Service | 10 tests ✅ | Coverage calculé par JaCoCo |
 | STModel Service | 10 tests ✅ | Coverage calculé par JaCoCo |
 
+Exemple Alert Service :
+
+<img width="1279" height="205" alt="image" src="https://github.com/user-attachments/assets/77608298-a174-4387-8ad0-89b40dd72a84" />
+
+
 ### SonarCloud Analysis
 
-> *Screenshots à ajouter après le premier push*
+<img width="1274" height="584" alt="image" src="https://github.com/user-attachments/assets/b3ca76b8-f487-459b-b490-40354dc456b8" />
 
-<!-- 
-![SonarCloud Dashboard](./docs/screenshots/sonarcloud-dashboard.png)
--->
+
+<img width="1274" height="588" alt="image" src="https://github.com/user-attachments/assets/4871248e-46af-4314-9717-0db328eff92f" />
+
 
 ---
 
@@ -148,9 +153,11 @@ Le pipeline GitHub Actions automatise :
 ### Pipeline Screenshots
 
 Capture 1: 
+
 <img width="1268" height="669" alt="image" src="https://github.com/user-attachments/assets/9f6dc412-44ad-4936-9660-e5243ecd4c8b" />
 
 Capture 2:
+
 <img width="1268" height="671" alt="image" src="https://github.com/user-attachments/assets/8256f2e8-3244-4101-9868-7d3b7639de62" />
 
 ---
